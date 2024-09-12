@@ -1,6 +1,6 @@
 package com.mpumd.poc.person.context.aggregat;
 
-enum Gender {
+public enum Gender {
     MALE,
     FEMALE,
     HERMAPHRODITE,

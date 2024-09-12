@@ -15,7 +15,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>22</java.version>
         <spring-boot-dependencies.version>3.3.3</spring-boot-dependencies.version>
+
+        <!-- Test -->
         <pitest-maven.version>1.16.3</pitest-maven.version>
+        <datafaker.version>2.3.1</datafaker.version>
+        <easy-random.version>5.0.0</easy-random.version>
+        <jfairy.version>0.6.5</jfairy.version>
     </properties>
 
     <dependencyManagement>
@@ -39,7 +44,17 @@
         </dependency>
 
         <!-- Run -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
         <!-- Test -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -60,6 +75,28 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- generator of fake data like firstname -->
+        <dependency>
+            <groupId>net.datafaker</groupId>
+            <artifactId>datafaker</artifactId>
+            <version>${datafaker.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jeasy</groupId>
+            <artifactId>easy-random-core</artifactId>
+            <version>${easy-random.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!--        <dependency> &lt;!&ndash; generate a fake person data &ndash;&gt;-->
+        <!--            <groupId>com.devskiller</groupId>-->
+        <!--            <artifactId>jfairy</artifactId>-->
+        <!--            <version>${jfairy.version}</version>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
+
+        <!-- mutation testing to increase the test resilience -->
         <dependency>
             <groupId>org.pitest</groupId>
             <artifactId>pitest-parent</artifactId>
