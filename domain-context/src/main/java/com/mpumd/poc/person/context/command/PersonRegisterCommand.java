@@ -4,13 +4,13 @@ import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
 import lombok.Getter;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 @Getter
 public class PersonRegisterCommand {
     private String firstName;
     private String lastName;
-    private OffsetDateTime birthDate;
+    private LocalDateTime birthDate;
     private Gender gender;
     private String birthPlace;
     private Nationality nationality;
@@ -43,7 +43,7 @@ public class PersonRegisterCommand {
         }
 
         @Override
-        public BirthPlaceStep birthDate(OffsetDateTime birthDate) {
+        public BirthPlaceStep birthDate(LocalDateTime birthDate) {
             cmd.birthDate = birthDate;
             return this;
         }
@@ -81,7 +81,7 @@ public class PersonRegisterCommand {
     }
 
     public interface BirthDateStep {
-        BirthPlaceStep birthDate(OffsetDateTime birthDate);
+        BirthPlaceStep birthDate(LocalDateTime birthDate);
     }
 
     public interface BirthPlaceStep {
