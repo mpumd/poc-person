@@ -33,9 +33,9 @@ class PersonTest {
     }
 
     @Test
-    void dontMissTest_TDD_please() {
+    void dontMissTest_TDD_Approch_please() {
         // instance attribut + logger
-        assertEquals(Person.class.getDeclaredFields().length, 5);
+        assertEquals(Person.class.getDeclaredFields().length, 7);
     }
 
     @Test
@@ -46,28 +46,34 @@ class PersonTest {
     }
 
     @Test
-    void buildValidPerson() {
+    void OK_personAggregateRoot() {
         var firstName = faker.name().firstName();
         var lastName = faker.name().lastName();
         var birthDate = LocalDateTime.of(faker.timeAndDate().birthday(0, 150), LocalTime.now());
         log.info("firstName {}, lastName {}", firstName, lastName);
         var gender = Gender.ALIEN;
+        var birthPlace = faker.space().planet();
+        var nationality = Nationality.TT;
 
         var prc = Mockito.mock(PersonRegisterCommand.class);
         when(prc.firstName()).thenReturn(firstName);
         when(prc.lastName()).thenReturn(lastName);
         when(prc.birthDate()).thenReturn(birthDate);
         when(prc.gender()).thenReturn(gender);
+        when(prc.birthPlace()).thenReturn(birthPlace);
+        when(prc.nationality()).thenReturn(nationality);
 
         Person register = Person.register(prc);
         assertThat(register)
-                .extracting("firstName", "lastName", "birthDate", "gender")
-                .containsExactly(firstName, lastName, birthDate, gender);
+                .extracting("firstName", "lastName", "birthDate", "gender", "birthPlace",
+                        "nationality")
+                .containsExactly(firstName, lastName, birthDate, gender, birthPlace,
+                        nationality);
     }
 
     @ParameterizedTest
     @NullAndEmptySource
-    void throwExForEmptyFirstName(String val) throws IllegalAccessException, NoSuchFieldException {
+    void KO_firstName(String val) throws IllegalAccessException, NoSuchFieldException {
         Field field = PersonRegisterCommand.class.getDeclaredField("firstName");
         field.setAccessible(true);
         field.set(prc, val);
@@ -80,7 +86,7 @@ class PersonTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void throwExForEmptyLastName(String val) throws NoSuchFieldException, IllegalAccessException {
+    void KO_lastName(String val) throws NoSuchFieldException, IllegalAccessException {
         Field field = PersonRegisterCommand.class.getDeclaredField("lastName");
         field.setAccessible(true);
         field.set(prc, val);
@@ -91,7 +97,7 @@ class PersonTest {
     }
 
     @Test
-    void throwExForEmptyBirthDate() throws NoSuchFieldException, IllegalAccessException {
+    void KO_birthDate() throws NoSuchFieldException, IllegalAccessException {
         Field field = PersonRegisterCommand.class.getDeclaredField("birthDate");
         field.setAccessible(true);
         field.set(prc, null);
@@ -102,7 +108,7 @@ class PersonTest {
     }
 
     @Test
-    void throwExForEmptyGender() throws NoSuchFieldException, IllegalAccessException {
+    void KO_gender() throws NoSuchFieldException, IllegalAccessException {
         Field field = PersonRegisterCommand.class.getDeclaredField("gender");
         field.setAccessible(true);
         field.set(prc, null);
@@ -111,4 +117,28 @@ class PersonTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("gender must not be null");
     }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void KO_birthPlace(String val) throws NoSuchFieldException, IllegalAccessException {
+        Field field = PersonRegisterCommand.class.getDeclaredField("birthPlace");
+        field.setAccessible(true);
+        field.set(prc, val);
+
+        assertThatThrownBy(() -> Person.register(prc))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("birthPlace must not be empty");
+    }
+
+    @Test
+    void KO_nationality() throws NoSuchFieldException, IllegalAccessException {
+        Field field = PersonRegisterCommand.class.getDeclaredField("nationality");
+        field.setAccessible(true);
+        field.set(prc, null);
+
+        assertThatThrownBy(() -> Person.register(prc))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("nationality must not be null");
+    }
+
 }

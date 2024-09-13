@@ -13,8 +13,8 @@ public class Person {
     private final String lastName;
     private final LocalDateTime birthDate;
     private final Gender gender;
-//    private final String birthPlace; // age calculated
-//    private final Nationality nationality;
+    private final String birthPlace; // age calculated
+    private final Nationality nationality;
 //    private final PhysicalAppearance physicalAppearance;
 
     private Person(@NonNull PersonRegisterCommand cmd) {
@@ -28,6 +28,11 @@ public class Person {
                 .orElseThrow(() -> new IllegalArgumentException("birthDate must not be null"));
         this.gender = Optional.ofNullable(cmd.gender())
                 .orElseThrow(() -> new IllegalArgumentException("gender must not be null"));
+        this.birthPlace = Optional.ofNullable(cmd.birthPlace())
+                .filter(s -> !s.isBlank())
+                .orElseThrow(() -> new IllegalArgumentException("birthPlace must not be empty"));
+        this.nationality = Optional.ofNullable(cmd.nationality())
+                .orElseThrow(() -> new IllegalArgumentException("nationality must not be null"));
     }
 
     // caculateAge() // valeur calculer

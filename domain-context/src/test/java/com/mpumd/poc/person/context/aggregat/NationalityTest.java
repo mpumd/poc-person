@@ -11,11 +11,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class NationalityTest {
 
     @Test
-    void shoudlHave2Nationalities() {
+    void TDD_approch_please() {
         var nationalities = Arrays.stream(Nationality.values()).map(Enum::name).toArray(String[]::new);
         assertThat(nationalities)
-                .hasSize(2)
-                .containsExactly("FR", "EN");
+                .hasSize(3)
+                .containsExactly("FR", "EN", "TT");
     }
 
     @Test
@@ -28,6 +28,12 @@ class NationalityTest {
     void shouldOKEN() {
         assertThat(Nationality.EN).extracting(Enum::name).isEqualTo("EN");
         assertThat(Nationality.EN).extracting("label").isEqualTo("english");
+    }
+
+    @Test
+    void OK_titan() {
+        assertThat(Nationality.TT).extracting(Enum::name).isEqualTo("TT");
+        assertThat(Nationality.TT).extracting("label").isEqualTo("titan");
     }
 
     // NOTE the parametrized test seems to be a little bit complicate, but it was written after the previous tests
