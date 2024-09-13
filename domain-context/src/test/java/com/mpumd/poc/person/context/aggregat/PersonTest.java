@@ -22,16 +22,27 @@ import static org.mockito.Mockito.when;
 @Slf4j
 class PersonTest {
 
-//    @Mock
-//    PersonRegisterCommand prc;
-
     Faker faker = new Faker();
-    EasyRandom easyRandom = new EasyRandom();
+
+    PersonRegisterCommand prc;
+
+    {
+        EasyRandom easyRandom = new EasyRandom();
+        prc = easyRandom.nextObject(PersonRegisterCommand.class);
+        assertThat(prc).hasNoNullFieldsOrProperties();
+    }
 
     @Test
     void dontMissTest_TDD_please() {
         // instance attribut + logger
-        assertEquals(Person.class.getDeclaredFields().length, 4);
+        assertEquals(Person.class.getDeclaredFields().length, 5);
+    }
+
+    @Test
+    void shouldThrowExIfCommandIsNull() {
+        assertThatThrownBy(() -> Person.register(null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("cmd is marked non-null but is null");
     }
 
     @Test
@@ -40,24 +51,23 @@ class PersonTest {
         var lastName = faker.name().lastName();
         var birthDate = LocalDateTime.of(faker.timeAndDate().birthday(0, 150), LocalTime.now());
         log.info("firstName {}, lastName {}", firstName, lastName);
+        var gender = Gender.ALIEN;
 
         var prc = Mockito.mock(PersonRegisterCommand.class);
         when(prc.firstName()).thenReturn(firstName);
         when(prc.lastName()).thenReturn(lastName);
         when(prc.birthDate()).thenReturn(birthDate);
+        when(prc.gender()).thenReturn(gender);
 
         Person register = Person.register(prc);
         assertThat(register)
-                .extracting("firstName", "lastName", "birthDate")
-                .containsExactly(firstName, lastName, birthDate);
+                .extracting("firstName", "lastName", "birthDate", "gender")
+                .containsExactly(firstName, lastName, birthDate, gender);
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     void throwExForEmptyFirstName(String val) throws IllegalAccessException, NoSuchFieldException {
-        var prc = easyRandom.nextObject(PersonRegisterCommand.class);
-        assertThat(prc).hasNoNullFieldsOrProperties();
-
         Field field = PersonRegisterCommand.class.getDeclaredField("firstName");
         field.setAccessible(true);
         field.set(prc, val);
@@ -71,9 +81,6 @@ class PersonTest {
     @ParameterizedTest
     @NullAndEmptySource
     void throwExForEmptyLastName(String val) throws NoSuchFieldException, IllegalAccessException {
-        PersonRegisterCommand prc = easyRandom.nextObject(PersonRegisterCommand.class);
-        assertThat(prc).hasNoNullFieldsOrProperties();
-
         Field field = PersonRegisterCommand.class.getDeclaredField("lastName");
         field.setAccessible(true);
         field.set(prc, val);
@@ -85,9 +92,6 @@ class PersonTest {
 
     @Test
     void throwExForEmptyBirthDate() throws NoSuchFieldException, IllegalAccessException {
-        PersonRegisterCommand prc = easyRandom.nextObject(PersonRegisterCommand.class);
-        assertThat(prc).hasNoNullFieldsOrProperties();
-
         Field field = PersonRegisterCommand.class.getDeclaredField("birthDate");
         field.setAccessible(true);
         field.set(prc, null);
@@ -95,5 +99,16 @@ class PersonTest {
         assertThatThrownBy(() -> Person.register(prc))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("birthDate must not be null");
+    }
+
+    @Test
+    void throwExForEmptyGender() throws NoSuchFieldException, IllegalAccessException {
+        Field field = PersonRegisterCommand.class.getDeclaredField("gender");
+        field.setAccessible(true);
+        field.set(prc, null);
+
+        assertThatThrownBy(() -> Person.register(prc))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("gender must not be null");
     }
 }

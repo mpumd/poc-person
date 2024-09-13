@@ -1,6 +1,7 @@
 package com.mpumd.poc.person.context.aggregat;
 
 import com.mpumd.poc.person.context.command.PersonRegisterCommand;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
@@ -11,12 +12,12 @@ public class Person {
     private final String firstName;
     private final String lastName;
     private final LocalDateTime birthDate;
-//    private final Gender gender;
+    private final Gender gender;
 //    private final String birthPlace; // age calculated
 //    private final Nationality nationality;
 //    private final PhysicalAppearance physicalAppearance;
 
-    private Person(PersonRegisterCommand cmd) {
+    private Person(@NonNull PersonRegisterCommand cmd) {
         this.firstName = Optional.ofNullable(cmd.firstName())
                 .filter(s -> !s.isBlank())
                 .orElseThrow(() -> new IllegalArgumentException("firstName must not be empty"));
@@ -25,7 +26,8 @@ public class Person {
                 .orElseThrow(() -> new IllegalArgumentException("lastName must not be empty"));
         this.birthDate = Optional.ofNullable(cmd.birthDate())
                 .orElseThrow(() -> new IllegalArgumentException("birthDate must not be null"));
-
+        this.gender = Optional.ofNullable(cmd.gender())
+                .orElseThrow(() -> new IllegalArgumentException("gender must not be null"));
     }
 
     // caculateAge() // valeur calculer
