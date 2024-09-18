@@ -9,6 +9,8 @@ class PhysicalAppearance {
     private final short weight; // kilogramme
     private final EyesColor eyesColor;
 
+    // private final byte[] face;
+
     public static PhysicalAppearance inform(short size, short weight, EyesColor eyesColor) {
         // REFACTOR use string template for size
         if (size < 0) throw new IllegalArgumentException("value was " + size + " but size is always positive");

@@ -16,17 +16,22 @@ public class Person {
     private final Gender gender;
     private final String birthPlace; // age calculated
     private final Nationality nationality;
+    //    private final BiometricPrint biometricPrint; // facial recognition, fingerprint recognition, and iris recognition.
 
     private PhysicalAppearance physicalAppearance;
+//    private final Personality personality;
 
 //    private final Career career;
-//    private final Personality personality;
+
 //    private final Hobby hobby;
 //    private final SocialLife socialLife;
 //    private final LifeStyle lifeStyle;
 //    private final LifePurpose lifePurpose;
+
 //    private final Challenge challenge;
+
 //    private final SignificantPossessions significantPossessions;
+//
 
     private Person(@NonNull PersonRegisterCommand cmd) {
         this.firstName = Optional.ofNullable(cmd.firstName())
@@ -45,7 +50,7 @@ public class Person {
         this.nationality = Optional.ofNullable(cmd.nationality())
                 .orElseThrow(() -> new IllegalArgumentException("nationality must not be null"));
     }
-    
+
     public static Person register(PersonRegisterCommand cmd) {
         return new Person(cmd);
     }
