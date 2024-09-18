@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Slf4j
@@ -44,8 +45,7 @@ public class Person {
         this.nationality = Optional.ofNullable(cmd.nationality())
                 .orElseThrow(() -> new IllegalArgumentException("nationality must not be null"));
     }
-
-    // TODO caculateAge() // valeur calculer
+    
     public static Person register(PersonRegisterCommand cmd) {
         return new Person(cmd);
     }
@@ -54,5 +54,7 @@ public class Person {
         this.physicalAppearance = PhysicalAppearance.inform(size, weight, eyesColor);
     }
 
-
+    public short calculateAge() {
+        return (short) ChronoUnit.YEARS.between(birthDate, LocalDateTime.now());
+    }
 }

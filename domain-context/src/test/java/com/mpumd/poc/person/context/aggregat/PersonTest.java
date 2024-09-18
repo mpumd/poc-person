@@ -7,6 +7,7 @@ import net.datafaker.Faker;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.FieldPredicates;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -14,6 +15,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -169,5 +171,22 @@ class PersonTest {
             assertThat(person).extracting("physicalAppearance")
                     .isEqualTo(physicalAppearanceMock);
         }
+    }
+
+    @Test
+    @DisplayName("calcul a correct age related to the birthDate and an instant in the time ")
+    void shouldCalculateCorrectAge() throws NoSuchFieldException, IllegalAccessException {
+        var person = easyRandom.nextObject(Person.class);
+        assertThat(person).hasNoNullFieldsOrProperties();
+
+        var birthDate = LocalDateTime.of(1990, 1, 5, 23, 42);
+        var now = LocalDateTime.now();
+        Field field = Person.class.getDeclaredField("birthDate");
+        field.setAccessible(true);
+        field.set(person, birthDate);
+
+        long expectedAge = ChronoUnit.YEARS.between(birthDate, now);
+        assertEquals(expectedAge, person.calculateAge(), "the age calcule must be " + expectedAge);
+
     }
 }
