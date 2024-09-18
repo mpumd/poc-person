@@ -9,7 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class EyesColorTest {
 
-    /** track new value if the dev forget to write the test, so test after */
+    /**
+     * track new value if the dev forget to write the test, so test after
+     */
     @Test
     void shouldHaveRightNumberOfEnumeration() {
         assertThat(EyesColor.values()).hasSize(6);
@@ -18,7 +20,8 @@ class EyesColorTest {
     @ParameterizedTest
     @ValueSource(strings = {"BROWN", "BLUE", "GREEN", "BLACK", "GREY", "HAZELNUT"})
     void shouldValidEnum(EyesColor enumerate) {
+        // if the enumerate name change, the valueof method will throw an IllegalArgEx.
+        // this following assert isn't even unnecessary :)
         assertNotNull(enumerate);
     }
-
 }

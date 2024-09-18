@@ -14,7 +14,6 @@ public class PersonRegisterCommand {
     private Gender gender;
     private String birthPlace;
     private Nationality nationality;
-//    private PhysicalAppearance physicalAppearance;
 
     private PersonRegisterCommand() {
     }

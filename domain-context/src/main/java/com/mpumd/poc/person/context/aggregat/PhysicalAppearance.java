@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class PhysicalAppearance {
+class PhysicalAppearance {
     private final short size; // in centimeters
     private final short weight; // kilogramme
     private final EyesColor eyesColor;

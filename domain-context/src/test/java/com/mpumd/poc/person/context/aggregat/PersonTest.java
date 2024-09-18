@@ -5,29 +5,31 @@ import com.mpumd.poc.person.context.command.PersonRegisterCommand;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.jeasy.random.EasyRandom;
+import org.jeasy.random.EasyRandomParameters;
+import org.jeasy.random.FieldPredicates;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.mockito.Mockito;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @Slf4j
 class PersonTest {
 
     Faker faker = new Faker();
+    EasyRandom easyRandom = new EasyRandom();
 
     PersonRegisterCommand prc;
 
     {
-        EasyRandom easyRandom = new EasyRandom();
         prc = easyRandom.nextObject(PersonRegisterCommand.class);
         assertThat(prc).hasNoNullFieldsOrProperties();
     }
@@ -35,7 +37,7 @@ class PersonTest {
     @Test
     void dontMissTest_TDD_Approch_please() {
         // instance attribut + logger
-        assertEquals(Person.class.getDeclaredFields().length, 7);
+        assertEquals(Person.class.getDeclaredFields().length, 8);
     }
 
     @Test
@@ -55,7 +57,7 @@ class PersonTest {
         var birthPlace = faker.space().planet();
         var nationality = Nationality.TT;
 
-        var prc = Mockito.mock(PersonRegisterCommand.class);
+        var prc = mock(PersonRegisterCommand.class);
         when(prc.firstName()).thenReturn(firstName);
         when(prc.lastName()).thenReturn(lastName);
         when(prc.birthDate()).thenReturn(birthDate);
@@ -141,4 +143,31 @@ class PersonTest {
                 .hasMessage("nationality must not be null");
     }
 
+    @Test
+    void should_informPhysicalAppearanceAndSetInstanceAttribut() {
+        // generate fullfilled Person instance except physicalAppearance field
+        Predicate<Field> physicalAppearancePredicate = FieldPredicates.named("physicalAppearance")
+                .and(FieldPredicates.inClass(Person.class));
+        var person = new EasyRandom(new EasyRandomParameters().excludeField(physicalAppearancePredicate))
+                .nextObject(Person.class);
+        assertThat(person).hasNoNullFieldsOrPropertiesExcept("physicalAppearance");
+
+        short size = 170;
+        short weight = 70;
+        EyesColor eyesColor = EyesColor.BLUE;
+
+        // GIVEN
+        var physicalAppearanceMock = mock(PhysicalAppearance.class);
+        try (var physicalAppearanceMS = mockStatic(PhysicalAppearance.class)) {
+            physicalAppearanceMS.when(() -> PhysicalAppearance.inform(size, weight, eyesColor))
+                    .thenReturn(physicalAppearanceMock);
+
+            // WHEN
+            person.informPhysicalAppearance(size, weight, eyesColor);
+
+            // THEN
+            assertThat(person).extracting("physicalAppearance")
+                    .isEqualTo(physicalAppearanceMock);
+        }
+    }
 }

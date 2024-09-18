@@ -15,7 +15,17 @@ public class Person {
     private final Gender gender;
     private final String birthPlace; // age calculated
     private final Nationality nationality;
-//    private final PhysicalAppearance physicalAppearance;
+
+    private PhysicalAppearance physicalAppearance;
+
+//    private final Career career;
+//    private final Personality personality;
+//    private final Hobby hobby;
+//    private final SocialLife socialLife;
+//    private final LifeStyle lifeStyle;
+//    private final LifePurpose lifePurpose;
+//    private final Challenge challenge;
+//    private final SignificantPossessions significantPossessions;
 
     private Person(@NonNull PersonRegisterCommand cmd) {
         this.firstName = Optional.ofNullable(cmd.firstName())
@@ -35,25 +45,14 @@ public class Person {
                 .orElseThrow(() -> new IllegalArgumentException("nationality must not be null"));
     }
 
-    // caculateAge() // valeur calculer
+    // TODO caculateAge() // valeur calculer
     public static Person register(PersonRegisterCommand cmd) {
         return new Person(cmd);
     }
 
-    //    private final Career career;
-//
-//    private final Personality personality;
-//
-//    private final Hobby hobby;
-//
-//    private final SocialLife socialLife;
-//
-//    private final LifeStyle lifeStyle;
-//
-//    private final LifePurpose lifePurpose;
-//
-//    private final Challenge challenge;
-//
-//    private final SignificantPossessions significantPossessions;
+    public void informPhysicalAppearance(short size, short weight, EyesColor eyesColor) {
+        this.physicalAppearance = PhysicalAppearance.inform(size, weight, eyesColor);
+    }
+
 
 }

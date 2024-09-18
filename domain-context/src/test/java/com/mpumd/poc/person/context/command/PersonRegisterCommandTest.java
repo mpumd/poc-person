@@ -9,7 +9,7 @@ import static com.mpumd.poc.person.context.aggregat.Gender.ALIEN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PersonRegisterCommandTest {
-    
+
     @Test
     void shouldBuildOK() {
         var birthDate = LocalDateTime.now();
