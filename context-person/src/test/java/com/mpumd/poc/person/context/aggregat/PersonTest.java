@@ -8,6 +8,7 @@ import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.FieldPredicates;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -37,7 +38,8 @@ class PersonTest {
     }
 
     @Test
-    void dontMissTest_TDD_Approch_please() {
+    @Tag("PITestIgnore")
+    void dontMissTest_TDD_Approch_please_NotMutated() {
         // instance attribut + logger
         assertEquals(Person.class.getDeclaredFields().length, 8);
     }
