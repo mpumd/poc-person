@@ -14,7 +14,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>22</java.version>
-        <spring-boot-dependencies.version>3.3.3</spring-boot-dependencies.version>
+        <spring-boot-dependencies.version>3.3.4</spring-boot-dependencies.version>
 
         <!-- Test -->
         <datafaker.version>2.3.1</datafaker.version>
