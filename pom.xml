@@ -8,19 +8,20 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>domain-context</module>
+        <module>context-person</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>22</java.version>
+        <java.version>21</java.version>
         <spring-boot-dependencies.version>3.3.3</spring-boot-dependencies.version>
 
         <!-- Test -->
-        <pitest-maven.version>1.16.3</pitest-maven.version>
         <datafaker.version>2.3.1</datafaker.version>
         <easy-random.version>5.0.0</easy-random.version>
-        <jfairy.version>0.6.5</jfairy.version>
+        <!--        <jfairy.version>0.6.5</jfairy.version>-->
+        <pitest-maven.version>1.16.3</pitest-maven.version>
+        <pitest-junit5-plugin.version>1.2.1</pitest-junit5-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -55,6 +56,7 @@
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -120,12 +122,19 @@
                 <groupId>org.pitest</groupId>
                 <artifactId>pitest-maven</artifactId>
                 <version>${pitest-maven.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>${pitest-junit5-plugin.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <targetClasses>
-                        <param>com.mpumd.poc.*</param>
+                        <param>com.mpumd.poc.person.context.*</param>
                     </targetClasses>
                     <targetTests>
-                        <param>com.mpumd.poc.*</param>
+                        <param>com.mpumd.poc.person.context.*</param>
                     </targetTests>
                 </configuration>
             </plugin>
