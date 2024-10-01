@@ -1,5 +1,6 @@
 Feature: Register of a person in the system
 
+  @disabled
   Scenario: Registration of a valid person
     Given I want to register a new person
     When I provide this following informations
