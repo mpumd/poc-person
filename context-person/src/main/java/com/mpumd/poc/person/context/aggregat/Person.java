@@ -1,10 +1,10 @@
 package com.mpumd.poc.person.context.aggregat;
 
-import com.mpumd.poc.person.context.command.PersonRegisterCommand;
+import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
@@ -12,8 +12,8 @@ import java.util.Optional;
 public class Person {
     private final String firstName;
     private final String lastName;
-    private final LocalDateTime birthDate;
     private final Gender gender;
+    private final ZonedDateTime birthDate;
     private final String birthPlace; // age calculated
     private final Nationality nationality;
     //    private final BiometricPrint biometricPrint; // facial recognition, fingerprint recognition, and iris recognition.
@@ -33,7 +33,7 @@ public class Person {
 //    private final SignificantPossessions significantPossessions;
 //
 
-    private Person(@NonNull PersonRegisterCommand cmd) {
+    private Person(@NonNull PersonRegistrationCommand cmd) {
         this.firstName = Optional.ofNullable(cmd.firstName())
                 .filter(s -> !s.isBlank())
                 .orElseThrow(() -> new IllegalArgumentException("firstName must not be empty"));
@@ -51,7 +51,7 @@ public class Person {
                 .orElseThrow(() -> new IllegalArgumentException("nationality must not be null"));
     }
 
-    public static Person register(PersonRegisterCommand cmd) {
+    public static Person register(PersonRegistrationCommand cmd) {
         return new Person(cmd);
     }
 
@@ -60,6 +60,6 @@ public class Person {
     }
 
     public short calculateAge() {
-        return (short) ChronoUnit.YEARS.between(birthDate, LocalDateTime.now());
+        return (short) ChronoUnit.YEARS.between(birthDate, ZonedDateTime.now());
     }
 }

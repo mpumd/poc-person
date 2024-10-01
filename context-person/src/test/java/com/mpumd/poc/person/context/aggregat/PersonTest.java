@@ -1,7 +1,7 @@
 package com.mpumd.poc.person.context.aggregat;
 
 
-import com.mpumd.poc.person.context.command.PersonRegisterCommand;
+import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.jeasy.random.EasyRandom;
@@ -14,8 +14,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.function.Predicate;
 
@@ -30,10 +31,10 @@ class PersonTest {
     Faker faker = new Faker();
     EasyRandom easyRandom = new EasyRandom();
 
-    PersonRegisterCommand prc;
+    PersonRegistrationCommand prc;
 
     {
-        prc = easyRandom.nextObject(PersonRegisterCommand.class);
+        prc = easyRandom.nextObject(PersonRegistrationCommand.class);
         assertThat(prc).hasNoNullFieldsOrProperties();
     }
 
@@ -55,13 +56,16 @@ class PersonTest {
     void OK_personAggregateRoot() {
         var firstName = faker.name().firstName();
         var lastName = faker.name().lastName();
-        var birthDate = LocalDateTime.of(faker.timeAndDate().birthday(0, 150), LocalTime.now());
+        var birthDate = ZonedDateTime.of(
+                faker.timeAndDate().birthday(0, 150),
+                LocalTime.now(),
+                ZoneId.of("Europe/Paris"));
         log.info("firstName {}, lastName {}", firstName, lastName);
         var gender = Gender.ALIEN;
         var birthPlace = faker.space().planet();
         var nationality = Nationality.TT;
 
-        var prc = mock(PersonRegisterCommand.class);
+        var prc = mock(PersonRegistrationCommand.class);
         when(prc.firstName()).thenReturn(firstName);
         when(prc.lastName()).thenReturn(lastName);
         when(prc.birthDate()).thenReturn(birthDate);
@@ -80,7 +84,7 @@ class PersonTest {
     @ParameterizedTest
     @NullAndEmptySource
     void KO_firstName(String val) throws IllegalAccessException, NoSuchFieldException {
-        Field field = PersonRegisterCommand.class.getDeclaredField("firstName");
+        Field field = PersonRegistrationCommand.class.getDeclaredField("firstName");
         field.setAccessible(true);
         field.set(prc, val);
 
@@ -93,7 +97,7 @@ class PersonTest {
     @ParameterizedTest
     @NullAndEmptySource
     void KO_lastName(String val) throws NoSuchFieldException, IllegalAccessException {
-        Field field = PersonRegisterCommand.class.getDeclaredField("lastName");
+        Field field = PersonRegistrationCommand.class.getDeclaredField("lastName");
         field.setAccessible(true);
         field.set(prc, val);
 
@@ -104,7 +108,7 @@ class PersonTest {
 
     @Test
     void KO_birthDate() throws NoSuchFieldException, IllegalAccessException {
-        Field field = PersonRegisterCommand.class.getDeclaredField("birthDate");
+        Field field = PersonRegistrationCommand.class.getDeclaredField("birthDate");
         field.setAccessible(true);
         field.set(prc, null);
 
@@ -115,7 +119,7 @@ class PersonTest {
 
     @Test
     void KO_gender() throws NoSuchFieldException, IllegalAccessException {
-        Field field = PersonRegisterCommand.class.getDeclaredField("gender");
+        Field field = PersonRegistrationCommand.class.getDeclaredField("gender");
         field.setAccessible(true);
         field.set(prc, null);
 
@@ -127,7 +131,7 @@ class PersonTest {
     @ParameterizedTest
     @NullAndEmptySource
     void KO_birthPlace(String val) throws NoSuchFieldException, IllegalAccessException {
-        Field field = PersonRegisterCommand.class.getDeclaredField("birthPlace");
+        Field field = PersonRegistrationCommand.class.getDeclaredField("birthPlace");
         field.setAccessible(true);
         field.set(prc, val);
 
@@ -138,7 +142,7 @@ class PersonTest {
 
     @Test
     void KO_nationality() throws NoSuchFieldException, IllegalAccessException {
-        Field field = PersonRegisterCommand.class.getDeclaredField("nationality");
+        Field field = PersonRegistrationCommand.class.getDeclaredField("nationality");
         field.setAccessible(true);
         field.set(prc, null);
 
@@ -181,13 +185,16 @@ class PersonTest {
         var person = easyRandom.nextObject(Person.class);
         assertThat(person).hasNoNullFieldsOrProperties();
 
-        var birthDate = LocalDateTime.of(1990, 1, 5, 23, 42);
-        var now = LocalDateTime.now();
+        var birthDate = ZonedDateTime.of(
+                1990, 1, 5,
+                23, 42, 34, 0,
+                ZoneId.of("Europe/Paris"));
+
         Field field = Person.class.getDeclaredField("birthDate");
         field.setAccessible(true);
         field.set(person, birthDate);
 
-        long expectedAge = ChronoUnit.YEARS.between(birthDate, now);
+        long expectedAge = ChronoUnit.YEARS.between(birthDate, ZonedDateTime.now());
         assertEquals(expectedAge, person.calculateAge(), "the age calcule must be " + expectedAge);
 
     }

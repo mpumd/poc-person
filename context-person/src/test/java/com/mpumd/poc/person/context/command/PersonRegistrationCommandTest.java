@@ -3,17 +3,17 @@ package com.mpumd.poc.person.context.command;
 import com.mpumd.poc.person.context.aggregat.Nationality;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import static com.mpumd.poc.person.context.aggregat.Gender.ALIEN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class PersonRegisterCommandTest {
+class PersonRegistrationCommandTest {
 
     @Test
     void shouldBuildOK() {
-        var birthDate = LocalDateTime.now();
-        PersonRegisterCommand pb = PersonRegisterCommand.builder()
+        var birthDate = ZonedDateTime.now();
+        PersonRegistrationCommand pb = PersonRegistrationCommand.builder()
                 .firstName("mpu")
                 .lastName("md")
                 .birthDate(birthDate)

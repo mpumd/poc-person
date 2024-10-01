@@ -4,28 +4,28 @@ import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Getter
-public class PersonRegisterCommand {
+public class PersonRegistrationCommand {
     private String firstName;
     private String lastName;
-    private LocalDateTime birthDate;
+    private ZonedDateTime birthDate;
     private Gender gender;
     private String birthPlace;
     private Nationality nationality;
 
-    private PersonRegisterCommand() {
+    private PersonRegistrationCommand() {
     }
 
     public static FirstNameStep builder() {
-        return new Builder(new PersonRegisterCommand());
+        return new Builder(new PersonRegistrationCommand());
     }
 
     private static class Builder implements FirstNameStep, LastNameStep, BirthDateStep, GenderStep, BirthPlaceStep, BuildStep, NationalityStep {
-        private final PersonRegisterCommand cmd;
+        private final PersonRegistrationCommand cmd;
 
-        private Builder(PersonRegisterCommand cmd) {
+        private Builder(PersonRegistrationCommand cmd) {
             this.cmd = cmd;
         }
 
@@ -42,7 +42,7 @@ public class PersonRegisterCommand {
         }
 
         @Override
-        public BirthPlaceStep birthDate(LocalDateTime birthDate) {
+        public BirthPlaceStep birthDate(ZonedDateTime birthDate) {
             cmd.birthDate = birthDate;
             return this;
         }
@@ -66,7 +66,7 @@ public class PersonRegisterCommand {
         }
 
         @Override
-        public PersonRegisterCommand build() {
+        public PersonRegistrationCommand build() {
             return cmd;
         }
     }
@@ -80,7 +80,7 @@ public class PersonRegisterCommand {
     }
 
     public interface BirthDateStep {
-        BirthPlaceStep birthDate(LocalDateTime birthDate);
+        BirthPlaceStep birthDate(ZonedDateTime birthDate);
     }
 
     public interface BirthPlaceStep {
@@ -96,7 +96,7 @@ public class PersonRegisterCommand {
     }
 
     public interface BuildStep {
-        PersonRegisterCommand build();
+        PersonRegistrationCommand build();
     }
 }
 
