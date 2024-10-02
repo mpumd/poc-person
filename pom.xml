@@ -20,8 +20,11 @@
         <!-- Test -->
         <datafaker.version>2.3.1</datafaker.version>
         <easy-random.version>5.0.0</easy-random.version>
+
         <pitest-maven.version>1.17.0</pitest-maven.version>
         <pitest-junit5-plugin.version>1.2.1</pitest-junit5-plugin.version>
+        <pitest-maven.package.scope>com.mpumd.poc.person.*</pitest-maven.package.scope>
+
         <cucumber-bom.version>7.19.0</cucumber-bom.version>
     </properties>
 
@@ -123,14 +126,6 @@
         <!--            <version>${jfairy.version}</version>-->
         <!--            <scope>test</scope>-->
         <!--        </dependency>-->
-
-        <!-- mutation testing to increase the test resilience -->
-        <dependency>
-            <groupId>org.pitest</groupId>
-            <artifactId>pitest-parent</artifactId>
-            <version>${pitest-maven.version}</version>
-            <type>pom</type>
-        </dependency>
     </dependencies>
 
     <build>
@@ -145,6 +140,7 @@
             </plugin>
 
             <plugin>
+                <!-- mutation testing to increase the test resilience -->
                 <groupId>org.pitest</groupId>
                 <artifactId>pitest-maven</artifactId>
                 <version>${pitest-maven.version}</version>
@@ -157,10 +153,10 @@
                 </dependencies>
                 <configuration>
                     <targetClasses>
-                        <param>com.mpumd.poc.person.context.*</param>
+                        <param>${pitest-maven.package.scope}</param>
                     </targetClasses>
                     <targetTests>
-                        <param>com.mpumd.poc.person.context.*</param>
+                        <param>${pitest-maven.package.scope}</param>
                     </targetTests>
                     <mutators>
                         <!-- https://pitest.org/quickstart/mutators/ -->
