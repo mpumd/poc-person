@@ -5,9 +5,9 @@ Feature: Register of a person in the system
     Given I provide this following informations
       | firstName | lastName | birthDate                 | gender | birthPlace     | nationality |
       | john      | rambo    | 1965-02-15T02:37:00-07:00 | MALE   | Bowie, Arizona | US          |
+      | corben    | dallas   | 1960-08-08T14:45:00-07:00 | MALE   | Texas          | TT          |
     When I engage the registration of a person
-    Then the person name is present inside the system
-#    And We have no error message during the creation
+    Then The persons are present inside the system
 
 #  Scenario: Echec de l'enregistrement d'une personne
 #    Given l'utilisateur souhaite créer une nouvelle personne
