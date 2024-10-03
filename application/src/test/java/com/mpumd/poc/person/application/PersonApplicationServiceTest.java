@@ -55,6 +55,13 @@ public class PersonApplicationServiceTest {
     }
 
     @Test
+    void throwIllegalArgExAtNullDependencyInjection() {
+        assertThatThrownBy(() -> new PersonApplicationService(null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("personPersistanceRepository is marked non-null but is null");
+    }
+
+    @Test
     void registerNewPerson() {
         var queryCaptor = ArgumentCaptor.forClass(PersonSearchQuery.class);
         given(personPersistanceRepository.isExist(queryCaptor.capture())).willReturn(false);
@@ -89,4 +96,5 @@ public class PersonApplicationServiceTest {
             verify(personPersistanceRepository, never()).push(person);
         }
     }
+
 }

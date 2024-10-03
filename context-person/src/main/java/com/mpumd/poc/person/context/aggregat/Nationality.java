@@ -4,6 +4,7 @@ public enum Nationality {
     FR("francaise"),
     EN("english"),
     TT("titan"),
+    US("american"),
     ;
 
     private final String label;
