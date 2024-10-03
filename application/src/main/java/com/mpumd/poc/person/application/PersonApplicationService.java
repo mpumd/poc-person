@@ -13,7 +13,7 @@ public class PersonApplicationService {
 
     @NonNull
     private final PersonPersistanceRepository personPersistanceRepository;
-    
+
     public void register(PersonRegistrationCommand cmd) {
         var searchQuery = PersonSearchQuery.builder()
                 .firstName(cmd.firstName())
@@ -24,7 +24,7 @@ public class PersonApplicationService {
                 .build();
 
         if (personPersistanceRepository.isExist(searchQuery)) {
-            throw new PersonAlreadyExistException();
+            throw new PersonAlreadyExistException(searchQuery.firstName(), searchQuery.lastName());
         }
 
         personPersistanceRepository.push(Person.register(cmd));

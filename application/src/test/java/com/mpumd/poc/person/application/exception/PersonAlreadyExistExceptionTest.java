@@ -15,10 +15,18 @@ class PersonAlreadyExistExceptionTest {
     }
 
     @Test
-    void throwExWithMessage() {
-        assertThatThrownBy(() -> throwEx(new PersonAlreadyExistException("Person not found!")))
+    void throwExWithFirstNameLastNameInMessage() {
+        assertThatThrownBy(() -> throwEx(new PersonAlreadyExistException("john", "rambo")))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Person not found!")
+                .hasNoCause()
+                .hasMessage("john rambo already exist !");
+    }
+
+    @Test
+    void throwExWithMessage() {
+        assertThatThrownBy(() -> throwEx(new PersonAlreadyExistException("Person already exist!")))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Person already exist!")
                 .hasNoCause();
     }
 
@@ -36,12 +44,12 @@ class PersonAlreadyExistExceptionTest {
 
     @Test
     void throwExWithMessageAndCause() {
-        String errorMessage = "Person not found!";
+        String errorMessage = "Person already exist!";
         Throwable cause = new IllegalCallerException("Underlying cause");
 
         assertThatThrownBy(() -> throwEx(new PersonAlreadyExistException(errorMessage, cause)))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Person not found!")
+                .hasMessage("Person already exist!")
                 .cause()
                 .isInstanceOf(IllegalCallerException.class)
                 .hasMessage("Underlying cause");

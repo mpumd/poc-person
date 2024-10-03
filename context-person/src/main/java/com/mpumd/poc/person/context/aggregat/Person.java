@@ -1,6 +1,7 @@
 package com.mpumd.poc.person.context.aggregat;
 
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,6 +10,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Slf4j
+@Getter
 public class Person {
     private final String firstName;
     private final String lastName;

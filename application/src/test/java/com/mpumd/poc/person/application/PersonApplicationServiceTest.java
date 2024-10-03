@@ -85,7 +85,7 @@ public class PersonApplicationServiceTest {
             // when
             assertThatThrownBy(() -> personApplicationService.register(command))
                     .isInstanceOf(PersonAlreadyExistException.class)
-                    .hasMessage(null);
+                    .hasMessage("mpu md already exist !");
 
             // then
             assertThat(queryCaptor).extracting(ArgumentCaptor::getValue)

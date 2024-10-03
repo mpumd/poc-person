@@ -1,71 +1,112 @@
 package com.mpumd.poc.person.application.feature;
 
 import com.mpumd.poc.person.application.PersonApplicationService;
+import com.mpumd.poc.person.application.exception.PersonAlreadyExistException;
 import com.mpumd.poc.person.context.PersonPersistanceRepository;
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
+import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.mockito.ArgumentCaptor;
+import org.assertj.core.api.InstanceOfAssertFactories;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+
+class PersonPersistanceInMemory implements PersonPersistanceRepository {
+
+    @Getter
+    private List<Person> persons = new ArrayList<>();
+
+    @Override
+    public boolean isExist(PersonSearchQuery personQuery) {
+        return this.persons.stream().anyMatch(p ->
+                p.firstName().equals(personQuery.firstName()) &&
+                        p.lastName().equals(personQuery.lastName()) &&
+                        p.birthDate().equals(personQuery.birthDate())
+        );
+    }
+
+    @Override
+    public void push(Person person) {
+        this.persons.add(person);
+    }
+}
+
 
 @Slf4j
 public class RegisterPersonFeature {
 
-    PersonPersistanceRepository persistanceRepository = mock(PersonPersistanceRepository.class);
+    // port-out
+    PersonPersistanceInMemory personRepoInMemory;
+
+    // port-in
+    List<PersonRegistrationCommand> commands;
+    List<Exception> exceptions = new ArrayList<>();
+
     PersonApplicationService applicationService;
 
-    {
-        applicationService = new PersonApplicationService(persistanceRepository);
+    int dataSetLineNb = 0;
+
+    @Before
+    public void setup() {
+        personRepoInMemory = new PersonPersistanceInMemory();
+        applicationService = new PersonApplicationService(personRepoInMemory);
     }
-
-
-    List<Map<String, String>> dataSet;
-    List<PersonRegistrationCommand> commands;
-    List<Person> persons;
-
 
     @Given("I provide this following informations")
     public void createCommand(DataTable dataTable) {
-        dataSet = dataTable.asMaps();
-        commands = dataSet.stream()
-                .map(dataSet -> PersonRegistrationCommand.builder()
-                        .firstName(dataSet.get("firstName"))
-                        .lastName(dataSet.get("lastName"))
-                        .birthDate(ZonedDateTime.parse(dataSet.get("birthDate")))
-                        .birthPlace(dataSet.get("birthPlace"))
-                        .gender(Gender.valueOf(dataSet.get("gender")))
-                        .nationality(Nationality.valueOf(dataSet.get("nationality")))
+        List<Map<String, String>> maps = dataTable.asMaps();
+        dataSetLineNb = maps.size();
+        commands = maps.stream()
+                .map(map -> PersonRegistrationCommand.builder()
+                        .firstName(map.get("firstName"))
+                        .lastName(map.get("lastName"))
+                        .birthDate(ZonedDateTime.parse(map.get("birthDate")))
+                        .birthPlace(map.get("birthPlace"))
+                        .gender(Gender.valueOf(map.get("gender")))
+                        .nationality(Nationality.valueOf(map.get("nationality")))
                         .build())
                 .toList();
     }
 
-    @When("I engage the registration of a person")
+    @When("I engage the registration of persons")
     public void callRegisterBusinessAct() {
-        commands.forEach(applicationService::register);
-        log.info("### call PersonApplicationService#register");
-
-        var personCaptor = ArgumentCaptor.forClass(Person.class);
-        verify(persistanceRepository, times(commands.size())).push(personCaptor.capture());
-        this.persons = personCaptor.getAllValues();
+        for (var cmd : commands) {
+            try {
+                applicationService.register(cmd);
+            } catch (Exception e) {
+                exceptions.add(e);
+            }
+        }
     }
 
     @Then("The persons are present inside the system")
-    public void verifyPersonIsInsideTheSystem() {
-        assertThat(persons)
+    public void verifyPersonsAreInsideTheSystem() {
+        assertThat(personRepoInMemory.persons())
                 .usingRecursiveComparison()
                 .comparingOnlyFields("firstName", "lastName", "birthDate", "birthPlace", "gender", "nationality")
                 .isEqualTo(commands);
+    }
+
+    @Then("I receive an already exist person error for {string} {string}")
+    public void verifySamePersonCantBeTwoTimeInTheSystem(String firstName, String lastName) {
+        assertThat(exceptions)
+                .hasSize(dataSetLineNb - 1) // 3 calls with same person, 1 correct and 2 exceptions
+                .first(as(InstanceOfAssertFactories.THROWABLE))
+                .isInstanceOf(PersonAlreadyExistException.class)
+                .hasMessageContainingAll(firstName, lastName);
     }
 }
