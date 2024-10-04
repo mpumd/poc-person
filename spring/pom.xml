@@ -9,16 +9,9 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>application</artifactId>
+    <artifactId>spring</artifactId>
+
     <properties>
-        <context-person.version>1.0-SNAPSHOT</context-person.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.mpumd.poc</groupId>
-            <artifactId>context-person</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-    </dependencies>
 </project>
