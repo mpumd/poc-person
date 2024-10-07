@@ -10,7 +10,7 @@
     <modules>
         <module>context-person</module>
         <module>application</module>
-        <module>spring</module>
+        <module>infra-spring</module>
     </modules>
 
     <properties>
@@ -67,7 +67,7 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        <!--#### Test #####-->
+        <!--##### Test #####-->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>

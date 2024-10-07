@@ -1,0 +1,35 @@
+server:
+  port: 8090
+  servlet:
+    context-path: /spring
+
+spring:
+  application.name: person.μsvc.spring
+  # log
+  mvc.log-request-details: true
+  boot:
+    admin:
+      context-path: /admin
+      client.url: http://localhost:${server.port}${server.servlet.context-path}/admin
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+    enabled: true # default true
+  api-docs:
+    path: /api-docs
+
+management:
+  endpoints.web.exposure.include: "*"
+  endpoint.health.show-details: always
+  info:
+    env:
+      enabled: true
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE
+    org.springdoc: DEBUG
+    org.springframework.boot.actuate.endpoint.web.servlet: DEBUG
+    org.springframework.boot.web.servlet.ServletRegistrationBean: DEBUG
