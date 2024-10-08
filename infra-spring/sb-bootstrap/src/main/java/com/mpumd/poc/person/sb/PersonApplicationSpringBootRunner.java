@@ -1,6 +1,5 @@
 package com.mpumd.poc.person.sb;
 
-import com.mpumd.poc.person.application.PersonApplicationService;
 import com.mpumd.poc.person.context.PersonPersistanceRepository;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
@@ -21,10 +20,6 @@ public class PersonApplicationSpringBootRunner {
         SpringApplication.run(PersonApplicationSpringBootRunner.class, args);
     }
 
-    @Bean
-    public PersonApplicationService buildPersonApplicationService(PersonPersistanceRepository repo) {
-        return new PersonApplicationService(repo);
-    }
 
     // just for the test at this moment
     @Bean

@@ -8,10 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Getter
 public class Person {
+    private final UUID id;
     private final String firstName;
     private final String lastName;
     private final Gender gender;
@@ -35,7 +37,8 @@ public class Person {
 //    private final SignificantPossessions significantPossessions;
 //
 
-    private Person(@NonNull PersonRegistrationCommand cmd) {
+    private Person(@NonNull PersonRegistrationCommand cmd, @NonNull UUID id) {
+        this.id = id;
         this.firstName = Optional.ofNullable(cmd.firstName())
                 .filter(s -> !s.isBlank())
                 .orElseThrow(() -> new IllegalArgumentException("firstName must not be empty"));
@@ -54,7 +57,7 @@ public class Person {
     }
 
     public static Person register(PersonRegistrationCommand cmd) {
-        return new Person(cmd);
+        return new Person(cmd, UUID.randomUUID());
     }
 
     public void informPhysicalAppearance(short size, short weight, EyesColor eyesColor) {

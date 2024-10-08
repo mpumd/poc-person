@@ -19,8 +19,8 @@
 
     <modules>
         <module>sb-bootstrap</module>
-        <module>sb-in-rest</module>
-        <module>sb-out-jpa</module>
+        <module>sb-in</module>
+        <module>sb-out</module>
         <module>sb-application</module>
     </modules>
 
@@ -33,7 +33,12 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Domain -->
+            <!-- domain -->
+            <dependency>
+                <groupId>com.mpumd.poc</groupId>
+                <artifactId>context-person</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.mpumd.poc</groupId>
                 <artifactId>application</artifactId>
@@ -43,12 +48,12 @@
             <!-- infra -->
             <dependency>
                 <groupId>com.mpumd.poc</groupId>
-                <artifactId>sb-in-rest</artifactId>
+                <artifactId>sb-in</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.mpumd.poc</groupId>
-                <artifactId>sb-out-jpa</artifactId>
+                <artifactId>sb-out</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -91,12 +96,12 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.boot</groupId>-->
-        <!--            <artifactId>spring-boot-docker-compose</artifactId>-->
-        <!--            <scope>runtime</scope>-->
-        <!--            <optional>true</optional>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-docker-compose</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
 
         <!--##### Build #####-->
         <!-- like lombok or SB configuration processor -->

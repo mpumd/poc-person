@@ -14,7 +14,6 @@
         <dependency>
             <groupId>com.mpumd.poc</groupId>
             <artifactId>application</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

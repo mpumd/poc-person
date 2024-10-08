@@ -14,11 +14,11 @@
     <dependencies>
         <dependency>
             <groupId>com.mpumd.poc</groupId>
-            <artifactId>sb-in-rest</artifactId>
+            <artifactId>sb-in</artifactId>
         </dependency>
         <dependency>
             <groupId>com.mpumd.poc</groupId>
-            <artifactId>sb-out-jpa</artifactId>
+            <artifactId>sb-out</artifactId>
         </dependency>
 
         <dependency>
@@ -39,10 +39,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.graalvm.buildtools</groupId>
-                <artifactId>native-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
@@ -53,6 +49,10 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.graalvm.buildtools</groupId>
+                <artifactId>native-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

@@ -18,6 +18,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +43,7 @@ class PersonTest {
     @Tag("PITestIgnore")
     void dontMissTest_TDD_Approch_please_NotMutated() {
         // instance attribut + logger
-        assertEquals(Person.class.getDeclaredFields().length, 8);
+        assertEquals(Person.class.getDeclaredFields().length, 9);
     }
 
     @Test
@@ -73,12 +74,15 @@ class PersonTest {
         when(prc.birthPlace()).thenReturn(birthPlace);
         when(prc.nationality()).thenReturn(nationality);
 
-        Person register = Person.register(prc);
-        assertThat(register)
+        Person person = Person.register(prc);
+        assertThat(person)
                 .extracting("firstName", "lastName", "birthDate", "gender", "birthPlace",
                         "nationality")
-                .containsExactly(firstName, lastName, birthDate, gender, birthPlace,
-                        nationality);
+                .containsExactly(firstName, lastName, birthDate, gender, birthPlace, nationality);
+
+        assertThat(person)
+                .extracting("id")
+                .isNotNull();
     }
 
     @ParameterizedTest
@@ -149,6 +153,16 @@ class PersonTest {
         assertThatThrownBy(() -> Person.register(prc))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("nationality must not be null");
+    }
+
+    @Test
+    void KO_UUID() {
+        try (var mockedUUID = mockStatic(UUID.class)) {
+            mockedUUID.when(UUID::randomUUID).thenReturn(null);
+            assertThatThrownBy(() -> Person.register(prc))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("id is marked non-null but is null");
+        }
     }
 
     @Test
