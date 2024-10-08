@@ -1,4 +1,4 @@
-package com.mpumd.poc.person.spring.exposition.rest;
+package com.mpumd.poc.person.sb.rest;
 
 import com.mpumd.poc.person.application.PersonApplicationService;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;

@@ -1,4 +1,4 @@
-package com.mpumd.poc.person.spring;
+package com.mpumd.poc.person.sb;
 
 import com.mpumd.poc.person.application.PersonApplicationService;
 import com.mpumd.poc.person.context.PersonPersistanceRepository;

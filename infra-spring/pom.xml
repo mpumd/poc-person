@@ -13,11 +13,21 @@
     <groupId>com.mpumd.poc</groupId>
     <artifactId>infra-spring</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <!-- <packaging>pom</packaging>-->
-    <!-- <name>infra-spring</name>-->
+    <packaging>pom</packaging>
+
     <description>Spring Boot application using in the person context</description>
+
+    <modules>
+        <module>sb-bootstrap</module>
+        <module>sb-in-rest</module>
+        <module>sb-out-jpa</module>
+    </modules>
+
     <properties>
+        <java.version>22</java.version>
+
         <springdoc-openapi-starter.version>2.6.0</springdoc-openapi-starter.version>
+        <spring-boot.version>3.3.4</spring-boot.version>
     </properties>
 
     <dependencyManagement>
@@ -25,9 +35,31 @@
             <dependency>
                 <groupId>de.codecentric</groupId>
                 <artifactId>spring-boot-admin-dependencies</artifactId>
-                <version>${project.parent.version}</version>
-                <type>pom</type>
+                <version>${spring-boot.version}</version>
                 <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
+            <dependency> <!-- openapi -->
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+                <version>${springdoc-openapi-starter.version}</version>
+            </dependency>
+            <dependency> <!-- swagger -->
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc-openapi-starter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.mpumd.poc</groupId>
+                <artifactId>sb-in-rest</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mpumd.poc</groupId>
+                <artifactId>sb-out-jpa</artifactId>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -61,42 +93,6 @@
             <optional>true</optional>
         </dependency>
 
-        <!--##### Run #####-->
-        <dependency>
-            <groupId>com.mpumd.poc</groupId>
-            <artifactId>application</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency> <!-- openapi -->
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
-            <version>${springdoc-openapi-starter.version}</version>
-        </dependency>
-        <dependency> <!-- swagger -->
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>${springdoc-openapi-starter.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-starter-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-starter-client</artifactId>
-        </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.boot</groupId>-->
-        <!--            <artifactId>spring-boot-starter-security</artifactId>-->
-        <!--        </dependency>-->
-
-
         <!--##### Test #####-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -104,26 +100,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.graalvm.buildtools</groupId>
-                <artifactId>native-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>
