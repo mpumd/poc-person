@@ -9,27 +9,21 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sb-in-rest</artifactId>
-
+    <artifactId>sb-application</artifactId>
     <dependencies>
-        <!--##### Run #####-->
         <dependency>
             <groupId>com.mpumd.poc</groupId>
-            <artifactId>sb-application</artifactId>
-            <version>${project.version}</version>
+            <artifactId>application</artifactId>
+            <optional>true</optional>
         </dependency>
-        
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
-        <dependency> <!-- openapi -->
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
-        </dependency>
-        <dependency> <!-- swagger -->
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
         </dependency>
     </dependencies>
+
 </project>

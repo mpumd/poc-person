@@ -21,6 +21,7 @@
         <module>sb-bootstrap</module>
         <module>sb-in-rest</module>
         <module>sb-out-jpa</module>
+        <module>sb-application</module>
     </modules>
 
     <properties>
@@ -32,6 +33,30 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Domain -->
+            <dependency>
+                <groupId>com.mpumd.poc</groupId>
+                <artifactId>application</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- infra -->
+            <dependency>
+                <groupId>com.mpumd.poc</groupId>
+                <artifactId>sb-in-rest</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mpumd.poc</groupId>
+                <artifactId>sb-out-jpa</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mpumd.poc</groupId>
+                <artifactId>sb-application</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>de.codecentric</groupId>
                 <artifactId>spring-boot-admin-dependencies</artifactId>
@@ -49,17 +74,6 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springdoc-openapi-starter.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.mpumd.poc</groupId>
-                <artifactId>sb-in-rest</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mpumd.poc</groupId>
-                <artifactId>sb-out-jpa</artifactId>
-                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
