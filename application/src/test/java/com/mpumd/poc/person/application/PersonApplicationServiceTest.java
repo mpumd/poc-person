@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -36,14 +35,15 @@ public class PersonApplicationServiceTest {
 
     @Mock
     PersonPersistanceRepository personPersistanceRepository;
-
-    @InjectMocks
     PersonApplicationService personApplicationService;
 
     PersonRegistrationCommand command;
 
     @BeforeEach
     void setUp() {
+        personApplicationService = new PersonApplicationService(personPersistanceRepository) {
+        };
+
         command = PersonRegistrationCommand.builder()
                 .firstName("mpu")
                 .lastName("md")
@@ -56,7 +56,7 @@ public class PersonApplicationServiceTest {
 
     @Test
     void throwIllegalArgExAtNullDependencyInjection() {
-        assertThatThrownBy(() -> new PersonApplicationService(null))
+        assertThatThrownBy(() -> new PersonApplicationService(null) {})
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("personPersistanceRepository is marked non-null but is null");
     }

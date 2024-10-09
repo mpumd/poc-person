@@ -9,7 +9,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class PersonApplicationService {
+public abstract class PersonApplicationService {
 
     @NonNull
     private final PersonPersistanceRepository personPersistanceRepository;

@@ -9,7 +9,7 @@ import static io.cucumber.core.options.Constants.*;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("feature")
+@SelectClasspathResource("com.mpumd.poc.person.application/feature")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.mpumd.poc.person.application.feature")
 @ConfigurationParameter(key = FILTER_TAGS_PROPERTY_NAME, value = "not @disabled")

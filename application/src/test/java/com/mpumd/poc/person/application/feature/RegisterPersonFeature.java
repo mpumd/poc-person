@@ -63,7 +63,7 @@ public class RegisterPersonFeature {
     @Before
     public void setup() {
         personRepoInMemory = new PersonPersistanceInMemory();
-        applicationService = new PersonApplicationService(personRepoInMemory);
+        applicationService = new PersonApplicationService(personRepoInMemory){};
     }
 
     @Given("I provide this following informations")
