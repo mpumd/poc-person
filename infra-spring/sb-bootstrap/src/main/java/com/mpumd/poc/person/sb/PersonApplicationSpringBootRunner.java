@@ -19,29 +19,4 @@ public class PersonApplicationSpringBootRunner {
     public static void main(String[] args) {
         SpringApplication.run(PersonApplicationSpringBootRunner.class, args);
     }
-
-
-    // just for the test at this moment
-    @Bean
-    public PersonPersistanceRepository buildPersonPersistanceInMemory() {
-        return new PersonPersistanceRepository() {
-
-            @Getter
-            private List<Person> persons = new ArrayList<>();
-
-            @Override
-            public boolean isExist(PersonSearchQuery personQuery) {
-                return this.persons.stream().anyMatch(p ->
-                        p.firstName().equals(personQuery.firstName()) &&
-                                p.lastName().equals(personQuery.lastName()) &&
-                                p.birthDate().equals(personQuery.birthDate())
-                );
-            }
-
-            @Override
-            public void push(Person person) {
-                this.persons.add(person);
-            }
-        };
-    }
 }

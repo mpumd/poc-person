@@ -11,6 +11,12 @@ spring:
     admin:
       context-path: /admin
       client.url: http://localhost:${server.port}${server.servlet.context-path}/admin
+  jpa:
+    hibernate:
+      ddl-auto: validate # create, create-drop, validate, update
+    show-sql: true
+  liquibase:
+    change-log: classpath:/db.changelog-master.sql
 
 springdoc:
   swagger-ui:

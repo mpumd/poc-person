@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PersonAppSvc extends com.mpumd.poc.person.application.PersonApplicationService {
+    
     public PersonAppSvc(@NonNull PersonPersistanceRepository personPersistanceRepository) {
         super(personPersistanceRepository);
     }
