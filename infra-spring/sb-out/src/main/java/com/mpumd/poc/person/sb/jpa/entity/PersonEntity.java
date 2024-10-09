@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @Data
 @Table(name = "PERSON")
@@ -14,7 +15,7 @@ import java.time.ZonedDateTime;
 public class PersonEntity {
     @Id
     @Column(name = "id", length = 36, unique = true)
-    private final String id;
+    private final UUID id;
 
     @Column(name = "first_name")
     private final String firstName;

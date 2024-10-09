@@ -1,15 +1,15 @@
 package com.mpumd.poc.person.sb.application;
 
+import com.mpumd.poc.person.application.PersonApplicationService;
 import com.mpumd.poc.person.context.PersonPersistanceRepository;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
-import lombok.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PersonAppSvc extends com.mpumd.poc.person.application.PersonApplicationService {
-    
-    public PersonAppSvc(@NonNull PersonPersistanceRepository personPersistanceRepository) {
+public class PersonAppSvc extends PersonApplicationService {
+
+    public PersonAppSvc(PersonPersistanceRepository personPersistanceRepository) {
         super(personPersistanceRepository);
     }
 

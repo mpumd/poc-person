@@ -2,7 +2,7 @@
 -- changeset mpumd:1
 
 CREATE TABLE IF NOT EXISTS PERSON (
-    id          VARCHAR(36) NOT NULL UNIQUE,
+    id          UUID NOT NULL UNIQUE,
     first_name  VARCHAR(255),
     last_name   VARCHAR(255),
     gender      VARCHAR(255),
