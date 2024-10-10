@@ -4,34 +4,39 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.*;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-@Data
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "PERSON")
 @Entity
 public class PersonEntity {
     @Id
     @Column(name = "id", length = 36, unique = true)
-    private final UUID id;
+    private UUID id;
 
     @Column(name = "first_name")
-    private final String firstName;
+    private String firstName;
 
     @Column(name = "last_name")
-    private final String lastName;
+    private String lastName;
 
     @Column(name = "gender")
-    private final String gender;
+    private String gender;
 
     @Column(name = "birth_date")
-    private final ZonedDateTime birthDate;
+    private ZonedDateTime birthDate;
 
     @Column(name = "birth_place")
-    private final String birthPlace;
+    private String birthPlace;
 
     @Column(name = "nationality")
-    private final String nationality;
+    private String nationality;
 }
+
