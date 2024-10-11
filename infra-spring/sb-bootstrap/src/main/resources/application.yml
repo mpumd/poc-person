@@ -5,8 +5,7 @@ server:
 
 spring:
   application.name: person.μsvc.spring
-  # log
-  mvc.log-request-details: true
+  mvc.log-request-details: true # log
   boot:
     admin:
       context-path: /admin
@@ -17,6 +16,7 @@ spring:
     show-sql: true
   liquibase:
     change-log: classpath:/db.changelog-master.sql
+  threads.virtual.enabled: true # since jdk21
 
 springdoc:
   swagger-ui:

@@ -15,6 +15,7 @@ public abstract class PersonApplicationService {
     private final PersonPersistanceRepository personPersistanceRepository;
 
     public void register(PersonRegistrationCommand cmd) {
+        // FIXME build Aggregat root and AFTER build query
         var searchQuery = PersonSearchQuery.builder()
                 .firstName(cmd.firstName())
                 .lastName(cmd.lastName())

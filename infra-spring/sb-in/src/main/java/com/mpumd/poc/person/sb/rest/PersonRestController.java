@@ -1,14 +1,10 @@
 package com.mpumd.poc.person.sb.rest;
 
-import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.sb.application.PersonAppSvc;
 import com.mpumd.poc.person.sb.rest.resource.PersonRegisterResource;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
         consumes = MediaType.APPLICATION_JSON_VALUE
 )
 @RequiredArgsConstructor
-public class PersonController {
+public class PersonRestController {
 
     private final PersonAppSvc personAppSvc;
 
