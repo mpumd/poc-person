@@ -35,7 +35,7 @@ class Runner {
 @Testcontainers(disabledWithoutDocker = true)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(PersonJpaAdapter.class)
-class PersonJpaAdapterIT {
+class PersonJpaAdapterITest {
 
     // TODO extract the postgres image name outside of here, anywhere who is possible de change easier it
     @Container
