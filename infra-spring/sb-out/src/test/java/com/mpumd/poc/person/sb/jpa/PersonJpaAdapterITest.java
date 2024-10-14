@@ -6,6 +6,7 @@ import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
 import com.mpumd.poc.person.sb.jpa.mapper.DomainJPAMapper;
 import lombok.SneakyThrows;
 import org.jeasy.random.EasyRandom;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -40,7 +41,7 @@ class PersonJpaAdapterITest {
     // TODO extract the postgres image name outside of here, anywhere who is possible de change easier it
     @Container
     @ServiceConnection
-    static final PostgreSQLContainer postgre = new PostgreSQLContainer("postgres:17-alpine");
+    static final PostgreSQLContainer postgresContainer = new PostgreSQLContainer("postgres:17-alpine");
 
     @Autowired
     PersonJpaAdapter adapter;
@@ -48,6 +49,12 @@ class PersonJpaAdapterITest {
     TestEntityManager entityManager;
 
     EasyRandom easyRandom = new EasyRandom();
+
+    @AfterAll
+    static void afterAll() {
+        // default destroy container after IT, avoid the conflict with a local run
+        postgresContainer.close();
+    }
 
     @Test
     void pushInDBWithoutError() {
