@@ -8,13 +8,15 @@ import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 @RequiredArgsConstructor
 public abstract class PersonApplicationService {
 
     @NonNull
     private final PersonPersistanceRepository personPersistanceRepository;
 
-    public void register(PersonRegistrationCommand cmd) {
+    public UUID register(PersonRegistrationCommand cmd) {
         // FIXME build Aggregat root and AFTER build query
         var searchQuery = PersonSearchQuery.builder()
                 .firstName(cmd.firstName())
@@ -28,6 +30,9 @@ public abstract class PersonApplicationService {
             throw new PersonAlreadyExistException(searchQuery.firstName(), searchQuery.lastName());
         }
 
-        personPersistanceRepository.push(Person.register(cmd));
+        Person register = Person.register(cmd);
+        personPersistanceRepository.push(register);
+
+        return register.id();
     }
 }

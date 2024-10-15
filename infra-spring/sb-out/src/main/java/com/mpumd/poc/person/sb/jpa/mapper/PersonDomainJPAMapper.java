@@ -8,7 +8,7 @@ import lombok.experimental.UtilityClass;
 import java.util.Optional;
 
 @UtilityClass
-public class DomainJPAMapper {
+public class PersonDomainJPAMapper {
 
     public PersonEntity toJpa(Person person) {
         var builder = PersonEntity.builder()

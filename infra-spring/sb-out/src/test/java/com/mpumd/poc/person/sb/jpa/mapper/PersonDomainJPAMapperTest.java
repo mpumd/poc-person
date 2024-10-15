@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-class DomainJPAMapperTest {
+class PersonDomainJPAMapperTest {
 
     EasyRandom easyRandom = new EasyRandom();
 
@@ -21,7 +21,7 @@ class DomainJPAMapperTest {
         var aggregatRoot = easyRandom.nextObject(Person.class);
         assertThat(aggregatRoot).hasNoNullFieldsOrProperties();
 
-        PersonEntity entity = DomainJPAMapper.toJpa(aggregatRoot);
+        PersonEntity entity = PersonDomainJPAMapper.toJpa(aggregatRoot);
 
         assertThat(entity)
                 .isNotNull()
@@ -35,7 +35,7 @@ class DomainJPAMapperTest {
         Person aggregatRoot = mock();
         assertThat(aggregatRoot).hasAllNullFieldsOrProperties();
 
-        PersonEntity entity = DomainJPAMapper.toJpa(aggregatRoot);
+        PersonEntity entity = PersonDomainJPAMapper.toJpa(aggregatRoot);
 
         assertThat(entity)
                 .isNotNull()
@@ -54,7 +54,7 @@ class DomainJPAMapperTest {
 
         assertThat(query).hasNoNullFieldsOrProperties();
 
-        PersonEntity entity = DomainJPAMapper.toJpa(query);
+        PersonEntity entity = PersonDomainJPAMapper.toJpa(query);
 
         assertThat(entity)
                 .usingRecursiveComparison()

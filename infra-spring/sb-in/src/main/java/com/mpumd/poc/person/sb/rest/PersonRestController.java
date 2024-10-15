@@ -6,11 +6,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 
 @RestController
@@ -33,7 +33,8 @@ public class PersonRestController {
             @ApiResponse(responseCode = "409", description = "la personne existe déjà")
     })
     @PostMapping("/person")
-    public void register(@RequestBody PersonRegisterResource cmd) {
-//        personAppSvc.register(cmd);
+    @ResponseStatus(HttpStatus.CREATED)
+    public UUID register(@RequestBody PersonRegisterResource cmd) {
+        return personAppSvc.register(PersonDomainRestMapper.toDomain(cmd));
     }
 }

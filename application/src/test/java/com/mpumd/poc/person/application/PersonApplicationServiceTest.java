@@ -15,9 +15,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -65,13 +67,16 @@ public class PersonApplicationServiceTest {
     void registerNewPerson() {
         var queryCaptor = ArgumentCaptor.forClass(PersonSearchQuery.class);
         given(personPersistanceRepository.isExist(queryCaptor.capture())).willReturn(false);
+        UUID id = UUID.randomUUID();
+        given(person.id()).willReturn(id);
 
         try (var mockedStatic = mockStatic(Person.class)) {
 
             mockedStatic.when(() -> Person.register(command)).thenReturn(person);
 
-            personApplicationService.register(command);
+            UUID result = personApplicationService.register(command);
 
+            assertEquals(result, id);
             verify(personPersistanceRepository).push(person);
         }
     }

@@ -3,7 +3,7 @@ package com.mpumd.poc.person.sb.jpa;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
-import com.mpumd.poc.person.sb.jpa.mapper.DomainJPAMapper;
+import com.mpumd.poc.person.sb.jpa.mapper.PersonDomainJPAMapper;
 import lombok.SneakyThrows;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.AfterAll;
@@ -61,7 +61,7 @@ class PersonJpaAdapterITest {
         Person aggregatRoot = easyRandom.nextObject(Person.class);
         assertThat(aggregatRoot).hasNoNullFieldsOrProperties();
 
-        try (var mapper = mockStatic(DomainJPAMapper.class, InvocationOnMock::callRealMethod)) {
+        try (var mapper = mockStatic(PersonDomainJPAMapper.class, InvocationOnMock::callRealMethod)) {
             adapter.push(aggregatRoot);
 
             assertThat(entityManager.find(PersonEntity.class, aggregatRoot.id()))
@@ -69,7 +69,7 @@ class PersonJpaAdapterITest {
                     .withEnumStringComparison()
                     .isEqualTo(aggregatRoot);
 
-            mapper.verify(() -> DomainJPAMapper.toJpa(aggregatRoot));
+            mapper.verify(() -> PersonDomainJPAMapper.toJpa(aggregatRoot));
         }
     }
 
@@ -96,10 +96,10 @@ class PersonJpaAdapterITest {
 
         entityManager.persist(entity);
 
-        try (var mapper = mockStatic(DomainJPAMapper.class, InvocationOnMock::callRealMethod)) {
+        try (var mapper = mockStatic(PersonDomainJPAMapper.class, InvocationOnMock::callRealMethod)) {
 
             assertTrue(adapter.isExist(query));
-            mapper.verify(() -> DomainJPAMapper.toJpa(query));
+            mapper.verify(() -> PersonDomainJPAMapper.toJpa(query));
         }
     }
 

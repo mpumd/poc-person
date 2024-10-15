@@ -20,7 +20,7 @@ public record PersonRegisterResource(
         ZonedDateTime birthDate,
 
         @Schema(description = "Birthplace of the person", example = "Bowie, Arizona, USA")
-        ZonedDateTime birthPlace,
+        String birthPlace,
 
         @Schema(description = "Nationality of the person", example = "American")
         String nationality

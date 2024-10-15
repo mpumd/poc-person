@@ -6,6 +6,8 @@ import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 public class PersonAppSvc extends PersonApplicationService {
 
@@ -16,7 +18,7 @@ public class PersonAppSvc extends PersonApplicationService {
     // TODO maybe put the security check here ?
     @Transactional
     @Override
-    public void register(PersonRegistrationCommand cmd) {
-        super.register(cmd);
+    public UUID register(PersonRegistrationCommand cmd) {
+        return super.register(cmd);
     }
 }

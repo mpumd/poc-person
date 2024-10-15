@@ -11,8 +11,10 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class PersonAppSvcTest {
@@ -30,10 +32,12 @@ class PersonAppSvcTest {
     @Test
     void shouldCallSuperRegister() {
         var captor = ArgumentCaptor.forClass(PersonRegistrationCommand.class);
-        doNothing().when((PersonApplicationService)personAppSvc).register(captor.capture());
+        UUID id = UUID.randomUUID();
+        doReturn(id).when((PersonApplicationService)personAppSvc).register(captor.capture());
 
-        personAppSvc.register(cmd);
+        var result = personAppSvc.register(cmd);
 
         assertEquals(captor.getValue(), cmd);
+        assertEquals(id, result);
     }
 }
