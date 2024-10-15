@@ -1,8 +1,9 @@
-package com.mpumd.poc.person.sb.rest;
+package com.mpumd.poc.person.sb.rest.mapper;
 
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
+import com.mpumd.poc.person.sb.rest.RandomRecordFiller;
 import com.mpumd.poc.person.sb.rest.resource.PersonRegisterResource;
 import org.junit.jupiter.api.Test;
 

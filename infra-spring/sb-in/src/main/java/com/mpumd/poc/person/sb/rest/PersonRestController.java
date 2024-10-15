@@ -1,6 +1,7 @@
 package com.mpumd.poc.person.sb.rest;
 
 import com.mpumd.poc.person.sb.application.PersonAppSvc;
+import com.mpumd.poc.person.sb.rest.mapper.PersonDomainRestMapper;
 import com.mpumd.poc.person.sb.rest.resource.PersonRegisterResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
