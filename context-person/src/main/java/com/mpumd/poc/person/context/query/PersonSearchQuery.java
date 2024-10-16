@@ -1,14 +1,18 @@
 package com.mpumd.poc.person.context.query;
 
 import com.mpumd.poc.person.context.aggregat.Gender;
+import com.mpumd.poc.person.context.aggregat.Person;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.time.ZonedDateTime;
 
 // FIXME doesn't works with record :(. After fix it, pass to record
 // or put @NotNull on all fields
 @Builder
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class PersonSearchQuery {
     private final String firstName;
@@ -17,12 +21,11 @@ public class PersonSearchQuery {
     private final ZonedDateTime birthDate;
     private final String birthPlace;
 
-
-//    public Predicate<Person> buildPredicate() {
-//        List<Predicate<Person>> predicates = new ArrayList<>();
-//
-//        if (firstName != null && !firstName.isEmpty()) {
-//            predicates.add(person -> person.getFirstName().toLowerCase().contains(firstName.toLowerCase()));
-//        }
-//    }
+    public PersonSearchQuery(Person person) {
+        this.firstName = person.firstName();
+        this.lastName = person.lastName();
+        this.gender = person.gender();
+        this.birthDate = person.birthDate();
+        this.birthPlace = person.birthPlace();
+    }
 }

@@ -76,7 +76,6 @@ class PersonRestControllerITest {
 
     @Test
     void register409() throws Exception {
-
         try (var mapperMock = mockStatic(PersonDomainRestMapper.class)) {
             mapperMock.when(() -> PersonDomainRestMapper.toDomain(any(PersonRegisterResource.class))).thenReturn(command);
 

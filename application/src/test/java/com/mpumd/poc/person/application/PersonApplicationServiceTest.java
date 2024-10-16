@@ -45,7 +45,6 @@ public class PersonApplicationServiceTest {
     void setUp() {
         personApplicationService = new PersonApplicationService(personPersistanceRepository) {
         };
-
         command = PersonRegistrationCommand.builder()
                 .firstName("mpu")
                 .lastName("md")
@@ -58,24 +57,33 @@ public class PersonApplicationServiceTest {
 
     @Test
     void throwIllegalArgExAtNullDependencyInjection() {
-        assertThatThrownBy(() -> new PersonApplicationService(null) {})
+        assertThatThrownBy(() -> new PersonApplicationService(null) {
+        })
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("personPersistanceRepository is marked non-null but is null");
     }
 
     @Test
     void registerNewPerson() {
-        var queryCaptor = ArgumentCaptor.forClass(PersonSearchQuery.class);
-        given(personPersistanceRepository.isExist(queryCaptor.capture())).willReturn(false);
+        var queryCaptorFromRepo = ArgumentCaptor.forClass(PersonSearchQuery.class);
+        given(personPersistanceRepository.isExist(queryCaptorFromRepo.capture())).willReturn(false);
+
         UUID id = UUID.randomUUID();
         given(person.id()).willReturn(id);
 
-        try (var mockedStatic = mockStatic(Person.class)) {
+        try (var personMockedStatic = mockStatic(Person.class);
+             var queryConstructorMock = mockConstruction(PersonSearchQuery.class)) {
 
-            mockedStatic.when(() -> Person.register(command)).thenReturn(person);
+            personMockedStatic.when(() -> Person.register(command)).thenReturn(person);
 
+            // when
             UUID result = personApplicationService.register(command);
 
+            // then
+            assertEquals(
+                    queryConstructorMock.constructed().get(0),
+                    queryCaptorFromRepo.getValue()
+            );
             assertEquals(result, id);
             verify(personPersistanceRepository).push(person);
         }
@@ -83,23 +91,29 @@ public class PersonApplicationServiceTest {
 
     @Test
     void registerThrowAlreadyExistEx() {
-        var queryCaptor = ArgumentCaptor.forClass(PersonSearchQuery.class);
-        given(personPersistanceRepository.isExist(queryCaptor.capture())).willReturn(true);
+        var queryPassedToRepo = ArgumentCaptor.forClass(PersonSearchQuery.class);
+        given(personPersistanceRepository.isExist(queryPassedToRepo.capture())).willReturn(true);
 
-        try (var mockedStatic = mockStatic(Person.class)) {
+        try (var mockedStatic = mockStatic(Person.class);
+             var queryConstructorMock = mockConstruction(PersonSearchQuery.class, (queryMock, context) -> {
+                 when(queryMock.firstName()).thenReturn("mpu");
+                 when(queryMock.lastName()).thenReturn("md");
+             })
+        ) {
             // when
             assertThatThrownBy(() -> personApplicationService.register(command))
                     .isInstanceOf(PersonAlreadyExistException.class)
                     .hasMessage("mpu md already exist !");
 
             // then
-            assertThat(queryCaptor).extracting(ArgumentCaptor::getValue)
-                    .extracting("firstName", "lastName", "gender", "birthDate", "birthPlace")
-                    .containsExactly("mpu", "md", gender, birthDate, "anywhere");
+            assertThat(queryConstructorMock.constructed())
+                    .hasSize(1)
+                    .first()
+                    .isEqualTo(queryPassedToRepo.getValue());
 
-            mockedStatic.verify(() -> Person.register(command), never());
+
+            mockedStatic.verify(() -> Person.register(command));
             verify(personPersistanceRepository, never()).push(person);
         }
     }
-
 }

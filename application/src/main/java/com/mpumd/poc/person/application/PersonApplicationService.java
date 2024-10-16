@@ -17,22 +17,16 @@ public abstract class PersonApplicationService {
     private final PersonPersistanceRepository personPersistanceRepository;
 
     public UUID register(PersonRegistrationCommand cmd) {
-        // FIXME build Aggregat root and AFTER build query
-        var searchQuery = PersonSearchQuery.builder()
-                .firstName(cmd.firstName())
-                .lastName(cmd.lastName())
-                .birthDate(cmd.birthDate())
-                .birthPlace(cmd.birthPlace())
-                .gender(cmd.gender())
-                .build();
-
+        Person person = Person.register(cmd);
+        var searchQuery = new PersonSearchQuery(person);
         if (personPersistanceRepository.isExist(searchQuery)) {
             throw new PersonAlreadyExistException(searchQuery.firstName(), searchQuery.lastName());
         }
 
-        Person register = Person.register(cmd);
-        personPersistanceRepository.push(register);
-
-        return register.id();
+        personPersistanceRepository.push(person);
+        return person.id();
     }
+
+
+
 }

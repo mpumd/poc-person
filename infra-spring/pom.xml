@@ -144,7 +144,6 @@
             <version>${datafaker.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
 </project>
