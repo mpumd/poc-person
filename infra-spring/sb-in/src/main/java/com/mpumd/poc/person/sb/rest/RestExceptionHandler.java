@@ -31,4 +31,15 @@ class RestExceptionHandler {
                         .status(HttpStatus.CONFLICT.value())
                         .build());
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    ResponseEntity<Error> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Error.builder()
+                        .type(ex.getClass().getSimpleName())
+                        .title(ex.getMessage())
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .build());
+    }
 }

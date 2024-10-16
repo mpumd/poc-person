@@ -14,6 +14,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
@@ -85,10 +86,28 @@ class PersonRestControllerITest {
                             .contentType("application/json")
                             .content(payload)
                     )
-                    .andExpect(status().isConflict())
+                    .andExpect(status().is(HttpStatus.CONFLICT.value()))
                     .andExpect(jsonPath("$.type").value(PersonAlreadyExistException.class.getSimpleName()))
                     .andExpect(jsonPath("$.title").value("person already exist"))
                     .andExpect(jsonPath("$.status").value(409));
+        }
+    }
+
+    @Test
+    void register400() throws Exception {
+        try (var mapperMock = mockStatic(PersonDomainRestMapper.class)) {
+            mapperMock.when(() -> PersonDomainRestMapper.toDomain(any(PersonRegisterResource.class))).thenReturn(command);
+
+            given(appService.register(command)).willThrow(new IllegalArgumentException("field value is wrong"));
+
+            mockMvc.perform(post("/person")
+                            .contentType("application/json")
+                            .content(payload)
+                    )
+                    .andExpect(status().is(400))
+                    .andExpect(jsonPath("$.type").value(IllegalArgumentException.class.getSimpleName()))
+                    .andExpect(jsonPath("$.title").value("field value is wrong"))
+                    .andExpect(jsonPath("$.status").value(400));
         }
     }
 }
