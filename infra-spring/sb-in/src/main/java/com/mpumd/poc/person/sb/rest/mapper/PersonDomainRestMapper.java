@@ -17,7 +17,7 @@ public class PersonDomainRestMapper {
                 .lastName(resource.lastName())
                 .birthDate(resource.birthDate())
                 .birthPlace(resource.birthPlace())
-                .gender(Optional.ofNullable(resource.gender()).map(Gender::valueOf).orElse(null))
+                .gender(Optional.ofNullable(resource.gender()).map(Gender::valueOfName).orElse(null))
                 .nationality(Optional.ofNullable(resource.nationality()).map(Nationality::valueOf).orElse(null))
                 .build();
     }

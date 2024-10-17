@@ -1,45 +1,38 @@
 package com.mpumd.poc.person.sb.rest;
 
 import com.mpumd.poc.person.application.exception.PersonAlreadyExistException;
-import lombok.Builder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+/**
+ * @see https://datatracker.ietf.org/doc/html/rfc9457
+ * @see https://www.baeldung.com/rest-api-error-handling-best-practices
+ */
+
 @ControllerAdvice
 class RestExceptionHandler {
 
-    // https://www.baeldung.com/rest-api-error-handling-best-practices
-    @Builder
-    private record Error(
-            String type,
-            String title,
-            int status,
-            String detail,
-            String instance
-    ) {
-    }
-
     @ExceptionHandler(PersonAlreadyExistException.class)
-    ResponseEntity<Error> handlePersonAlreadyExistException(PersonAlreadyExistException ex) {
+    ResponseEntity<ProblemDetail> handlePersonAlreadyExistException(PersonAlreadyExistException ex) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
-                .body(Error.builder()
-                        .type(ex.getClass().getSimpleName())
-                        .title(ex.getMessage())
-                        .status(HttpStatus.CONFLICT.value())
-                        .build());
+                .body(fillProblemDetailResponse(ex, HttpStatus.CONFLICT));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    ResponseEntity<Error> handleIllegalArgumentException(IllegalArgumentException ex) {
+    ResponseEntity<ProblemDetail> handleIllegalArgumentException(IllegalArgumentException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(Error.builder()
-                        .type(ex.getClass().getSimpleName())
-                        .title(ex.getMessage())
-                        .status(HttpStatus.BAD_REQUEST.value())
-                        .build());
+                .body(fillProblemDetailResponse(ex, HttpStatus.BAD_REQUEST));
+    }
+
+    private static ProblemDetail fillProblemDetailResponse(RuntimeException ex, HttpStatus httpStatus) {
+        ProblemDetail body = ProblemDetail.forStatus(httpStatus);
+        body.setTitle(ex.getClass().getSimpleName());
+        body.setDetail(ex.getMessage());
+        return body;
     }
 }

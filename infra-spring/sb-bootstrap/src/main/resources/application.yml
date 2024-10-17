@@ -4,7 +4,7 @@ server:
     context-path: /spring
 
 spring:
-  application.name: person.μsvc.spring
+  application.name: person.msvc.spring
   mvc.log-request-details: true # log
   boot:
     admin:

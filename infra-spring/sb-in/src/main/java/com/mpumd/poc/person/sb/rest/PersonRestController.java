@@ -2,6 +2,7 @@ package com.mpumd.poc.person.sb.rest;
 
 import com.mpumd.poc.person.sb.application.PersonAppSvc;
 import com.mpumd.poc.person.sb.rest.mapper.PersonDomainRestMapper;
+import com.mpumd.poc.person.sb.rest.resource.PersonCreatedResponse;
 import com.mpumd.poc.person.sb.rest.resource.PersonRegisterResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,12 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
-
 
 @RestController
 @RequestMapping(
-        produces = "application/vnd.mpu.person.v1+json",
+        // TODO good or bad way to manage version using vendor style
+//        produces = "application/vnd.mpu.person.v1+json",
+        produces = MediaType.APPLICATION_JSON_VALUE,
         consumes = MediaType.APPLICATION_JSON_VALUE
 )
 @RequiredArgsConstructor
@@ -35,7 +36,8 @@ public class PersonRestController {
     })
     @PostMapping("/person")
     @ResponseStatus(HttpStatus.CREATED)
-    public UUID register(@RequestBody PersonRegisterResource cmd) {
-        return personAppSvc.register(PersonDomainRestMapper.toDomain(cmd));
+    public PersonCreatedResponse register(@RequestBody PersonRegisterResource cmd) {
+        var uuid = personAppSvc.register(PersonDomainRestMapper.toDomain(cmd));
+        return new PersonCreatedResponse(uuid);
     }
 }

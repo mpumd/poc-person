@@ -65,7 +65,7 @@ class PersonRestControllerITest {
                             .contentType("application/json")
                             .content(payload))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$").value(id.toString()));
+                    .andExpect(jsonPath("$.id").value(id.toString()));
 
             JSONAssert.assertEquals(
                     payload,
@@ -87,8 +87,8 @@ class PersonRestControllerITest {
                             .content(payload)
                     )
                     .andExpect(status().is(HttpStatus.CONFLICT.value()))
-                    .andExpect(jsonPath("$.type").value(PersonAlreadyExistException.class.getSimpleName()))
-                    .andExpect(jsonPath("$.title").value("person already exist"))
+                    .andExpect(jsonPath("$.title").value(PersonAlreadyExistException.class.getSimpleName()))
+                    .andExpect(jsonPath("$.detail").value("person already exist"))
                     .andExpect(jsonPath("$.status").value(409));
         }
     }
@@ -105,8 +105,8 @@ class PersonRestControllerITest {
                             .content(payload)
                     )
                     .andExpect(status().is(400))
-                    .andExpect(jsonPath("$.type").value(IllegalArgumentException.class.getSimpleName()))
-                    .andExpect(jsonPath("$.title").value("field value is wrong"))
+                    .andExpect(jsonPath("$.title").value(IllegalArgumentException.class.getSimpleName()))
+                    .andExpect(jsonPath("$.detail").value("field value is wrong"))
                     .andExpect(jsonPath("$.status").value(400));
         }
     }
