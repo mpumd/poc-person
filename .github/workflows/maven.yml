@@ -20,13 +20,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 21
+      - name: Git checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
+      - name: Setup Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: 4.0.0-beta-4
+
+      - name: check version of build tools
+        run: mvn -v
+
+      # build env
       - name: Build with Maven
         run: mvn -B package org.pitest:pitest-maven:mutationCoverage --file pom.xml
 

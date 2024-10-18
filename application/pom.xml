@@ -6,13 +6,13 @@
     <parent>
         <groupId>com.mpumd.poc</groupId>
         <artifactId>person</artifactId>
-        <version>1.0-SNAPSHOT</version>
+<!--        <version>1.0-SNAPSHOT</version>-->
     </parent>
 
     <artifactId>application</artifactId>
-    <properties>
-        <context-person.version>1.0-SNAPSHOT</context-person.version>
-    </properties>
+<!--    <properties>-->
+<!--        <context-person.version>1.0-SNAPSHOT</context-person.version>-->
+<!--    </properties>-->
 
     <dependencies>
         <dependency>
