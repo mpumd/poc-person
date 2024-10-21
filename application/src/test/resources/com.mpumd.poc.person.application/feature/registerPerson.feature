@@ -16,5 +16,5 @@ Feature: Register a person in the system
       | john      | rambo    | 1965-02-15T02:37:00-07:00 | MALE   | Bowie, Arizona | US          |
       | john      | rambo    | 1965-02-15T02:37:00-07:00 | MALE   | Bowie, Arizona | US          |
     When I engage the registration of persons
-    Then I receive an already exist person error for "john" "rambo"
+    Then I receive an already exist person error for "john" "rambo" 2 times
 

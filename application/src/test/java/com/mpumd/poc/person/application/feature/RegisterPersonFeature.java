@@ -58,8 +58,6 @@ public class RegisterPersonFeature {
 
     PersonApplicationService applicationService;
 
-    int dataSetLineNb = 0;
-
     @Before
     public void setup() {
         personRepoInMemory = new PersonPersistanceInMemory();
@@ -69,7 +67,6 @@ public class RegisterPersonFeature {
     @Given("I provide this following informations")
     public void createCommand(DataTable dataTable) {
         List<Map<String, String>> maps = dataTable.asMaps();
-        dataSetLineNb = maps.size();
         commands = maps.stream()
                 .map(map -> PersonRegistrationCommand.builder()
                         .firstName(map.get("firstName"))
@@ -101,10 +98,10 @@ public class RegisterPersonFeature {
                 .isEqualTo(commands);
     }
 
-    @Then("I receive an already exist person error for {string} {string}")
-    public void verifySamePersonCantBeTwoTimeInTheSystem(String firstName, String lastName) {
+    @Then("I receive an already exist person error for {string} {string} {int} times")
+    public void verifySamePersonCantBeTwoTimeInTheSystem(String firstName, String lastName, int errorNb) {
         assertThat(exceptions)
-                .hasSize(dataSetLineNb - 1) // 3 calls with same person, 1 correct and 2 exceptions
+                .hasSize(errorNb) // 3 calls with same person, 1 correct and 2 exceptions
                 .first(as(InstanceOfAssertFactories.THROWABLE))
                 .isInstanceOf(PersonAlreadyExistException.class)
                 .hasMessageContainingAll(firstName, lastName);
