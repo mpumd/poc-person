@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers(disabledWithoutDocker = true)
 @Slf4j
+// FIXME run with cucumber feature here
+// FIXME run with native image. two different test I guest
 public class PocPersonITest {
 
 //    @LocalServerPort

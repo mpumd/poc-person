@@ -5,7 +5,7 @@ server:
 
 spring:
   application.name: person.msvc.spring
-  mvc.log-request-details: true # log
+#  mvc.log-request-details: true # log
   boot:
     admin:
       context-path: /admin
@@ -32,10 +32,10 @@ management:
     env:
       enabled: true
 
-logging:
-  level:
-    org.springframework.web: DEBUG
-    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE
-    org.springdoc: DEBUG
-    org.springframework.boot.actuate.endpoint.web.servlet: DEBUG
-    org.springframework.boot.web.servlet.ServletRegistrationBean: DEBUG
+#logging:
+#  level:
+#    org.springframework.web: DEBUG
+#    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE
+#    org.springdoc: DEBUG
+#    org.springframework.boot.actuate.endpoint.web.servlet: DEBUG
+#    org.springframework.boot.web.servlet.ServletRegistrationBean: DEBUG

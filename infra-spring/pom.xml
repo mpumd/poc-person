@@ -32,23 +32,53 @@
 
         <easy-random.version>5.0.0</easy-random.version>
         <datafaker.version>2.3.1</datafaker.version>
+
+        <cucumber-bom.version>7.19.0</cucumber-bom.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <!-- domain -->
-<!--            <dependency>-->
-<!--                <groupId>com.mpumd.poc</groupId>-->
-<!--                <artifactId>context-person</artifactId>-->
-<!--                <version>${domain.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>com.mpumd.poc</groupId>-->
-<!--                <artifactId>application</artifactId>-->
-<!--                <version>${domain.version}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>com.mpumd.poc</groupId>
+                <artifactId>context-person</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mpumd.poc</groupId>
+                <artifactId>application</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- infra -->
+            <dependency>
+                <groupId>com.mpumd.poc</groupId>
+                <artifactId>sb-in</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mpumd.poc</groupId>
+                <artifactId>sb-out</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mpumd.poc</groupId>
+                <artifactId>sb-application</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mpumd.poc</groupId>
+                <artifactId>sb-bootstrap</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>de.codecentric</groupId>
                 <artifactId>spring-boot-admin-dependencies</artifactId>
@@ -67,6 +97,15 @@
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springdoc-openapi-starter.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-bom</artifactId>
+                <version>${cucumber-bom.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -136,4 +175,18 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- BUG maven 4 https://github.com/apache/maven-apache-parent/issues/265
+                    in attemps of the correction, this following fix plugin management version config like bellow
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugin-tools</groupId>
+                    <artifactId>maven-plugin-annotations</artifactId>
+                    <version>3.11.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

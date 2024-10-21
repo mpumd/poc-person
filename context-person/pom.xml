@@ -5,7 +5,9 @@
     <parent>
         <groupId>com.mpumd.poc</groupId>
         <artifactId>person</artifactId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>context-person</artifactId>
+
 </project>
