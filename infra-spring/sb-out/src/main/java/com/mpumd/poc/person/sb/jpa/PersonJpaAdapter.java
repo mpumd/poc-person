@@ -3,6 +3,7 @@ package com.mpumd.poc.person.sb.jpa;
 import com.mpumd.poc.person.context.PersonPersistanceRepository;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
+import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
 import com.mpumd.poc.person.sb.jpa.mapper.PersonDomainJPAMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -20,7 +21,7 @@ public class PersonJpaAdapter implements PersonPersistanceRepository {
     public boolean isExist(PersonSearchQuery queryPerson) {
         var example = Example.of(
                 PersonDomainJPAMapper.toJpa(queryPerson),
-                ExampleMatcher.matchingAny()
+                ExampleMatcher.matching()
                         .withIgnoreCase("firstName", "lastName")
         );
         return personSpringRepo.findOne(example).isPresent();
@@ -28,6 +29,7 @@ public class PersonJpaAdapter implements PersonPersistanceRepository {
 
     @Override
     public void push(Person person) {
-        personSpringRepo.save(PersonDomainJPAMapper.toJpa(person));
+        PersonEntity jpa = PersonDomainJPAMapper.toJpa(person);
+        personSpringRepo.save(jpa);
     }
 }

@@ -3,14 +3,16 @@ package com.mpumd.poc.person.sb.jpa.mapper;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.experimental.UtilityClass;
 
 import java.util.Optional;
 
-@UtilityClass
-public class PersonDomainJPAMapper {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class PersonDomainJPAMapper {
 
-    public PersonEntity toJpa(Person person) {
+    public static PersonEntity toJpa(Person person) {
         var builder = PersonEntity.builder()
                 .id(person.id())
                 .firstName(person.firstName())
@@ -29,7 +31,7 @@ public class PersonDomainJPAMapper {
         return builder.build();
     }
 
-    public PersonEntity toJpa(PersonSearchQuery query) {
+    public static PersonEntity toJpa(PersonSearchQuery query) {
         var builder = PersonEntity.builder()
                 .firstName(query.firstName())
                 .lastName(query.lastName())

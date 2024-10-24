@@ -1,12 +1,14 @@
 package com.mpumd.poc.person.sb.jpa.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.mpumd.poc.person.sb.jpa.converter.ISO8601ZonedDateTimeConverter;
+import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.jpa.repository.Temporal;
 
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Builder
@@ -31,6 +33,7 @@ public class PersonEntity {
     private String gender;
 
     @Column(name = "birth_date")
+    @Convert(converter = ISO8601ZonedDateTimeConverter.class)
     private ZonedDateTime birthDate;
 
     @Column(name = "birth_place")
