@@ -17,7 +17,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static io.cucumber.core.options.Constants.*;
+import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 // *** Cucumber Junit Runner
@@ -35,10 +36,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(
         classes = {PersonApplicationSpringBootRunner.class},
         webEnvironment = RANDOM_PORT,
-        properties = {
-                "spring.jackson.deserialization.adjust-dates-to-context-time-zone=false",
-//                "spring.jpa.properties.hibernate.type.descriptor.sql.ZonedDateTime=string"
-        })
+        properties = "spring.profiles.active=test") // test profile is required to track the production config
 @Testcontainers(disabledWithoutDocker = true)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 // This class is injectable
@@ -54,6 +52,8 @@ public class PersonApplicationBDDIT {
     private RestClient restClient;
 
     /* static { dbContainer.start(); } */
+
+
 
     PersonApplicationBDDIT(@LocalServerPort int port) {
         restClient = RestClient.builder()

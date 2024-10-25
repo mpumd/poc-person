@@ -66,7 +66,7 @@ public class RegisterPersonFeature {
         for (var resource : registerPersonRestResources) {
             try {
                 ResponseEntity<String> response = restClient.post()
-                        .uri("/person")
+                        .uri("/spring/person")
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(resource)
                         .retrieve()
