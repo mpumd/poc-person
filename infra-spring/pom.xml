@@ -107,17 +107,22 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-            <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>testcontainers</artifactId>
-                <version>${testcontainers.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
+
+            <!-- TODO delete junit 4
+                java: cannot access org.junit.rules.TestRule
+                class file for org.junit.rules.TestRule not found
+            -->
+<!--            <dependency>-->
+<!--                <groupId>org.testcontainers</groupId>-->
+<!--                <artifactId>testcontainers</artifactId>-->
+<!--                <version>${testcontainers.version}</version>-->
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>junit</groupId>-->
+<!--                        <artifactId>junit</artifactId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
+<!--            </dependency>-->
 
         </dependencies>
     </dependencyManagement>
