@@ -27,12 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(properties = {
-//        "spring.jackson.serialization.write-dates-as-timestamps=false",
-        "spring.jackson.serialization.write-dates-with-zone-id=true",
-//        "spring.jackson.date-format=yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
         "spring.jackson.deserialization.adjust-dates-to-context-time-zone=false",
-//        "spring.jackson.mapper.adjust-dates-to-context-time-zone=false"
-        // 1965-02-15T02:37:00-07:00
+        // usefull for ISO8601 date like 1965-02-15T02:37:00-07:00
 })
 class PersonRestControllerITest {
 
