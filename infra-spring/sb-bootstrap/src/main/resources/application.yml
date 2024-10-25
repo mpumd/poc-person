@@ -6,11 +6,24 @@ server:
 spring:
   application.name: person.msvc.spring
 #  mvc.log-request-details: true # log
+  jackson:
+#    serialization:
+#      write-dates-with-zone-id: true
+#      write-dates-with-zone-id: true # keep timezone during deserialisation
+#      write-dates-as-timestamps: false
+#    date-format: "yyyy-MM-dd'T'HH:mm:ssXXX"
+    deserialization:
+      adjust-dates-to-context-time-zone: false
+#    mapper:
+#      adjust-dates-to-context-time-zone: false
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
   boot:
     admin:
       context-path: /admin
       client.url: http://localhost:${server.port}${server.servlet.context-path}/admin
-  jpa:
     hibernate:
       ddl-auto: validate # create, create-drop, validate, update
     show-sql: true

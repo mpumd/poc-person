@@ -66,6 +66,7 @@ class PersonJpaAdapterITest {
         postgresContainer.close();
     }
 
+    // TODO how to track the usage of the hibernate converter with spy it an verify ?
     @Test
     void pushInDBWithoutError() {
         Person aggregatRoot = easyRandom.nextObject(Person.class);

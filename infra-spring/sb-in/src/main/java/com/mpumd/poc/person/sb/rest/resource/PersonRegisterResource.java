@@ -1,5 +1,6 @@
 package com.mpumd.poc.person.sb.rest.resource;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.ZonedDateTime;
@@ -16,7 +17,7 @@ public record PersonRegisterResource(
         @Schema(description = "Gender of the person", example = "Male")
         String gender,
 
-        @Schema(description = "Birthdate of the person", example = "1947-07-06T00:00:00Z")
+        @Schema(description = "Birthdate of the person in ISO 8601", example = "1947-07-06T00:00:00+01:00")
         ZonedDateTime birthDate,
 
         @Schema(description = "Birthplace of the person", example = "Bowie, Arizona, USA")

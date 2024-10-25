@@ -26,7 +26,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+@WebMvcTest(properties = {
+//        "spring.jackson.serialization.write-dates-as-timestamps=false",
+        "spring.jackson.serialization.write-dates-with-zone-id=true",
+//        "spring.jackson.date-format=yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+        "spring.jackson.deserialization.adjust-dates-to-context-time-zone=false",
+//        "spring.jackson.mapper.adjust-dates-to-context-time-zone=false"
+        // 1965-02-15T02:37:00-07:00
+})
 class PersonRestControllerITest {
 
     @MockBean
@@ -46,7 +53,7 @@ class PersonRestControllerITest {
               "firstName": "John",
               "lastName": "Rambo",
               "gender": "Male",
-              "birthDate": "1947-07-06T00:00:00Z",
+              "birthDate": "1947-07-06T05:00:00+01:00",
               "birthPlace": "Bowie, Arizona, USA",
               "nationality": "US"
             }
