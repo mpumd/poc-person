@@ -53,8 +53,6 @@ public class PersonApplicationBDDIT {
 
     /* static { dbContainer.start(); } */
 
-
-
     PersonApplicationBDDIT(@LocalServerPort int port) {
         restClient = RestClient.builder()
                 .baseUrl("http://localhost:" + port)
