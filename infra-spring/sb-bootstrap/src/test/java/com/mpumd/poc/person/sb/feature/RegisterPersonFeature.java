@@ -2,18 +2,16 @@ package com.mpumd.poc.person.sb.feature;
 
 import com.jayway.jsonpath.JsonPath;
 import com.mpumd.poc.person.application.exception.PersonAlreadyExistException;
+import com.mpumd.poc.person.sb.PersonApplicationBDDIT;
 import io.cucumber.datatable.DataTable;
-import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static com.mpumd.poc.person.sb.feature.BBDTestConfiguration.dbContainer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -42,29 +39,17 @@ public class RegisterPersonFeature {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    JdbcClient jdbcClient = JdbcClient.create(new DriverManagerDataSource(
-            dbContainer.getJdbcUrl(),
-            dbContainer.getUsername(),
-            dbContainer.getPassword()
-    ));
-
     RestClient restClient;
+    JdbcClient jdbcClient;
 
-    @LocalServerPort
-    int port;
+    RegisterPersonFeature(PersonApplicationBDDIT personApplicationBDDIT) {
+        jdbcClient = personApplicationBDDIT.jdbcClient();
+        restClient = personApplicationBDDIT.restClient();
+    }
 
     @Before
     public void setUp() {
-        restClient = RestClient.builder()
-                .baseUrl("http://localhost:" + port)
-                .build();
-
         jdbcClient.sql("DELETE FROM PERSON").update();
-    }
-
-    @After
-    public void tearDown() {
-
     }
 
     @Given("I provide this following informations")
