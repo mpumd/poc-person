@@ -71,14 +71,15 @@
                         </exclude>
                     </excludes>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>process-aot</id>
-                        <goals>
-                            <goal>process-aot</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <!-- TODO no need to build AOT static factories of we can't run in AOT mode -->
+                <!--                <executions>-->
+                <!--                    <execution>-->
+                <!--                        <id>process-aot</id>-->
+                <!--                        <goals>-->
+                <!--                            <goal>process-aot</goal>-->
+                <!--                        </goals>-->
+                <!--                    </execution>-->
+                <!--                </executions>-->
             </plugin>
         </plugins>
     </build>

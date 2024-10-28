@@ -1,6 +1,7 @@
 package com.mpumd.poc.person.context.aggregat;
 
 
+import com.mpumd.poc.person.context.command.InformPhysicalAppearanceCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
@@ -168,24 +169,24 @@ class PersonTest {
     @Test
     void should_informPhysicalAppearanceAndSetInstanceAttribut() {
         // generate fullfilled Person instance except physicalAppearance field
-        Predicate<Field> physicalAppearancePredicate = FieldPredicates.named("physicalAppearance")
+        Predicate<Field> physicalAppearancePredicate = FieldPredicates
+                .named("physicalAppearance")
                 .and(FieldPredicates.inClass(Person.class));
         var person = new EasyRandom(new EasyRandomParameters().excludeField(physicalAppearancePredicate))
                 .nextObject(Person.class);
         assertThat(person).hasNoNullFieldsOrPropertiesExcept("physicalAppearance");
 
-        short size = 170;
-        short weight = 70;
-        EyesColor eyesColor = EyesColor.BLUE;
+
+        InformPhysicalAppearanceCommand informPhysicalAppearanceCommand = mock();
 
         // GIVEN
         var physicalAppearanceMock = mock(PhysicalAppearance.class);
         try (var physicalAppearanceMS = mockStatic(PhysicalAppearance.class)) {
-            physicalAppearanceMS.when(() -> PhysicalAppearance.inform(size, weight, eyesColor))
+            physicalAppearanceMS.when(() -> PhysicalAppearance.inform(informPhysicalAppearanceCommand))
                     .thenReturn(physicalAppearanceMock);
 
             // WHEN
-            person.informPhysicalAppearance(size, weight, eyesColor);
+            person.informPhysicalAppearance(informPhysicalAppearanceCommand);
 
             // THEN
             assertThat(person).extracting("physicalAppearance")

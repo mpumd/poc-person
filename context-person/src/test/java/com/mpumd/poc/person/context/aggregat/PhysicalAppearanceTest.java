@@ -1,41 +1,68 @@
 package com.mpumd.poc.person.context.aggregat;
 
+import com.mpumd.poc.person.context.command.InformPhysicalAppearanceCommand;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PhysicalAppearanceTest {
 
+    InformPhysicalAppearanceCommand cmd = InformPhysicalAppearanceCommand.builder()
+            .size((short) 175)
+            .weight((short) 75)
+            .eyesColor(EyesColor.BLACK)
+            .hairColor(HairColor.GREY)
+            .build();
+
     @Test
     void OK() {
-        short size = 175;
-        short weight = 75;
-        var eyesColor = EyesColor.BLACK;
-
-        assertThat(PhysicalAppearance.inform(size, weight, eyesColor))
-                .extracting("size", "weight", "eyesColor")
-                .containsExactly(size, weight, eyesColor);
+        assertThat(PhysicalAppearance.inform(cmd))
+                .extracting("size", "weight", "eyesColor", "hairColor")
+                .containsExactly((short) 175, (short) 75, EyesColor.BLACK, HairColor.GREY);
     }
 
     @Test
-    void KO_size() {
-        assertThatThrownBy(() -> PhysicalAppearance.inform((short) -3, (short) 75, EyesColor.BLACK))
+    void KO_CommandNull() {
+        assertThatThrownBy(() -> PhysicalAppearance.inform(null))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("value was -3 but size is always positive");
+                .hasMessage("cmd is marked non-null but is null");
     }
 
-    @Test
-    void KO_weight() {
-        assertThatThrownBy(() -> PhysicalAppearance.inform((short) 175, (short) -5, EyesColor.BLACK))
+    @ParameterizedTest
+    @ValueSource(shorts = {-7, 0})
+    void KO_size(short val) {
+        ReflectionTestUtils.setField(cmd, "size", val);
+        assertThatThrownBy(() -> PhysicalAppearance.inform(cmd))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("value was -5 but weight is always positive");
+                .hasMessage("value was %s but size is always positive", val);
+    }
+
+    @ParameterizedTest
+    @ValueSource(shorts = {-7, 0})
+    void KO_weight(short val) {
+        ReflectionTestUtils.setField(cmd, "weight", val);
+        assertThatThrownBy(() -> PhysicalAppearance.inform(cmd))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("value was %s but weight is always positive", val);
     }
 
     @Test
     void KO_eyesColor() {
-        assertThatThrownBy(() -> PhysicalAppearance.inform((short) 175, (short) 75, null))
+        ReflectionTestUtils.setField(cmd, "eyesColor", null);
+        assertThatThrownBy(() -> PhysicalAppearance.inform(cmd))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("eyesColor can't be empty");
+    }
+
+    @Test
+    void KO_hairColor() {
+        ReflectionTestUtils.setField(cmd, "hairColor", null);
+        assertThatThrownBy(() -> PhysicalAppearance.inform(cmd))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("hairColor can't be empty");
     }
 }

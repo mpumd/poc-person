@@ -1,5 +1,6 @@
 package com.mpumd.poc.person.context.aggregat;
 
+import com.mpumd.poc.person.context.command.InformPhysicalAppearanceCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import lombok.Getter;
 import lombok.NonNull;
@@ -24,15 +25,14 @@ public class Person {
 
     private PhysicalAppearance physicalAppearance;
 //    private final Personality personality;
-
 //    private final Career career;
+//  private final Health
+    // private final Contact contact
 
 //    private final Hobby hobby;
 //    private final SocialLife socialLife;
 //    private final LifeStyle lifeStyle;
 //    private final LifePurpose lifePurpose;
-
-//    private final Challenge challenge;
 
 //    private final SignificantPossessions significantPossessions;
 //
@@ -60,8 +60,8 @@ public class Person {
         return new Person(cmd, UUID.randomUUID());
     }
 
-    public void informPhysicalAppearance(short size, short weight, EyesColor eyesColor) {
-        this.physicalAppearance = PhysicalAppearance.inform(size, weight, eyesColor);
+    public void informPhysicalAppearance(InformPhysicalAppearanceCommand cmd) {
+        this.physicalAppearance = PhysicalAppearance.inform(cmd);
     }
 
     public short calculateAge() {
