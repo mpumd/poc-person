@@ -1,12 +1,18 @@
 package com.mpumd.poc.person.sb.jpa.mapper;
 
+import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
+import com.mpumd.poc.person.sb.jpa.entity.GenderHistoryEntity;
 import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Optional.ofNullable;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PersonDomainJPAMapper {
@@ -19,11 +25,11 @@ public final class PersonDomainJPAMapper {
                 .birthDate(person.birthDate())
                 .birthPlace(person.birthPlace());
 
-        Optional.ofNullable(person.gender())
-                .map(Enum::toString)
-                .ifPresent(builder::gender);
+        ofNullable(person.genders())
+                .map(PersonDomainJPAMapper::toJpa)
+                .ifPresent(builder::genderHistory);
 
-        Optional.ofNullable(person.nationality())
+        ofNullable(person.nationality())
                 .map(Enum::toString)
                 .ifPresent(builder::nationality);
 
@@ -37,11 +43,20 @@ public final class PersonDomainJPAMapper {
                 .birthDate(query.birthDate())
                 .birthPlace(query.birthPlace());
 
-        Optional.ofNullable(query.gender())
-                .map(Enum::toString)
-                .ifPresent(builder::gender);
+        ofNullable(query.gender())
+                .map(gd -> List.of(new GenderHistoryEntity(gd, query.birthDate().toLocalDateTime())))
+                .ifPresent(builder::genderHistory);
 
         return builder.build();
+    }
+
+    public static List<GenderHistoryEntity> toJpa(Map<LocalDateTime, Gender> genders) {
+        if (genders == null || genders.isEmpty()) return null;
+
+        return genders.entrySet()
+                .stream()
+                .map(e -> new GenderHistoryEntity(null, null, e.getValue(), e.getKey()))
+                .toList();
     }
 
 }

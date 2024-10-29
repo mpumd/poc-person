@@ -5,6 +5,7 @@ import com.mpumd.poc.person.context.command.InformPhysicalAppearanceCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.FieldPredicates;
@@ -16,10 +17,12 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -78,9 +81,11 @@ class PersonTest {
 
         Person person = Person.register(prc);
         assertThat(person)
-                .extracting("firstName", "lastName", "birthDate", "gender", "birthPlace",
+                .extracting("firstName", "lastName", "birthDate", "genders", "birthPlace",
                         "nationality")
-                .containsExactly(firstName, lastName, birthDate, gender, birthPlace, nationality);
+                .containsExactly(firstName, lastName, birthDate,
+                        Map.of(prc.birthDate().toLocalDateTime(), gender),
+                        birthPlace, nationality);
 
         assertThat(person)
                 .extracting("id")
@@ -117,7 +122,7 @@ class PersonTest {
     }
 
     @Test
-    void KO_gender() throws NoSuchFieldException, IllegalAccessException {
+    void KO_gender() {
         ReflectionTestUtils.setField(prc, "gender", null);
 
         assertThatThrownBy(() -> Person.register(prc))
@@ -198,6 +203,22 @@ class PersonTest {
 
         long expectedAge = ChronoUnit.YEARS.between(birthDate, ZonedDateTime.now());
         assertEquals(expectedAge, person.calculateAge(), "the age calcule must be " + expectedAge);
+    }
 
+    @Test
+    void canChangeOfSex() {
+        var person = easyRandom.nextObject(Person.class);
+        assertThat(person).hasNoNullFieldsOrProperties();
+        Map.class.cast(ReflectionTestUtils.getField(person, "genders")).clear();
+
+        var changeDate = LocalDateTime.now();
+
+        person.changeOfSex(Gender.FEMALE, changeDate);
+
+        assertThat(person)
+                .extracting("genders")
+                .asInstanceOf(InstanceOfAssertFactories.MAP)
+                .hasSize(1)
+                .containsEntry(changeDate, Gender.FEMALE);
     }
 }

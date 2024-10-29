@@ -2,7 +2,6 @@ package com.mpumd.poc.person.sb.jpa;
 
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
-import com.mpumd.poc.person.sb.jpa.converter.ISO8601ZonedDateTimeConverter;
 import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
 import com.mpumd.poc.person.sb.jpa.mapper.PersonDomainJPAMapper;
 import lombok.SneakyThrows;
@@ -13,33 +12,23 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.invocation.InvocationOnMock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.time.ZonedDateTime;
+import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.verify;
 
 
 @DataJpaTest
@@ -104,7 +93,7 @@ class PersonJpaAdapterITest {
         entity.lastName(dbLastName);
         entity.birthPlace(query.birthPlace());
         entity.birthDate(query.birthDate());
-        entity.gender(query.gender().toString());
+        entity.genderHistory(PersonDomainJPAMapper.toJpa(Map.of(query.birthDate().toLocalDateTime(), query.gender())));
 
         entityManager.persist(entity);
 

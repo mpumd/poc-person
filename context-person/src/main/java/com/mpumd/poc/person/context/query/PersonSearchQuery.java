@@ -24,8 +24,9 @@ public class PersonSearchQuery {
     public PersonSearchQuery(Person person) {
         this.firstName = person.firstName();
         this.lastName = person.lastName();
-        this.gender = person.gender();
+        this.gender = person.genders().lastEntry().getValue();
         this.birthDate = person.birthDate();
         this.birthPlace = person.birthPlace();
     }
+
 }

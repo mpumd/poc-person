@@ -38,9 +38,11 @@ class PersonSearchQueryTest {
 
         PersonSearchQuery query = new PersonSearchQuery(person);
 
-        assertThat(person)
+        assertThat(query)
                 .usingRecursiveComparison()
-                .comparingOnlyFields("firstName", "lastName", "gender", "birthDate", "birthPlace")
-                .isEqualTo(query);
+                .ignoringFields("gender")// ignore in query
+                .isEqualTo(person);
+
+        assertEquals(query.gender(), person.genders().lastEntry().getValue());
     }
 }

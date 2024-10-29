@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.ZonedDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ISO8601ZonedDateTimeConverterTest {
 
@@ -20,7 +20,19 @@ class ISO8601ZonedDateTimeConverterTest {
     }
 
     @Test
+    void convertFromNullZonedDateTimeToNullString() {
+        var result = converter.convertToDatabaseColumn(null);
+        assertNull(result);
+    }
+
+    @Test
     void convertFromStringToZonedDateTime() {
+        var result = converter.convertToEntityAttribute(exampleDateISO8601);
+        assertEquals(exampleDateISO8601, result.toString());
+    }
+
+    @Test
+    void convertFromNullStringToNullZonedDateTime() {
         var result = converter.convertToEntityAttribute(exampleDateISO8601);
         assertEquals(exampleDateISO8601, result.toString());
     }
