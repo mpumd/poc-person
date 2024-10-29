@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.lang.reflect.Field;
 import java.time.LocalTime;
@@ -88,11 +89,8 @@ class PersonTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void KO_firstName(String val) throws IllegalAccessException, NoSuchFieldException {
-        Field field = PersonRegistrationCommand.class.getDeclaredField("firstName");
-        field.setAccessible(true);
-        field.set(prc, val);
-
+    void KO_firstName(String val) {
+        ReflectionTestUtils.setField(prc, "firstName", val);
 
         assertThatThrownBy(() -> Person.register(prc))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -101,10 +99,8 @@ class PersonTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void KO_lastName(String val) throws NoSuchFieldException, IllegalAccessException {
-        Field field = PersonRegistrationCommand.class.getDeclaredField("lastName");
-        field.setAccessible(true);
-        field.set(prc, val);
+    void KO_lastName(String val) {
+        ReflectionTestUtils.setField(prc, "lastName", val);
 
         assertThatThrownBy(() -> Person.register(prc))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -112,10 +108,8 @@ class PersonTest {
     }
 
     @Test
-    void KO_birthDate() throws NoSuchFieldException, IllegalAccessException {
-        Field field = PersonRegistrationCommand.class.getDeclaredField("birthDate");
-        field.setAccessible(true);
-        field.set(prc, null);
+    void KO_birthDate() {
+        ReflectionTestUtils.setField(prc, "birthDate", null);
 
         assertThatThrownBy(() -> Person.register(prc))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -124,9 +118,7 @@ class PersonTest {
 
     @Test
     void KO_gender() throws NoSuchFieldException, IllegalAccessException {
-        Field field = PersonRegistrationCommand.class.getDeclaredField("gender");
-        field.setAccessible(true);
-        field.set(prc, null);
+        ReflectionTestUtils.setField(prc, "gender", null);
 
         assertThatThrownBy(() -> Person.register(prc))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -135,10 +127,8 @@ class PersonTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void KO_birthPlace(String val) throws NoSuchFieldException, IllegalAccessException {
-        Field field = PersonRegistrationCommand.class.getDeclaredField("birthPlace");
-        field.setAccessible(true);
-        field.set(prc, val);
+    void KO_birthPlace(String val) {
+        ReflectionTestUtils.setField(prc, "birthPlace", val);
 
         assertThatThrownBy(() -> Person.register(prc))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -146,10 +136,8 @@ class PersonTest {
     }
 
     @Test
-    void KO_nationality() throws NoSuchFieldException, IllegalAccessException {
-        Field field = PersonRegistrationCommand.class.getDeclaredField("nationality");
-        field.setAccessible(true);
-        field.set(prc, null);
+    void KO_nationality() {
+        ReflectionTestUtils.setField(prc, "nationality", null);
 
         assertThatThrownBy(() -> Person.register(prc))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -196,7 +184,7 @@ class PersonTest {
 
     @Test
     @DisplayName("calcul a correct age related to the birthDate and an instant in the time ")
-    void shouldCalculateCorrectAge() throws NoSuchFieldException, IllegalAccessException {
+    void shouldCalculateCorrectAge() {
         var person = easyRandom.nextObject(Person.class);
         assertThat(person).hasNoNullFieldsOrProperties();
 
@@ -205,9 +193,8 @@ class PersonTest {
                 23, 42, 34, 0,
                 ZoneId.of("Europe/Paris"));
 
-        Field field = Person.class.getDeclaredField("birthDate");
-        field.setAccessible(true);
-        field.set(person, birthDate);
+
+        ReflectionTestUtils.setField(person, "birthDate", birthDate);
 
         long expectedAge = ChronoUnit.YEARS.between(birthDate, ZonedDateTime.now());
         assertEquals(expectedAge, person.calculateAge(), "the age calcule must be " + expectedAge);

@@ -3,12 +3,8 @@ package com.mpumd.poc.person.sb.jpa.entity;
 import com.mpumd.poc.person.sb.jpa.converter.ISO8601ZonedDateTimeConverter;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.jpa.repository.Temporal;
 
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Builder
