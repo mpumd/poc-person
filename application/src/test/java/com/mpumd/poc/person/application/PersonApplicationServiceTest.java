@@ -1,6 +1,7 @@
 package com.mpumd.poc.person.application;
 
 import com.mpumd.poc.person.application.exception.PersonAlreadyExistException;
+import com.mpumd.poc.person.application.exception.PersonNotFoundException;
 import com.mpumd.poc.person.context.PersonPersistanceRepository;
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
@@ -14,7 +15,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -115,5 +118,29 @@ public class PersonApplicationServiceTest {
             mockedStatic.verify(() -> Person.register(command));
             verify(personPersistanceRepository, never()).push(person);
         }
+    }
+
+    @Test
+    void changeSexOfAPerson() {
+        UUID id = UUID.randomUUID();
+        LocalDateTime changeSexDate = LocalDateTime.now();
+        given(personPersistanceRepository.pull(id)).willReturn(Optional.of(person));
+
+        personApplicationService.changeSex(id, Gender.FEMALE, changeSexDate);
+
+        verify(person).changeSex(Gender.FEMALE, changeSexDate);
+    }
+
+    @Test
+    void changeSexButThrowNotFound() {
+        UUID id = UUID.randomUUID();
+        LocalDateTime changeSexDate = LocalDateTime.now();
+        given(personPersistanceRepository.pull(id)).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> personApplicationService.changeSex(id, Gender.FEMALE, changeSexDate))
+                .isInstanceOf(PersonNotFoundException.class)
+                .hasMessage("The person with if %s doesn't exist !", id);
+
+        verify(person, never()).changeSex(Gender.FEMALE, changeSexDate);
     }
 }

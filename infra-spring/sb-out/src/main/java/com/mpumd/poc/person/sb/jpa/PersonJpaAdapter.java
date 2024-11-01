@@ -10,12 +10,21 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 
 @Repository
 @RequiredArgsConstructor
 public class PersonJpaAdapter implements PersonPersistanceRepository {
 
     private final PersonSpringRepo personSpringRepo;
+
+    @Override
+    public Optional<Person> pull(UUID uuid) {
+        // WIP
+        return Optional.empty();
+    }
 
     @Override
     public boolean isExist(PersonSearchQuery queryPerson) {

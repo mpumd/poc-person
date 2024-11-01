@@ -18,9 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.InstanceOfAssertFactories;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,6 +27,12 @@ class PersonPersistanceInMemory implements PersonPersistanceRepository {
 
     @Getter
     private List<Person> persons = new ArrayList<>();
+
+    @Override
+    public Optional<Person> pull(UUID uuid) {
+        // WIP
+        return Optional.empty();
+    }
 
     @Override
     public boolean isExist(PersonSearchQuery personQuery) {
