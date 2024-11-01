@@ -43,6 +43,6 @@ class PersonSearchQueryTest {
                 .ignoringFields("gender")// ignore in query
                 .isEqualTo(person);
 
-        assertEquals(query.gender(), person.genders().lastEntry().getValue());
+        assertEquals(query.gender(), person.genderChangeHistory().lastEntry().getValue());
     }
 }

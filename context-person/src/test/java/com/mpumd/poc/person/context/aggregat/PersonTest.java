@@ -60,6 +60,7 @@ class PersonTest {
 
     @Test
     void OK_personAggregateRoot() {
+        // given
         var firstName = faker.name().firstName();
         var lastName = faker.name().lastName();
         var birthDate = ZonedDateTime.of(
@@ -79,9 +80,12 @@ class PersonTest {
         when(prc.birthPlace()).thenReturn(birthPlace);
         when(prc.nationality()).thenReturn(nationality);
 
+        // when
         Person person = Person.register(prc);
+
+        // then
         assertThat(person)
-                .extracting("firstName", "lastName", "birthDate", "genders", "birthPlace",
+                .extracting("firstName", "lastName", "birthDate", "genderChangeHistory", "birthPlace",
                         "nationality")
                 .containsExactly(firstName, lastName, birthDate,
                         Map.of(prc.birthDate().toLocalDateTime(), gender),
@@ -209,14 +213,14 @@ class PersonTest {
     void canChangeOfSex() {
         var person = easyRandom.nextObject(Person.class);
         assertThat(person).hasNoNullFieldsOrProperties();
-        Map.class.cast(ReflectionTestUtils.getField(person, "genders")).clear();
+        Map.class.cast(ReflectionTestUtils.getField(person, "genderChangeHistory")).clear();
 
         var changeDate = LocalDateTime.now();
 
-        person.changeOfSex(Gender.FEMALE, changeDate);
+        person.changeSex(Gender.FEMALE, changeDate);
 
         assertThat(person)
-                .extracting("genders")
+                .extracting("genderChangeHistory")
                 .asInstanceOf(InstanceOfAssertFactories.MAP)
                 .hasSize(1)
                 .containsEntry(changeDate, Gender.FEMALE);

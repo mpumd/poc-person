@@ -1,11 +1,13 @@
 package com.mpumd.poc.person.sb.jpa.entity;
 
+import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.sb.jpa.converter.ISO8601ZonedDateTimeConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Builder
@@ -27,13 +29,16 @@ public class PersonEntity {
     @Column(name = "last_name")
     private String lastName;
 
-//    @Column(name = "genders")
-//    private String gender;
-
-    @OneToMany(mappedBy = "PERSON", cascade = CascadeType.ALL)
-//    @OrderBy("changeDate ASC")
-//    @Column(name = "genders")
-    private List<GenderHistoryEntity> genderHistory;
+    @ElementCollection
+    @CollectionTable(
+            name = "GENDERS",
+            joinColumns = {@JoinColumn(name = "person_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "change_date") // name of key map
+    @Column(name = "gender")            // name of value map
+    @Enumerated(EnumType.STRING)
+//    @MapKeyJdbcType(TimestampJdbcType.class)
+//    @MapKeyJavaType(LocalDateTimeJavaType.class)
+    private Map<LocalDateTime, Gender> genderChangeHistory;
 
     @Column(name = "birth_date")
     @Convert(converter = ISO8601ZonedDateTimeConverter.class)
@@ -43,6 +48,8 @@ public class PersonEntity {
     private String birthPlace;
 
     @Column(name = "nationality")
+    // TODO we can use this enum type here and use the jakarta converter to convert in string at persist
+    // @Enumerated(EnumType.STRING)
     private String nationality;
 }
 

@@ -20,12 +20,12 @@ spring:
     properties:
       hibernate:
         show_sql: true
+    hibernate:
+      ddl-auto: validate # create, create-drop, validate, update
   boot:
     admin:
       context-path: /admin
       client.url: http://localhost:${server.port}${server.servlet.context-path}/admin
-    hibernate:
-      ddl-auto: validate # create, create-drop, validate, update
     show-sql: true
   liquibase:
     change-log: classpath:/db.changelog-master.sql

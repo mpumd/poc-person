@@ -20,7 +20,7 @@ public class Person {
     private final String firstName;
     private final String lastName;
 
-    private final TreeMap<LocalDateTime, Gender> genders = new TreeMap<>();
+    private final TreeMap<LocalDateTime, Gender> genderChangeHistory = new TreeMap<>();
 
     private final ZonedDateTime birthDate;
     private final String birthPlace; // age calculated
@@ -39,7 +39,6 @@ public class Person {
 //    private final LifePurpose lifePurpose;
 
 //    private final SignificantPossessions significantPossessions;
-//
 
     private Person(@NonNull PersonRegistrationCommand cmd, @NonNull UUID id) {
         this.id = id;
@@ -55,7 +54,7 @@ public class Person {
                 .filter(s -> !s.isBlank())
                 .orElseThrow(() -> new IllegalArgumentException("birthPlace must not be empty"));
 
-        genders.putAll(ofNullable(cmd.gender())
+        genderChangeHistory.putAll(ofNullable(cmd.gender())
                 .map(gender -> Map.of(birthDate.toLocalDateTime(), gender))
                 .orElseThrow(() -> new IllegalArgumentException("gender must not be null"))
         );
@@ -77,7 +76,7 @@ public class Person {
     }
 
     // TODO move to physicalAppearance
-    public void changeOfSex(Gender sex, LocalDateTime date) {
-        genders.putIfAbsent(date, sex);
+    public void changeSex(Gender sex, LocalDateTime date) {
+        genderChangeHistory.putIfAbsent(date, sex);
     }
 }

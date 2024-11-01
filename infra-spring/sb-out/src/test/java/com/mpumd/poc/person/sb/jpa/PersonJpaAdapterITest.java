@@ -4,8 +4,8 @@ import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
 import com.mpumd.poc.person.sb.jpa.mapper.PersonDomainJPAMapper;
-import lombok.SneakyThrows;
 import org.jeasy.random.EasyRandom;
+import org.jeasy.random.EasyRandomParameters;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -26,8 +27,7 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mockStatic;
 
 
@@ -42,6 +42,16 @@ class PersonJpaAdapterITest {
     @ServiceConnection
     static final PostgreSQLContainer postgresContainer = new PostgreSQLContainer("postgres:17-alpine");
 
+    /* DEV : activate the block to fix the port and easy use an SQL client
+     * to finally inspect manually the updated schema
+     */
+//    static {
+//        // Internal PostgreSQL port
+//        postgresContainer.withExposedPorts(5432);
+//        // Bind host port 5432 to container port 5432
+//        postgresContainer.setPortBindings(List.of("5432:5432"));
+//    }
+
     @Autowired
     PersonJpaAdapter adapter;
     @Autowired
@@ -51,23 +61,29 @@ class PersonJpaAdapterITest {
 
     @AfterAll
     static void afterAll() {
-        // default destroy container after IT, avoid the conflict with a local run
         postgresContainer.close();
     }
 
     // TODO how to track the usage of the hibernate converter with spy it an verify ?
     @Test
     void pushInDBWithoutError() {
-        Person aggregatRoot = easyRandom.nextObject(Person.class);
+        Person aggregatRoot = new EasyRandom(new EasyRandomParameters().collectionSizeRange(5, 5))
+                .nextObject(Person.class);
         assertThat(aggregatRoot).hasNoNullFieldsOrProperties();
 
         try (var mapper = mockStatic(PersonDomainJPAMapper.class, InvocationOnMock::callRealMethod)) {
             adapter.push(aggregatRoot);
 
-            assertThat(entityManager.find(PersonEntity.class, aggregatRoot.id()))
+            PersonEntity result = entityManager.find(PersonEntity.class, aggregatRoot.id());
+            assertThat(result)
                     .usingRecursiveComparison()
                     .withEnumStringComparison()
+                    .ignoringFields("genderChangeHistory")
                     .isEqualTo(aggregatRoot);
+
+            // non control on order of elements of maps
+            assertThat(result.genderChangeHistory())
+                    .containsAllEntriesOf(aggregatRoot.genderChangeHistory());
 
             mapper.verify(() -> PersonDomainJPAMapper.toJpa(aggregatRoot));
         }
@@ -75,16 +91,19 @@ class PersonJpaAdapterITest {
 
     @ParameterizedTest
     @CsvSource({
-            "mpu, mpu, md, md",  // exact match
-            "mpu, MPU, md, MD",  // ignore case
-            // TODO set false case here
+            "mpu, mpu, md, md, true",  // exact match ok
+            "mpu, MPU, md, MD, true",  // ignore case ok
+            "mpu, cge, md, MD, false",  // firstName is different
+            "mpu, MPU, md, test, false",  // lastName is different
     })
-    void isExistIsTrueIfPersonInsideDB(String queryFirstName, String dbFirstName, String queryLastName, String dbLastName) {
+    void isExistIsTrueIfPersonInsideDB(
+            String queryFirstName, String dbFirstName,
+            String queryLastName, String dbLastName,
+            boolean exist) {
+        // given
         var query = easyRandom.nextObject(PersonSearchQuery.class);
-
-        replaceInside(query, "firstName", queryFirstName);
-        replaceInside(query, "lastName", queryLastName);
-
+        ReflectionTestUtils.setField(query, "firstName", queryFirstName);
+        ReflectionTestUtils.setField(query, "lastName", queryLastName);
         assertThat(query).hasNoNullFieldsOrProperties();
 
         PersonEntity entity = easyRandom.nextObject(PersonEntity.class);
@@ -93,12 +112,12 @@ class PersonJpaAdapterITest {
         entity.lastName(dbLastName);
         entity.birthPlace(query.birthPlace());
         entity.birthDate(query.birthDate());
-        entity.genderHistory(PersonDomainJPAMapper.toJpa(Map.of(query.birthDate().toLocalDateTime(), query.gender())));
-
+        entity.genderChangeHistory(Map.of(query.birthDate().toLocalDateTime(), query.gender()));
         entityManager.persist(entity);
 
         try (var mapper = mockStatic(PersonDomainJPAMapper.class, InvocationOnMock::callRealMethod)) {
-            assertTrue(adapter.isExist(query));
+            // when then
+            assertEquals(adapter.isExist(query), exist);
             mapper.verify(() -> PersonDomainJPAMapper.toJpa(query));
         }
     }
@@ -117,12 +136,5 @@ class PersonJpaAdapterITest {
             assertFalse(adapter.isExist(query));
             mapper.verify(() -> PersonDomainJPAMapper.toJpa(query));
         }
-    }
-
-    @SneakyThrows
-    private static <T> void replaceInside(T instance, String fieldName, Object value) {
-        var lnF = instance.getClass().getDeclaredField(fieldName);
-        lnF.setAccessible(true);
-        lnF.set(instance, value);
     }
 }

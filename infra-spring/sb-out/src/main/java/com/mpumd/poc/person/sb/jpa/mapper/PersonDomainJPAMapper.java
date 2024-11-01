@@ -1,15 +1,11 @@
 package com.mpumd.poc.person.sb.jpa.mapper;
 
-import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
-import com.mpumd.poc.person.sb.jpa.entity.GenderHistoryEntity;
 import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 import static java.util.Optional.ofNullable;
@@ -25,9 +21,9 @@ public final class PersonDomainJPAMapper {
                 .birthDate(person.birthDate())
                 .birthPlace(person.birthPlace());
 
-        ofNullable(person.genders())
-                .map(PersonDomainJPAMapper::toJpa)
-                .ifPresent(builder::genderHistory);
+        ofNullable(person.genderChangeHistory())
+                .filter(map -> map.size() > 0)
+                .ifPresent(builder::genderChangeHistory);
 
         ofNullable(person.nationality())
                 .map(Enum::toString)
@@ -44,19 +40,9 @@ public final class PersonDomainJPAMapper {
                 .birthPlace(query.birthPlace());
 
         ofNullable(query.gender())
-                .map(gd -> List.of(new GenderHistoryEntity(gd, query.birthDate().toLocalDateTime())))
-                .ifPresent(builder::genderHistory);
+                .map(gd -> Map.of(query.birthDate().toLocalDateTime(), gd))
+                .ifPresent(builder::genderChangeHistory);
 
         return builder.build();
     }
-
-    public static List<GenderHistoryEntity> toJpa(Map<LocalDateTime, Gender> genders) {
-        if (genders == null || genders.isEmpty()) return null;
-
-        return genders.entrySet()
-                .stream()
-                .map(e -> new GenderHistoryEntity(null, null, e.getValue(), e.getKey()))
-                .toList();
-    }
-
 }

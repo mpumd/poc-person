@@ -1,3 +1,10 @@
 spring:
   liquibase:
     change-log: classpath:/db.changelog-master.sql
+# DEV : Disable liquibase to let hibernate generate the new schema updated
+#    enabled: false
+
+# DEV : activate the creation of the schema by hibernate to generate the new schema updated
+#  jpa:
+#    hibernate:
+#      ddl-auto: create # create, create-drop, validate, update
