@@ -80,7 +80,12 @@ public class RegisterPersonFeature {
 
     @Then("The persons are present inside the system")
     public void verifyPersonsAreInsideTheSystem() {
-        List<Map<String, Object>> dbDataSet = jdbcClient.sql("SELECT * FROM PERSON")
+        List<Map<String, Object>> dbDataSet = jdbcClient.sql("""
+                        SELECT p.id, p.first_name, p.last_name, p.birth_date,
+                        p.birth_place, p.nationality, g.gender
+                        FROM PERSON p
+                        INNER JOIN genders g on  p.id = g.person_id
+                        """)
                 .query()
                 .listOfRows()
                 .stream()

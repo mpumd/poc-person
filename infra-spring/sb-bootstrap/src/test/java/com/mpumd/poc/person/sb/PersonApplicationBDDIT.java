@@ -22,6 +22,7 @@ import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 // *** Cucumber Junit Runner
+@Getter
 @Suite
 @IncludeEngines("cucumber")
 @SelectFile("../../application/src/test/resources/com/mpumd/poc/person/application/feature/registerPerson.feature")
@@ -39,16 +40,24 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
         properties = "spring.profiles.active=test") // test profile is required to track the production config
 @Testcontainers(disabledWithoutDocker = true)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-// This class is injectable
+// This class is a spring bean injectable, so you can inject the client inside features test
 public class PersonApplicationBDDIT {
 
     @Container
     @ServiceConnection
     private static final PostgreSQLContainer dbContainer = new PostgreSQLContainer("postgres:17-alpine");
 
-    @Getter
+    /* DEV : activate the block to fix the port and easy use an SQL client
+     * to finally inspect manually the updated schema
+     */
+//    static {
+//        // Internal PostgreSQL port
+//        dbContainer.withExposedPorts(5432);
+//        // Bind host port 5432 to container port 5432
+//        dbContainer.setPortBindings(List.of("5432:5432"));
+//    }
+
     private JdbcClient jdbcClient;
-    @Getter
     private RestClient restClient;
 
     /* static { dbContainer.start(); } */
