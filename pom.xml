@@ -28,6 +28,7 @@
 
         <pitest-maven.version>1.17.0</pitest-maven.version>
         <pitest-junit5-plugin.version>1.2.1</pitest-junit5-plugin.version>
+        <!-- CI pitest -->
         <pitest-maven.package.scope>com.mpumd.poc.person.*</pitest-maven.package.scope>
 
         <cucumber-bom.version>7.20.1</cucumber-bom.version>
@@ -94,14 +95,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>*</groupId>-->
-<!--                    <artifactId>*</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
         </dependency>
-
 
         <!-- BDD -->
         <dependency>
@@ -167,6 +161,15 @@
                         <version>${pitest-junit5-plugin.version}</version>
                     </dependency>
                 </dependencies>
+                <executions>
+                    <execution>
+                        <id>pit-report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>mutationCoverage</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <targetClasses>
                         <param>${pitest-maven.package.scope}</param>
@@ -174,6 +177,9 @@
                     <targetTests>
                         <param>${pitest-maven.package.scope}</param>
                     </targetTests>
+<!--                    <excludedClasses>-->
+<!--                        <param>**/*BDDIT</param>-->
+<!--                    </excludedClasses>-->
                     <mutators>
                         <!-- https://pitest.org/quickstart/mutators/ -->
                         <!-- OLD_DEFAULTS, DEFAULTS, STRONGER -->
