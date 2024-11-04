@@ -1,6 +1,5 @@
 Feature: Register a person in the system
 
-#  @disabled
   Scenario: Register a valid person
     Given I provide this following informations
       | firstName | lastName | birthDate                 | gender | birthPlace     | nationality |
