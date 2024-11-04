@@ -16,9 +16,7 @@ import org.assertj.core.api.InstanceOfAssertFactories;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,17 +24,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 public class ChangeSexFeature {
+    // port-in
+    private Map<String, Object> cmd = new HashMap<>();
 
     // port-out
-    PersonPersistanceInMemory personRepoInMemory;
+    private PersonPersistanceInMemory personRepoInMemory;
 
-    // port-in
-    Map<String, Object> cmd = new HashMap<>();
-
-    PersonApplicationService applicationService;
+    private PersonApplicationService applicationService;
 
     private LocalDateTime changeGenderDate;
     private Gender newGender;
+
+    private List<Exception> exceptions = new ArrayList<>();
 
     @Before
     public void setup() {
@@ -105,11 +104,15 @@ public class ChangeSexFeature {
 
     @When("I engage the changeSex business act")
     public void callChangeSex() {
-        applicationService.changeSex(
-                personRepoInMemory.persons().get(0).id(),
-                newGender,
-                changeGenderDate
-        );
+        try {
+            applicationService.changeSex(
+                    personRepoInMemory.persons().get(0).id(),
+                    newGender,
+                    changeGenderDate
+            );
+        } catch (Exception ex) {
+            exceptions.add(ex);
+        }
     }
 
     @Then("I see the history of gender like bellow in the order")
@@ -128,4 +131,25 @@ public class ChangeSexFeature {
                 .asInstanceOf(InstanceOfAssertFactories.MAP)
                 .containsExactlyEntriesOf(genderMap);
     }
+
+    @Then("The system refuse to change the gender with the following message {string}")
+    public void checkExForTheSystem(String message) {
+        assertThat(exceptions)
+                .hasSize(1)
+                .first()
+                .asInstanceOf(InstanceOfAssertFactories.THROWABLE)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(message);
+
+    }
+//    @Then("The system refuse to change the gender with the following message {string}")
+//    public void checkExIfTheGenderIsSame(String message) {
+//        assertThat(exceptions)
+//                .hasSize(1)
+//                .first()
+//                .asInstanceOf(InstanceOfAssertFactories.THROWABLE)
+//                .isInstanceOf(IllegalArgumentException.class)
+//                .hasMessage(message);
+//
+//    }
 }

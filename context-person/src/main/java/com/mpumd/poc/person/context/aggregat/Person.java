@@ -77,6 +77,13 @@ public class Person {
 
     // TODO move to physicalAppearance
     public void changeSex(Gender sex, LocalDateTime date) {
+        if(Gender.ALIEN.equals(sex)) {
+            throw new IllegalArgumentException("%s can't become a Alien. No sugery exist to do that".formatted(lastName));
+        }
+        else if (this.genderChangeHistory.lastEntry().getValue().equals(sex)) {
+            throw new IllegalArgumentException("%s is already a %s".formatted(lastName, sex));
+        }
+
         genderChangeHistory.putIfAbsent(date, sex);
     }
 }
