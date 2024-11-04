@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -23,6 +24,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -213,8 +215,9 @@ class PersonTest {
     void canChangeOfSex() {
         var person = easyRandom.nextObject(Person.class);
         assertThat(person).hasNoNullFieldsOrProperties();
-        Map.class.cast(ReflectionTestUtils.getField(person, "genderChangeHistory")).clear();
 
+        var history = new TreeMap(Map.of(person.birthDate().toLocalDateTime(), Gender.MALE));
+        ReflectionTestUtils.setField(person, "genderChangeHistory", history);
         var changeDate = LocalDateTime.now();
 
         person.changeSex(Gender.FEMALE, changeDate);
@@ -222,7 +225,49 @@ class PersonTest {
         assertThat(person)
                 .extracting("genderChangeHistory")
                 .asInstanceOf(InstanceOfAssertFactories.MAP)
-                .hasSize(1)
+                .hasSize(2)
                 .containsEntry(changeDate, Gender.FEMALE);
+    }
+
+    @Test
+    void throwExWhenTryToChangeSexWithTheSameSex() {
+        var person = easyRandom.nextObject(Person.class);
+        assertThat(person).hasNoNullFieldsOrProperties();
+
+        var history = new TreeMap(Map.of(person.birthDate().toLocalDateTime(), Gender.FEMALE));
+        ReflectionTestUtils.setField(person, "genderChangeHistory", history);
+        var changeDate = LocalDateTime.now();
+
+        assertThatThrownBy(() -> person.changeSex(Gender.FEMALE, changeDate))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("%s is already a FEMALE", person.lastName());
+    }
+
+    @Test
+    void throwExWhenChangeSexToAnAlien() {
+        var person = easyRandom.nextObject(Person.class);
+        assertThat(person).hasNoNullFieldsOrProperties();
+
+        var history = new TreeMap(Map.of(person.birthDate().toLocalDateTime(), Gender.MALE));
+        ReflectionTestUtils.setField(person, "genderChangeHistory", history);
+        var changeDate = LocalDateTime.now();
+
+        assertThatThrownBy(() -> person.changeSex(Gender.ALIEN, changeDate))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("%s can't become a Alien. No sugery exist to do that", person.lastName());
+    }
+
+    @ParameterizedTest
+    @CsvSource(nullValues = {"null"}, value = {
+            "sex,null,null",
+            "date,MALE,null,"
+    })
+    void throwExOnChangeSexCallWithNullArgs(String fieldName, Gender gender, LocalDateTime date) {
+        var person = easyRandom.nextObject(Person.class);
+        assertThat(person).hasNoNullFieldsOrProperties();
+
+        assertThatThrownBy(() -> person.changeSex(gender, date))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("%s is marked non-null but is null", fieldName);
     }
 }
