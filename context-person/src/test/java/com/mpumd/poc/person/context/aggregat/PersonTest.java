@@ -1,6 +1,7 @@
 package com.mpumd.poc.person.context.aggregat;
 
 
+import com.mpumd.poc.person.context.command.ChangeSexCommand;
 import com.mpumd.poc.person.context.command.InformPhysicalAppearanceCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -219,8 +219,9 @@ class PersonTest {
         var history = new TreeMap(Map.of(person.birthDate().toLocalDateTime(), Gender.MALE));
         ReflectionTestUtils.setField(person, "genderChangeHistory", history);
         var changeDate = LocalDateTime.now();
+        var changeSexCommand = new ChangeSexCommand(UUID.randomUUID(), Gender.FEMALE, changeDate);
 
-        person.changeSex(Gender.FEMALE, changeDate);
+        person.changeSex(changeSexCommand);
 
         assertThat(person)
                 .extracting("genderChangeHistory")
@@ -237,8 +238,9 @@ class PersonTest {
         var history = new TreeMap(Map.of(person.birthDate().toLocalDateTime(), Gender.FEMALE));
         ReflectionTestUtils.setField(person, "genderChangeHistory", history);
         var changeDate = LocalDateTime.now();
+        var changeSexCommand = new ChangeSexCommand(UUID.randomUUID(), Gender.FEMALE, changeDate);
 
-        assertThatThrownBy(() -> person.changeSex(Gender.FEMALE, changeDate))
+        assertThatThrownBy(() -> person.changeSex(changeSexCommand))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("%s is already a FEMALE", person.lastName());
     }
@@ -251,23 +253,20 @@ class PersonTest {
         var history = new TreeMap(Map.of(person.birthDate().toLocalDateTime(), Gender.MALE));
         ReflectionTestUtils.setField(person, "genderChangeHistory", history);
         var changeDate = LocalDateTime.now();
+        var changeSexCommand = new ChangeSexCommand(UUID.randomUUID(), Gender.ALIEN, changeDate);
 
-        assertThatThrownBy(() -> person.changeSex(Gender.ALIEN, changeDate))
+        assertThatThrownBy(() -> person.changeSex(changeSexCommand))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("%s can't become a Alien. No sugery exist to do that", person.lastName());
     }
 
-    @ParameterizedTest
-    @CsvSource(nullValues = {"null"}, value = {
-            "sex,null,null",
-            "date,MALE,null,"
-    })
-    void throwExOnChangeSexCallWithNullArgs(String fieldName, Gender gender, LocalDateTime date) {
+    @Test
+    void throwExWhenTheChangeSexCmdIsNull() {
         var person = easyRandom.nextObject(Person.class);
         assertThat(person).hasNoNullFieldsOrProperties();
 
-        assertThatThrownBy(() -> person.changeSex(gender, date))
+        assertThatThrownBy(() -> person.changeSex(null))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("%s is marked non-null but is null", fieldName);
+                .hasMessage("command is marked non-null but is null");
     }
 }

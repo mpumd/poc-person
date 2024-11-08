@@ -2,6 +2,7 @@ package com.mpumd.poc.person.sb.application;
 
 import com.mpumd.poc.person.application.PersonApplicationService;
 import com.mpumd.poc.person.context.PersonPersistanceRepository;
+import com.mpumd.poc.person.context.command.ChangeSexCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,5 +21,11 @@ public class PersonAppSvc extends PersonApplicationService {
     @Override
     public UUID register(PersonRegistrationCommand cmd) {
         return super.register(cmd);
+    }
+
+    @Transactional
+    @Override
+    public void changeSex(ChangeSexCommand command) {
+        super.changeSex(command);
     }
 }

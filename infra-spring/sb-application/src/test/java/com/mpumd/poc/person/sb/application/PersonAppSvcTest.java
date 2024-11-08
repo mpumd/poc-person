@@ -2,6 +2,7 @@ package com.mpumd.poc.person.sb.application;
 
 import com.mpumd.poc.person.application.PersonApplicationService;
 import com.mpumd.poc.person.context.PersonPersistanceRepository;
+import com.mpumd.poc.person.context.command.ChangeSexCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PersonAppSvcTest {
@@ -27,7 +28,9 @@ class PersonAppSvcTest {
     PersonAppSvc personAppSvc;
 
     @Mock
-    PersonRegistrationCommand cmd;
+    PersonRegistrationCommand registerCmd;
+    @Mock
+    ChangeSexCommand changeSexCommand;
 
     @Test
     void shouldCallSuperRegister() {
@@ -35,9 +38,20 @@ class PersonAppSvcTest {
         UUID id = UUID.randomUUID();
         doReturn(id).when((PersonApplicationService)personAppSvc).register(captor.capture());
 
-        var result = personAppSvc.register(cmd);
+        var result = personAppSvc.register(registerCmd);
 
-        assertEquals(captor.getValue(), cmd);
+        assertEquals(captor.getValue(), registerCmd);
         assertEquals(id, result);
     }
+
+    @Test
+    void shouldCallSuperChangeSex() {
+        var captor = ArgumentCaptor.forClass(ChangeSexCommand.class);
+        doNothing().when((PersonApplicationService)personAppSvc).changeSex(captor.capture());
+
+        personAppSvc.changeSex(changeSexCommand);
+
+        assertEquals(captor.getValue(), changeSexCommand);
+    }
+
 }

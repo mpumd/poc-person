@@ -6,6 +6,7 @@ import com.mpumd.poc.person.context.PersonPersistanceRepository;
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.aggregat.Person;
+import com.mpumd.poc.person.context.command.ChangeSexCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,19 +16,21 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PersonApplicationServiceTest {
+
+    UUID uuid = UUID.randomUUID();
 
     @Mock
     Person person;
@@ -37,9 +40,12 @@ public class PersonApplicationServiceTest {
     Gender gender;
     @Mock
     Nationality nationality;
+    @Mock
+    ChangeSexCommand changeSexCommand;
 
     @Mock
     PersonPersistanceRepository personPersistanceRepository;
+
     PersonApplicationService personApplicationService;
 
     PersonRegistrationCommand command;
@@ -70,9 +76,7 @@ public class PersonApplicationServiceTest {
     void registerNewPerson() {
         var queryCaptorFromRepo = ArgumentCaptor.forClass(PersonSearchQuery.class);
         given(personPersistanceRepository.isExist(queryCaptorFromRepo.capture())).willReturn(false);
-
-        UUID id = UUID.randomUUID();
-        given(person.id()).willReturn(id);
+        given(person.id()).willReturn(uuid);
 
         try (var personMockedStatic = mockStatic(Person.class);
              var queryConstructorMock = mockConstruction(PersonSearchQuery.class)) {
@@ -87,7 +91,7 @@ public class PersonApplicationServiceTest {
                     queryConstructorMock.constructed().get(0),
                     queryCaptorFromRepo.getValue()
             );
-            assertEquals(result, id);
+            assertEquals(result, uuid);
             verify(personPersistanceRepository).push(person);
         }
     }
@@ -122,25 +126,23 @@ public class PersonApplicationServiceTest {
 
     @Test
     void changeSexOfAPerson() {
-        UUID id = UUID.randomUUID();
-        LocalDateTime changeSexDate = LocalDateTime.now();
-        given(personPersistanceRepository.pull(id)).willReturn(Optional.of(person));
+        given(personPersistanceRepository.pull(uuid)).willReturn(Optional.of(person));
+        given(changeSexCommand.id()).willReturn(uuid);
 
-        personApplicationService.changeSex(id, Gender.FEMALE, changeSexDate);
+        assertDoesNotThrow(() -> personApplicationService.changeSex(changeSexCommand));
 
-        verify(person).changeSex(Gender.FEMALE, changeSexDate);
+        verify(person).changeSex(changeSexCommand);
     }
-
+    
     @Test
-    void changeSexButThrowNotFound() {
-        UUID id = UUID.randomUUID();
-        LocalDateTime changeSexDate = LocalDateTime.now();
-        given(personPersistanceRepository.pull(id)).willReturn(Optional.empty());
+    void changeSexThrowNotFoundIfUnknowId() {
+        given(personPersistanceRepository.pull(uuid)).willReturn(Optional.empty());
+        doReturn(uuid).when(changeSexCommand).id();
 
-        assertThatThrownBy(() -> personApplicationService.changeSex(id, Gender.FEMALE, changeSexDate))
+        assertThatThrownBy(() -> personApplicationService.changeSex(changeSexCommand))
                 .isInstanceOf(PersonNotFoundException.class)
-                .hasMessage("The person with if %s doesn't exist !", id);
+                .hasMessage("The person with if %s doesn't exist !", uuid);
 
-        verify(person, never()).changeSex(Gender.FEMALE, changeSexDate);
+        verify(person, never()).changeSex(changeSexCommand);
     }
 }

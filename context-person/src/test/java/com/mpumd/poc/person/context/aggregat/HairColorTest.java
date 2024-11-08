@@ -29,5 +29,4 @@ class HairColorTest {
                     .isEqualTo(HairColor.BLOND);
         }
     }
-
 }

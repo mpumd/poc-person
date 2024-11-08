@@ -9,5 +9,5 @@ import static io.cucumber.core.options.Constants.*;
 @SelectClasspathResource("com/mpumd/poc/person/application/feature")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
 @ConfigurationParameter(key = FILTER_TAGS_PROPERTY_NAME, value = "not @disabled")
-public class CucumberTest {
+public class ContextPersonBDDTest {
 }

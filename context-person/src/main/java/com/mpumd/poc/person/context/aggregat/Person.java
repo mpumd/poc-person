@@ -1,5 +1,6 @@
 package com.mpumd.poc.person.context.aggregat;
 
+import com.mpumd.poc.person.context.command.ChangeSexCommand;
 import com.mpumd.poc.person.context.command.InformPhysicalAppearanceCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import lombok.Getter;
@@ -9,9 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.UUID;
 
-import static java.util.Optional.*;
+import static java.util.Optional.ofNullable;
 
 @Slf4j
 @Getter
@@ -76,13 +79,13 @@ public class Person {
     }
 
     // TODO move to physicalAppearance
-    public void changeSex(@NonNull Gender sex, @NonNull LocalDateTime date) {
-        if (Gender.ALIEN.equals(sex)) {
+    public void changeSex(@NonNull ChangeSexCommand command) {
+        if (Gender.ALIEN.equals(command.gender())) {
             throw new IllegalArgumentException("%s can't become a Alien. No sugery exist to do that".formatted(lastName));
-        } else if (this.genderChangeHistory.lastEntry().getValue().equals(sex)) {
-            throw new IllegalArgumentException("%s is already a %s".formatted(lastName, sex));
+        } else if (this.genderChangeHistory.lastEntry().getValue().equals(command.gender())) {
+            throw new IllegalArgumentException("%s is already a %s".formatted(lastName, command.gender()));
         }
 
-        genderChangeHistory.putIfAbsent(date, sex);
+        genderChangeHistory.putIfAbsent(command.changeDate(), command.gender());
     }
 }
