@@ -1,6 +1,7 @@
 package com.mpumd.poc.person.sb.rest;
 
 import com.mpumd.poc.person.application.exception.PersonAlreadyExistException;
+import com.mpumd.poc.person.application.exception.PersonNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,13 @@ class RestExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(fillProblemDetailResponse(ex, HttpStatus.CONFLICT));
+    }
+
+    @ExceptionHandler(PersonNotFoundException.class)
+    ResponseEntity<ProblemDetail> handlePersonAlreadyExistException(PersonNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(fillProblemDetailResponse(ex, HttpStatus.UNPROCESSABLE_ENTITY));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

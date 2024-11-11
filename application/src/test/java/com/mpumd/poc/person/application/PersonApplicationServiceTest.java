@@ -6,7 +6,7 @@ import com.mpumd.poc.person.context.PersonPersistanceRepository;
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.aggregat.Person;
-import com.mpumd.poc.person.context.command.ChangeSexCommand;
+import com.mpumd.poc.person.context.command.GenderChangeCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +41,7 @@ public class PersonApplicationServiceTest {
     @Mock
     Nationality nationality;
     @Mock
-    ChangeSexCommand changeSexCommand;
+    GenderChangeCommand genderChangeCommand;
 
     @Mock
     PersonPersistanceRepository personPersistanceRepository;
@@ -127,22 +127,22 @@ public class PersonApplicationServiceTest {
     @Test
     void changeSexOfAPerson() {
         given(personPersistanceRepository.pull(uuid)).willReturn(Optional.of(person));
-        given(changeSexCommand.id()).willReturn(uuid);
+        given(genderChangeCommand.id()).willReturn(uuid);
 
-        assertDoesNotThrow(() -> personApplicationService.changeSex(changeSexCommand));
+        assertDoesNotThrow(() -> personApplicationService.changeSex(genderChangeCommand));
 
-        verify(person).changeSex(changeSexCommand);
+        verify(person).changeSex(genderChangeCommand);
     }
     
     @Test
     void changeSexThrowNotFoundIfUnknowId() {
         given(personPersistanceRepository.pull(uuid)).willReturn(Optional.empty());
-        doReturn(uuid).when(changeSexCommand).id();
+        doReturn(uuid).when(genderChangeCommand).id();
 
-        assertThatThrownBy(() -> personApplicationService.changeSex(changeSexCommand))
+        assertThatThrownBy(() -> personApplicationService.changeSex(genderChangeCommand))
                 .isInstanceOf(PersonNotFoundException.class)
                 .hasMessage("The person with if %s doesn't exist !", uuid);
 
-        verify(person, never()).changeSex(changeSexCommand);
+        verify(person, never()).changeSex(genderChangeCommand);
     }
 }

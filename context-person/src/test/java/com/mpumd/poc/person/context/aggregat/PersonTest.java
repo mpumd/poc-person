@@ -1,7 +1,7 @@
 package com.mpumd.poc.person.context.aggregat;
 
 
-import com.mpumd.poc.person.context.command.ChangeSexCommand;
+import com.mpumd.poc.person.context.command.GenderChangeCommand;
 import com.mpumd.poc.person.context.command.InformPhysicalAppearanceCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import lombok.extern.slf4j.Slf4j;
@@ -219,7 +219,7 @@ class PersonTest {
         var history = new TreeMap(Map.of(person.birthDate().toLocalDateTime(), Gender.MALE));
         ReflectionTestUtils.setField(person, "genderChangeHistory", history);
         var changeDate = LocalDateTime.now();
-        var changeSexCommand = new ChangeSexCommand(UUID.randomUUID(), Gender.FEMALE, changeDate);
+        var changeSexCommand = new GenderChangeCommand(UUID.randomUUID(), Gender.FEMALE, changeDate);
 
         person.changeSex(changeSexCommand);
 
@@ -238,7 +238,7 @@ class PersonTest {
         var history = new TreeMap(Map.of(person.birthDate().toLocalDateTime(), Gender.FEMALE));
         ReflectionTestUtils.setField(person, "genderChangeHistory", history);
         var changeDate = LocalDateTime.now();
-        var changeSexCommand = new ChangeSexCommand(UUID.randomUUID(), Gender.FEMALE, changeDate);
+        var changeSexCommand = new GenderChangeCommand(UUID.randomUUID(), Gender.FEMALE, changeDate);
 
         assertThatThrownBy(() -> person.changeSex(changeSexCommand))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -253,7 +253,7 @@ class PersonTest {
         var history = new TreeMap(Map.of(person.birthDate().toLocalDateTime(), Gender.MALE));
         ReflectionTestUtils.setField(person, "genderChangeHistory", history);
         var changeDate = LocalDateTime.now();
-        var changeSexCommand = new ChangeSexCommand(UUID.randomUUID(), Gender.ALIEN, changeDate);
+        var changeSexCommand = new GenderChangeCommand(UUID.randomUUID(), Gender.ALIEN, changeDate);
 
         assertThatThrownBy(() -> person.changeSex(changeSexCommand))
                 .isInstanceOf(IllegalArgumentException.class)

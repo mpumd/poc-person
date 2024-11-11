@@ -7,6 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAccessor;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 public class RandomRecordFiller {
     private static final Random random = new Random();
@@ -65,9 +66,11 @@ public class RandomRecordFiller {
             return random.nextDouble(Double.MAX_VALUE);
         } else if (type == boolean.class || type == Boolean.class) {
             return random.nextBoolean();
+        } else if (type == UUID.class) {
+            return UUID.randomUUID();
         } else if (type == String.class) {
             return generateRandomString(30);
-        }else if (TemporalAccessor.class.isAssignableFrom(type)) {
+        } else if (TemporalAccessor.class.isAssignableFrom(type)) {
             return generateRandomDate(type);
         }
         // Ajoutez d'autres types si nécessaire

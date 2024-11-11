@@ -4,7 +4,7 @@ import com.mpumd.poc.person.application.exception.PersonAlreadyExistException;
 import com.mpumd.poc.person.application.exception.PersonNotFoundException;
 import com.mpumd.poc.person.context.PersonPersistanceRepository;
 import com.mpumd.poc.person.context.aggregat.Person;
-import com.mpumd.poc.person.context.command.ChangeSexCommand;
+import com.mpumd.poc.person.context.command.GenderChangeCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import lombok.NonNull;
@@ -29,7 +29,7 @@ public abstract class PersonApplicationService {
         return person.id();
     }
 
-    public void changeSex(@NonNull ChangeSexCommand command) {
+    public void changeSex(@NonNull GenderChangeCommand command) {
         Person person = personPersistanceRepository.pull(command.id()).orElseThrow(
                 () -> new PersonNotFoundException(command.id()));
 

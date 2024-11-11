@@ -27,3 +27,9 @@ mvn -T 1C clean install -DskipTests && mvn spring-boot:run -pl infra-spring/sb-b
 - http://localhost:8090/spring/swagger-ui
 - http://localhost:8090/spring/actuator
 - http://localhost:8090/spring/admin
+
+## Hot reload
+
+[Spring Boot Auto Restart and Live Reload in IntelliJ IDEA Ultimate](https://www.codejava.net/frameworks/spring-boot/spring-boot-auto-restart-and-live-reload-in-intellij-idea)
+
+Ctrl+f9 is enough for intellij community

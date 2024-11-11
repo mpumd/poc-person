@@ -1,6 +1,6 @@
 services:
   postgres:
-    container_name: postgres-person
+    container_name: poc-person-postgres-dev
     image: 'postgres:17-alpine'
     environment:
       - 'POSTGRES_DB=persondb'

@@ -2,7 +2,7 @@ package com.mpumd.poc.person.sb.application;
 
 import com.mpumd.poc.person.application.PersonApplicationService;
 import com.mpumd.poc.person.context.PersonPersistanceRepository;
-import com.mpumd.poc.person.context.command.ChangeSexCommand;
+import com.mpumd.poc.person.context.command.GenderChangeCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +30,7 @@ class PersonAppSvcTest {
     @Mock
     PersonRegistrationCommand registerCmd;
     @Mock
-    ChangeSexCommand changeSexCommand;
+    GenderChangeCommand genderChangeCommand;
 
     @Test
     void shouldCallSuperRegister() {
@@ -46,12 +46,12 @@ class PersonAppSvcTest {
 
     @Test
     void shouldCallSuperChangeSex() {
-        var captor = ArgumentCaptor.forClass(ChangeSexCommand.class);
+        var captor = ArgumentCaptor.forClass(GenderChangeCommand.class);
         doNothing().when((PersonApplicationService)personAppSvc).changeSex(captor.capture());
 
-        personAppSvc.changeSex(changeSexCommand);
+        personAppSvc.changeSex(genderChangeCommand);
 
-        assertEquals(captor.getValue(), changeSexCommand);
+        assertEquals(captor.getValue(), genderChangeCommand);
     }
 
 }

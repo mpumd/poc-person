@@ -4,7 +4,7 @@ import com.mpumd.poc.person.application.PersonApplicationService;
 import com.mpumd.poc.person.application.PersonPersistanceInMemory;
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
-import com.mpumd.poc.person.context.command.ChangeSexCommand;
+import com.mpumd.poc.person.context.command.GenderChangeCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
@@ -106,7 +106,7 @@ public class ChangeSexFeature {
     @When("I engage the changeSex business act")
     public void callChangeSex() {
         try {
-            var command = new ChangeSexCommand(
+            var command = new GenderChangeCommand(
                     personRepoInMemory.persons().get(0).id(),
                     newGender,
                     changeGenderDate

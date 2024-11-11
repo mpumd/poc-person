@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class ChangeSexCommandTest {
+class GenderChangeCommandTest {
 
     UUID id = UUID.randomUUID();
     Gender gender = Gender.FEMALE;
@@ -16,21 +16,21 @@ class ChangeSexCommandTest {
 
     @Test
     void throwExOnNullId() {
-        assertThatThrownBy(() -> new ChangeSexCommand(null, gender, changeDate))
+        assertThatThrownBy(() -> new GenderChangeCommand(null, gender, changeDate))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("id is marked non-null but is null");
     }
 
     @Test
     void throwExOnNullGender() {
-        assertThatThrownBy(() -> new ChangeSexCommand(id, null, changeDate))
+        assertThatThrownBy(() -> new GenderChangeCommand(id, null, changeDate))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("gender is marked non-null but is null");
     }
 
     @Test
     void throwExOnNullChangeDate() {
-        assertThatThrownBy(() -> new ChangeSexCommand(id, gender, null))
+        assertThatThrownBy(() -> new GenderChangeCommand(id, gender, null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("changeDate is marked non-null but is null");
     }

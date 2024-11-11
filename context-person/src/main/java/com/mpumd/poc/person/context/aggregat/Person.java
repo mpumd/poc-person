@@ -1,6 +1,6 @@
 package com.mpumd.poc.person.context.aggregat;
 
-import com.mpumd.poc.person.context.command.ChangeSexCommand;
+import com.mpumd.poc.person.context.command.GenderChangeCommand;
 import com.mpumd.poc.person.context.command.InformPhysicalAppearanceCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import lombok.Getter;
@@ -79,7 +79,7 @@ public class Person {
     }
 
     // TODO move to physicalAppearance
-    public void changeSex(@NonNull ChangeSexCommand command) {
+    public void changeSex(@NonNull GenderChangeCommand command) {
         if (Gender.ALIEN.equals(command.gender())) {
             throw new IllegalArgumentException("%s can't become a Alien. No sugery exist to do that".formatted(lastName));
         } else if (this.genderChangeHistory.lastEntry().getValue().equals(command.gender())) {
