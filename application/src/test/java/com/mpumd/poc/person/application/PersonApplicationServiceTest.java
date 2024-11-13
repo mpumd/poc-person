@@ -33,7 +33,7 @@ public class PersonApplicationServiceTest {
     UUID uuid = UUID.randomUUID();
 
     @Mock
-    Person person;
+    Person personAggregateRoot;
     @Mock
     ZonedDateTime birthDate;
     @Mock
@@ -76,12 +76,12 @@ public class PersonApplicationServiceTest {
     void registerNewPerson() {
         var queryCaptorFromRepo = ArgumentCaptor.forClass(PersonSearchQuery.class);
         given(personPersistanceRepository.isExist(queryCaptorFromRepo.capture())).willReturn(false);
-        given(person.id()).willReturn(uuid);
+        given(personAggregateRoot.id()).willReturn(uuid);
 
         try (var personMockedStatic = mockStatic(Person.class);
              var queryConstructorMock = mockConstruction(PersonSearchQuery.class)) {
 
-            personMockedStatic.when(() -> Person.register(command)).thenReturn(person);
+            personMockedStatic.when(() -> Person.register(command)).thenReturn(personAggregateRoot);
 
             // when
             UUID result = personApplicationService.register(command);
@@ -92,7 +92,7 @@ public class PersonApplicationServiceTest {
                     queryCaptorFromRepo.getValue()
             );
             assertEquals(result, uuid);
-            verify(personPersistanceRepository).push(person);
+            verify(personPersistanceRepository).push(personAggregateRoot);
         }
     }
 
@@ -120,18 +120,19 @@ public class PersonApplicationServiceTest {
 
 
             mockedStatic.verify(() -> Person.register(command));
-            verify(personPersistanceRepository, never()).push(person);
+            verify(personPersistanceRepository, never()).push(personAggregateRoot);
         }
     }
 
     @Test
     void changeSexOfAPerson() {
-        given(personPersistanceRepository.pull(uuid)).willReturn(Optional.of(person));
+        given(personPersistanceRepository.pull(uuid)).willReturn(Optional.of(personAggregateRoot));
         given(genderChangeCommand.id()).willReturn(uuid);
 
         assertDoesNotThrow(() -> personApplicationService.changeSex(genderChangeCommand));
 
-        verify(person).changeSex(genderChangeCommand);
+        verify(personAggregateRoot).changeSex(genderChangeCommand);
+        verify(personPersistanceRepository).push(personAggregateRoot);
     }
     
     @Test
@@ -143,6 +144,7 @@ public class PersonApplicationServiceTest {
                 .isInstanceOf(PersonNotFoundException.class)
                 .hasMessage("The person with if %s doesn't exist !", uuid);
 
-        verify(person, never()).changeSex(genderChangeCommand);
+        verify(personAggregateRoot, never()).changeSex(genderChangeCommand);
+        verify(personPersistanceRepository, never()).push(personAggregateRoot);
     }
 }

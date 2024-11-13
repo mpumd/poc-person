@@ -3,6 +3,7 @@ package com.mpumd.poc.person.context.aggregat;
 import com.mpumd.poc.person.context.command.GenderChangeCommand;
 import com.mpumd.poc.person.context.command.InformPhysicalAppearanceCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +65,19 @@ public class Person {
 
         this.nationality = ofNullable(cmd.nationality())
                 .orElseThrow(() -> new IllegalArgumentException("nationality must not be null"));
+    }
+
+    // TODO maybe it exist a better way like a pattern to instanciate the person ; a protected constructor or abstract factory...
+    @Builder(builderMethodName = "builderFromRepository")
+    private Person(UUID id, String firstName, String lastName, ZonedDateTime birthDate, String birthPlace,
+                   Map<LocalDateTime, Gender> genders, Nationality nationality) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.birthPlace = birthPlace;
+        this.nationality = nationality;
+        this.genderChangeHistory.putAll(genders);
     }
 
     public static Person register(PersonRegistrationCommand cmd) {

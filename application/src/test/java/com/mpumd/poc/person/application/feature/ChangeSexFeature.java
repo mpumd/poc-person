@@ -131,6 +131,7 @@ public class ChangeSexFeature {
         assertThat(personRepoInMemory.persons().get(0))
                 .extracting("genderChangeHistory")
                 .asInstanceOf(InstanceOfAssertFactories.MAP)
+                .hasSize(2)
                 .containsExactlyEntriesOf(genderMap);
     }
 
@@ -144,14 +145,4 @@ public class ChangeSexFeature {
                 .hasMessage(message);
 
     }
-//    @Then("The system refuse to change the gender with the following message {string}")
-//    public void checkExIfTheGenderIsSame(String message) {
-//        assertThat(exceptions)
-//                .hasSize(1)
-//                .first()
-//                .asInstanceOf(InstanceOfAssertFactories.THROWABLE)
-//                .isInstanceOf(IllegalArgumentException.class)
-//                .hasMessage(message);
-//
-//    }
 }

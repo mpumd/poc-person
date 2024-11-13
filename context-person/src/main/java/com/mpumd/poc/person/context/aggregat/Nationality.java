@@ -15,7 +15,7 @@ public enum Nationality {
 
     private final String label;
 
-    Nationality(String label) {
+     Nationality(String label) {
         this.label = label;
     }
 

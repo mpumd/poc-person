@@ -2,10 +2,7 @@ package com.mpumd.poc.person.sb;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import lombok.Getter;
-import org.junit.platform.suite.api.ConfigurationParameter;
-import org.junit.platform.suite.api.IncludeEngines;
-import org.junit.platform.suite.api.SelectFile;
-import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.*;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -17,15 +14,20 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.List;
+
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 // *** Cucumber Junit Runner
-@Getter
 @Suite
 @IncludeEngines("cucumber")
-@SelectFile("../../application/src/test/resources/com/mpumd/poc/person/application/feature/registerPerson.feature")
+@SelectFiles({
+        // TODO how to match a folder instead of a specific file ?
+//        @SelectFile("../../application/src/test/resources/com/mpumd/poc/person/application/feature/registerPerson.feature"),
+        @SelectFile("../../application/src/test/resources/com/mpumd/poc/person/application/feature/changeSex.feature")
+})
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
 @ConfigurationParameter(key = FILTER_TAGS_PROPERTY_NAME, value = "not @disabled")
 // root package in glue property to target the CucumberContextConfiguration annotation
@@ -50,14 +52,16 @@ public class PersonApplicationBDDIT {
     /* DEV : activate the block to fix the port and easy use an SQL client
      * to finally inspect manually the updated schema
      */
-//    static {
-//        // Internal PostgreSQL port
-//        dbContainer.withExposedPorts(5432);
-//        // Bind host port 5432 to container port 5432
-//        dbContainer.setPortBindings(List.of("5432:5432"));
-//    }
+    static {
+        // Internal PostgreSQL port
+        dbContainer.withExposedPorts(5432);
+        // Bind host port 5432 to container port 5432
+        dbContainer.setPortBindings(List.of("5432:5432"));
+    }
 
+    @Getter
     private JdbcClient jdbcClient;
+    @Getter
     private RestClient restClient;
 
     /* static { dbContainer.start(); } */

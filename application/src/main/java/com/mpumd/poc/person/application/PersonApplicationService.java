@@ -34,5 +34,6 @@ public abstract class PersonApplicationService {
                 () -> new PersonNotFoundException(command.id()));
 
         person.changeSex(command);
+        personPersistanceRepository.push(person);
     }
 }
