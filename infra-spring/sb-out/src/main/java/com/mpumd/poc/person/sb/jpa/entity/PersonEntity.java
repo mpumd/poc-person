@@ -49,7 +49,7 @@ public class PersonEntity {
 
     @Column(name = "nationality")
     // TODO we can use this enum type here and use the jakarta converter to convert in string at persist
-    // @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     private String nationality;
 }
 

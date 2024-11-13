@@ -1,6 +1,7 @@
 package com.mpumd.poc.person.sb.jpa.mapper;
 
 import com.mpumd.poc.person.context.aggregat.Gender;
+import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
@@ -72,5 +73,51 @@ class PersonDomainJPAMapperTest {
         assertThat((Map<LocalDateTime, Gender>) ReflectionTestUtils.getField(entity, "genderChangeHistory"))
                 .hasSize(1)
                 .containsExactly(entry(LocalDateTime.parse("2003-10-03T15:30:00"), Gender.MALE));
+    }
+
+    @Test
+    void mapAllNullValuesFromQueryToJPAEntities() {
+        // given
+        PersonSearchQuery query = mock();
+        assertThat(query).hasAllNullFieldsOrProperties();
+
+        // when
+        PersonEntity entity = PersonDomainJPAMapper.toJpa(query);
+
+        // then entity
+        assertThat(entity)
+                .isNotNull()
+                .hasAllNullFieldsOrProperties();
+
+    }
+
+    @Test
+    void mapAllFilledValuesFromJPAEntitiesToAggregat() {
+        var entity = easyRandom.nextObject(PersonEntity.class);
+        assertThat(entity).hasNoNullFieldsOrProperties();
+        ReflectionTestUtils.setField(entity, "nationality", Nationality.FR.toString());
+
+        Person aggregateRoot = PersonDomainJPAMapper.toDomain(entity);
+
+        assertThat(aggregateRoot)
+                .isNotNull()
+                .usingRecursiveComparison()
+                .withEnumStringComparison()
+                .ignoringFields("physicalAppearance")
+                .isEqualTo(entity);
+    }
+
+    @Test
+    void mapAllNullValuesFromJPAEntitiesToAggregat() {
+        PersonEntity entity = mock();
+        assertThat(entity).hasAllNullFieldsOrProperties();
+
+        Person aggregateRoot = PersonDomainJPAMapper.toDomain(entity);
+
+        assertThat(aggregateRoot)
+                .isNotNull()
+                .hasAllNullFieldsOrPropertiesExcept("genderChangeHistory");
+
+        assertThat(aggregateRoot.genderChangeHistory()).isEmpty();
     }
 }

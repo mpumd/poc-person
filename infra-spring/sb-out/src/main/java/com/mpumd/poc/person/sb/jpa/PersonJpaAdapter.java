@@ -22,8 +22,8 @@ public class PersonJpaAdapter implements PersonPersistanceRepository {
 
     @Override
     public Optional<Person> pull(UUID uuid) {
-        // WIP
-        return Optional.empty();
+        return personSpringRepo.findById(uuid)
+                .map(e ->PersonDomainJPAMapper.toDomain(e));
     }
 
     @Override

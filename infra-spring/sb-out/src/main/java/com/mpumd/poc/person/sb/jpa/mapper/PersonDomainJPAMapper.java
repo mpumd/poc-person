@@ -1,5 +1,6 @@
 package com.mpumd.poc.person.sb.jpa.mapper;
 
+import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
@@ -44,5 +45,17 @@ public final class PersonDomainJPAMapper {
                 .ifPresent(builder::genderChangeHistory);
 
         return builder.build();
+    }
+
+    public static Person toDomain(PersonEntity jpaEntity) {
+        return Person.builderFromRepository()
+                .id(jpaEntity.id())
+                .firstName(jpaEntity.firstName())
+                .lastName(jpaEntity.lastName())
+                .birthDate(jpaEntity.birthDate())
+                .birthPlace(jpaEntity.birthPlace())
+                .nationality(ofNullable(jpaEntity.nationality()).map(Nationality::valueOfName).orElse(null))
+                .genders(ofNullable(jpaEntity.genderChangeHistory()).orElse(Map.of()))
+                .build();
     }
 }
