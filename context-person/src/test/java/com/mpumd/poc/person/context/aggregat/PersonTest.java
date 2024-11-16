@@ -80,6 +80,7 @@ class PersonTest {
                 faker.timeAndDate().birthday(0, 150),
                 LocalTime.now(),
                 ZoneId.of("Europe/Paris"));
+
         log.info("firstName {}, lastName {}", firstName, lastName);
         var gender = Gender.ALIEN;
         var birthPlace = faker.space().planet();
@@ -96,12 +97,14 @@ class PersonTest {
         // when
         Person person = Person.register(prc);
 
+        var birthDateWithNoMilliSec = birthDate.truncatedTo(ChronoUnit.SECONDS);
+
         // then
         assertThat(person)
                 .extracting("firstName", "lastName", "birthDate", "genderChangeHistory", "birthPlace",
                         "nationality")
-                .containsExactly(firstName, lastName, birthDate,
-                        Map.of(prc.birthDate().toLocalDateTime(), gender),
+                .containsExactly(firstName, lastName, birthDateWithNoMilliSec,
+                        Map.of(birthDateWithNoMilliSec.toLocalDateTime(), gender),
                         birthPlace, nationality);
 
         assertThat(person)

@@ -47,34 +47,18 @@ public class Person {
     }
 
     private Person(@NonNull PersonRegistrationCommand cmd, @NonNull UUID id) {
+        var birthDateTruncateMillis = cmd.birthDate().truncatedTo(ChronoUnit.SECONDS);
+
         this.id = id;
         this.firstName = cmd.firstName();
         this.lastName = cmd.lastName();
-        this.birthDate = cmd.birthDate();
+        this.birthDate = birthDateTruncateMillis;
         this.birthPlace = cmd.birthPlace();
         this.nationality = cmd.nationality();
-        this.genderChangeHistory.put(cmd.birthDate().toLocalDateTime(), cmd.gender());
-
-//        this.firstName = ofNullable(cmd.firstName())
-//                .filter(s -> !s.isBlank())
-//                .orElseThrow(() -> new IllegalArgumentException("firstName must not be empty"));
-//        this.lastName = ofNullable(cmd.lastName())
-//                .filter(s -> !s.isBlank())
-//                .orElseThrow(() -> new IllegalArgumentException("lastName must not be empty"));
-//        this.birthDate = ofNullable(cmd.birthDate())
-//                .orElseThrow(() -> new IllegalArgumentException("birthDate must not be null"));
-//        this.birthPlace = ofNullable(cmd.birthPlace())
-//                .filter(s -> !s.isBlank())
-//                .orElseThrow(() -> new IllegalArgumentException("birthPlace must not be empty"));
-//        genderChangeHistory.put(cmd.birthDate().toLocalDateTime(), cmd.gender());
-//                .map(gender -> Map.of(cmd.birthDate().toLocalDateTime(), gender))
-//                .orElseThrow(() -> new IllegalArgumentException("gender must not be null"));
-//        );
-//        this.nationality = ofNullable(cmd.nationality())
-//                .orElseThrow(() -> new IllegalArgumentException("nationality must not be null"));
+        this.genderChangeHistory.put(birthDateTruncateMillis.toLocalDateTime(), cmd.gender());
     }
-    // TODO maybe it exist a better way like a pattern to instanciate the person ; a protected constructor or abstract factory...
 
+    // TODO maybe it exist a better way like a pattern to instanciate the person ; a protected constructor or abstract factory...
     @Builder(builderMethodName = "builderFromRepository")
     private Person(UUID id, String firstName, String lastName, ZonedDateTime birthDate, String birthPlace,
                    Map<LocalDateTime, Gender> genders, Nationality nationality) {
