@@ -6,7 +6,7 @@ import com.mpumd.poc.person.context.command.GenderChangeCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.sb.rest.RandomRecordFiller;
 import com.mpumd.poc.person.sb.rest.resource.GenderChangeResource;
-import com.mpumd.poc.person.sb.rest.resource.PersonRegisterResource;
+import com.mpumd.poc.person.sb.rest.resource.RegisterPersonResource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +22,7 @@ class PersonDomainRestMapperTest {
 
     @Test
     void mapAllFilledValuesFromPersonRegisterResourceToCmd() throws Exception {
-        var resource = RandomRecordFiller.fillRandomly(PersonRegisterResource.class, Map.of(
+        var resource = RandomRecordFiller.fillRandomly(RegisterPersonResource.class, Map.of(
                 "gender", Gender.ALIEN.toString().toLowerCase(),
                 "nationality", Nationality.TT.toString()
         ));
@@ -41,14 +41,21 @@ class PersonDomainRestMapperTest {
 
     @Test
     void mapAllNullValuesFromPersonRegisterResourceToAggregat() {
-        PersonRegisterResource resource = mock();
+        RegisterPersonResource resource = mock();
         assertThat(resource).hasAllNullFieldsOrProperties();
 
-        PersonRegistrationCommand command = PersonDomainRestMapper.toDomain(resource);
+        try (var prcStaticMock = mockConstruction(PersonRegistrationCommand.class)) {
+            PersonRegistrationCommand command = PersonDomainRestMapper.toDomain(resource);
 
-        assertThat(command)
-                .isNotNull()
-                .hasAllNullFieldsOrProperties();
+            assertThat(command)
+                    .isNotNull()
+                    .hasAllNullFieldsOrProperties();
+
+            assertThat(prcStaticMock.constructed())
+                    .hasSize(1)
+                    .first()
+                    .isEqualTo(command);
+        }
     }
 
     @Test

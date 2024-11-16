@@ -1,12 +1,11 @@
 package com.mpumd.poc.person.sb.rest.resource;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.ZonedDateTime;
 
 @Schema(description = "Payload for creating a person resource")
-public record PersonRegisterResource(
+public record RegisterPersonResource(
 
         @Schema(description= "First name of the person", example = "John")
         String firstName,

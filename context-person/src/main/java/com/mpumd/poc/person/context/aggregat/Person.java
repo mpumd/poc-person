@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import static java.util.Optional.ofNullable;
-
 @Slf4j
 @Getter
 public class Person {
@@ -44,30 +42,39 @@ public class Person {
 
 //    private final SignificantPossessions significantPossessions;
 
-    private Person(@NonNull PersonRegistrationCommand cmd, @NonNull UUID id) {
-        this.id = id;
-        this.firstName = ofNullable(cmd.firstName())
-                .filter(s -> !s.isBlank())
-                .orElseThrow(() -> new IllegalArgumentException("firstName must not be empty"));
-        this.lastName = ofNullable(cmd.lastName())
-                .filter(s -> !s.isBlank())
-                .orElseThrow(() -> new IllegalArgumentException("lastName must not be empty"));
-        this.birthDate = ofNullable(cmd.birthDate())
-                .orElseThrow(() -> new IllegalArgumentException("birthDate must not be null"));
-        this.birthPlace = ofNullable(cmd.birthPlace())
-                .filter(s -> !s.isBlank())
-                .orElseThrow(() -> new IllegalArgumentException("birthPlace must not be empty"));
-
-        genderChangeHistory.putAll(ofNullable(cmd.gender())
-                .map(gender -> Map.of(birthDate.toLocalDateTime(), gender))
-                .orElseThrow(() -> new IllegalArgumentException("gender must not be null"))
-        );
-
-        this.nationality = ofNullable(cmd.nationality())
-                .orElseThrow(() -> new IllegalArgumentException("nationality must not be null"));
+    public static Person register(PersonRegistrationCommand cmd) {
+        return new Person(cmd, UUID.randomUUID());
     }
 
+    private Person(@NonNull PersonRegistrationCommand cmd, @NonNull UUID id) {
+        this.id = id;
+        this.firstName = cmd.firstName();
+        this.lastName = cmd.lastName();
+        this.birthDate = cmd.birthDate();
+        this.birthPlace = cmd.birthPlace();
+        this.nationality = cmd.nationality();
+        this.genderChangeHistory.put(cmd.birthDate().toLocalDateTime(), cmd.gender());
+
+//        this.firstName = ofNullable(cmd.firstName())
+//                .filter(s -> !s.isBlank())
+//                .orElseThrow(() -> new IllegalArgumentException("firstName must not be empty"));
+//        this.lastName = ofNullable(cmd.lastName())
+//                .filter(s -> !s.isBlank())
+//                .orElseThrow(() -> new IllegalArgumentException("lastName must not be empty"));
+//        this.birthDate = ofNullable(cmd.birthDate())
+//                .orElseThrow(() -> new IllegalArgumentException("birthDate must not be null"));
+//        this.birthPlace = ofNullable(cmd.birthPlace())
+//                .filter(s -> !s.isBlank())
+//                .orElseThrow(() -> new IllegalArgumentException("birthPlace must not be empty"));
+//        genderChangeHistory.put(cmd.birthDate().toLocalDateTime(), cmd.gender());
+//                .map(gender -> Map.of(cmd.birthDate().toLocalDateTime(), gender))
+//                .orElseThrow(() -> new IllegalArgumentException("gender must not be null"));
+//        );
+//        this.nationality = ofNullable(cmd.nationality())
+//                .orElseThrow(() -> new IllegalArgumentException("nationality must not be null"));
+    }
     // TODO maybe it exist a better way like a pattern to instanciate the person ; a protected constructor or abstract factory...
+
     @Builder(builderMethodName = "builderFromRepository")
     private Person(UUID id, String firstName, String lastName, ZonedDateTime birthDate, String birthPlace,
                    Map<LocalDateTime, Gender> genders, Nationality nationality) {
@@ -78,10 +85,6 @@ public class Person {
         this.birthPlace = birthPlace;
         this.nationality = nationality;
         this.genderChangeHistory.putAll(genders);
-    }
-
-    public static Person register(PersonRegistrationCommand cmd) {
-        return new Person(cmd, UUID.randomUUID());
     }
 
     public void informPhysicalAppearance(InformPhysicalAppearanceCommand cmd) {

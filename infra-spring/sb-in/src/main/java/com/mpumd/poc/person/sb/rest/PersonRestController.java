@@ -4,7 +4,7 @@ import com.mpumd.poc.person.sb.application.PersonAppSvc;
 import com.mpumd.poc.person.sb.rest.mapper.PersonDomainRestMapper;
 import com.mpumd.poc.person.sb.rest.resource.GenderChangeResource;
 import com.mpumd.poc.person.sb.rest.resource.PersonCreatedResponse;
-import com.mpumd.poc.person.sb.rest.resource.PersonRegisterResource;
+import com.mpumd.poc.person.sb.rest.resource.RegisterPersonResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -41,7 +41,7 @@ public class PersonRestController {
     })
     @PostMapping("/person")
     @ResponseStatus(HttpStatus.CREATED)
-    public PersonCreatedResponse register(@RequestBody PersonRegisterResource cmd) {
+    public PersonCreatedResponse register(@RequestBody RegisterPersonResource cmd) {
         var uuid = personAppSvc.register(PersonDomainRestMapper.toDomain(cmd));
         return new PersonCreatedResponse(uuid);
     }

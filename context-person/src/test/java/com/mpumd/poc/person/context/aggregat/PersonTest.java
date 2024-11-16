@@ -10,11 +10,10 @@ import org.assertj.core.api.InstanceOfAssertFactories;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.FieldPredicates;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.lang.reflect.Field;
@@ -41,7 +40,8 @@ class PersonTest {
 
     PersonRegistrationCommand prc;
 
-    {
+    @BeforeEach
+    void setUp() {
         prc = easyRandom.nextObject(PersonRegistrationCommand.class);
         assertThat(prc).hasNoNullFieldsOrProperties();
     }
@@ -54,11 +54,22 @@ class PersonTest {
     }
 
     @Test
-    void shouldThrowExIfCommandIsNull() {
+    void KO_NullCommand() {
         assertThatThrownBy(() -> Person.register(null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("cmd is marked non-null but is null");
     }
+
+    @Test
+    void KO_NullUUID() {
+        try (var mockedUUID = mockStatic(UUID.class)) {
+            mockedUUID.when(UUID::randomUUID).thenReturn(null);
+            assertThatThrownBy(() -> Person.register(prc))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("id is marked non-null but is null");
+        }
+    }
+
 
     @Test
     void OK_personAggregateRoot() {
@@ -98,72 +109,6 @@ class PersonTest {
                 .isNotNull();
     }
 
-    @ParameterizedTest
-    @NullAndEmptySource
-    void KO_firstName(String val) {
-        ReflectionTestUtils.setField(prc, "firstName", val);
-
-        assertThatThrownBy(() -> Person.register(prc))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("firstName must not be empty");
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    void KO_lastName(String val) {
-        ReflectionTestUtils.setField(prc, "lastName", val);
-
-        assertThatThrownBy(() -> Person.register(prc))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("lastName must not be empty");
-    }
-
-    @Test
-    void KO_birthDate() {
-        ReflectionTestUtils.setField(prc, "birthDate", null);
-
-        assertThatThrownBy(() -> Person.register(prc))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("birthDate must not be null");
-    }
-
-    @Test
-    void KO_gender() {
-        ReflectionTestUtils.setField(prc, "gender", null);
-
-        assertThatThrownBy(() -> Person.register(prc))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("gender must not be null");
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    void KO_birthPlace(String val) {
-        ReflectionTestUtils.setField(prc, "birthPlace", val);
-
-        assertThatThrownBy(() -> Person.register(prc))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("birthPlace must not be empty");
-    }
-
-    @Test
-    void KO_nationality() {
-        ReflectionTestUtils.setField(prc, "nationality", null);
-
-        assertThatThrownBy(() -> Person.register(prc))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("nationality must not be null");
-    }
-
-    @Test
-    void KO_UUID() {
-        try (var mockedUUID = mockStatic(UUID.class)) {
-            mockedUUID.when(UUID::randomUUID).thenReturn(null);
-            assertThatThrownBy(() -> Person.register(prc))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("id is marked non-null but is null");
-        }
-    }
 
     @Test
     void should_informPhysicalAppearanceAndSetInstanceAttribut() {

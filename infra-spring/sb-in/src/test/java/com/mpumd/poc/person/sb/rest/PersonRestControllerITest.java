@@ -8,7 +8,7 @@ import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.sb.application.PersonAppSvc;
 import com.mpumd.poc.person.sb.rest.mapper.PersonDomainRestMapper;
 import com.mpumd.poc.person.sb.rest.resource.GenderChangeResource;
-import com.mpumd.poc.person.sb.rest.resource.PersonRegisterResource;
+import com.mpumd.poc.person.sb.rest.resource.RegisterPersonResource;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -74,7 +74,7 @@ class PersonRestControllerITest {
     @Test
     void register201() throws Exception {
         try (var mapperMock = mockStatic(PersonDomainRestMapper.class)) {
-            var resourceCaptor = ArgumentCaptor.forClass(PersonRegisterResource.class);
+            var resourceCaptor = ArgumentCaptor.forClass(RegisterPersonResource.class);
             mapperMock.when(() -> PersonDomainRestMapper.toDomain(resourceCaptor.capture())).thenReturn(registerCmd);
             given(appService.register(registerCmd)).willReturn(id);
 
@@ -95,7 +95,7 @@ class PersonRestControllerITest {
     @Test
     void register409() throws Exception {
         try (var mapperMock = mockStatic(PersonDomainRestMapper.class)) {
-            mapperMock.when(() -> PersonDomainRestMapper.toDomain(any(PersonRegisterResource.class))).thenReturn(registerCmd);
+            mapperMock.when(() -> PersonDomainRestMapper.toDomain(any(RegisterPersonResource.class))).thenReturn(registerCmd);
 
             given(appService.register(registerCmd)).willThrow(new PersonAlreadyExistException("person already exist"));
 
@@ -113,7 +113,7 @@ class PersonRestControllerITest {
     @Test
     void register400() throws Exception {
         try (var mapperMock = mockStatic(PersonDomainRestMapper.class)) {
-            mapperMock.when(() -> PersonDomainRestMapper.toDomain(any(PersonRegisterResource.class))).thenReturn(registerCmd);
+            mapperMock.when(() -> PersonDomainRestMapper.toDomain(any(RegisterPersonResource.class))).thenReturn(registerCmd);
 
             given(appService.register(registerCmd)).willThrow(new IllegalArgumentException("field value is wrong"));
 

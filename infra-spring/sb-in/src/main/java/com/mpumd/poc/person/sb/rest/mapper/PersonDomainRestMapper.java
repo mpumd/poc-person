@@ -5,7 +5,7 @@ import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.command.GenderChangeCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.sb.rest.resource.GenderChangeResource;
-import com.mpumd.poc.person.sb.rest.resource.PersonRegisterResource;
+import com.mpumd.poc.person.sb.rest.resource.RegisterPersonResource;
 import lombok.experimental.UtilityClass;
 
 import java.util.Optional;
@@ -14,7 +14,7 @@ import java.util.UUID;
 @UtilityClass
 public class PersonDomainRestMapper {
 
-    public PersonRegistrationCommand toDomain(PersonRegisterResource resource) {
+    public PersonRegistrationCommand toDomain(RegisterPersonResource resource) {
         return PersonRegistrationCommand.builder()
                 .firstName(resource.firstName())
                 .lastName(resource.lastName())
