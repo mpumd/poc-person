@@ -2,37 +2,39 @@ package com.mpumd.poc.person.context.command;
 
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
-import lombok.Getter;
 
 import java.time.ZonedDateTime;
 
 import static java.util.Optional.ofNullable;
 
-@Getter
-public class PersonRegistrationCommand {
-    private String firstName;
-    private String lastName;
-    private ZonedDateTime birthDate;
-    private Gender gender;
-    private String birthPlace;
-    private Nationality nationality;
+//@Getter
+public record PersonRegistrationCommand(
+        String firstName,
+        String lastName,
+        ZonedDateTime birthDate,
+        String birthPlace,
+        Gender gender,
+        Nationality nationality) {
 
+    // We must call the canonical contructor because it's an obligation
     private PersonRegistrationCommand(Builder builder) {
-        this.firstName = ofNullable(builder.firstName)
-                .filter(s -> !s.isBlank())
-                .orElseThrow(() -> new IllegalArgumentException("firstName must not be empty"));
-        this.lastName = ofNullable(builder.lastName)
-                .filter(s -> !s.isBlank())
-                .orElseThrow(() -> new IllegalArgumentException("lastName must not be empty"));
-        this.birthDate = ofNullable(builder.birthDate)
-                .orElseThrow(() -> new IllegalArgumentException("birthDate must not be null"));
-        this.birthPlace = ofNullable(builder.birthPlace)
-                .filter(s -> !s.isBlank())
-                .orElseThrow(() -> new IllegalArgumentException("birthPlace must not be empty"));
-        this.gender = ofNullable(builder.gender)
-                .orElseThrow(() -> new IllegalArgumentException("gender must not be null"));
-        this.nationality = ofNullable(builder.nationality)
-                .orElseThrow(() -> new IllegalArgumentException("nationality must not be null"));
+        this(
+                ofNullable(builder.firstName)
+                        .filter(s -> !s.isBlank())
+                        .orElseThrow(() -> new IllegalArgumentException("firstName must not be empty")),
+                ofNullable(builder.lastName)
+                        .filter(s -> !s.isBlank())
+                        .orElseThrow(() -> new IllegalArgumentException("lastName must not be empty")),
+                ofNullable(builder.birthDate)
+                        .orElseThrow(() -> new IllegalArgumentException("birthDate must not be null")),
+                ofNullable(builder.birthPlace)
+                        .filter(s -> !s.isBlank())
+                        .orElseThrow(() -> new IllegalArgumentException("birthPlace must not be empty")),
+                ofNullable(builder.gender)
+                        .orElseThrow(() -> new IllegalArgumentException("gender must not be null")),
+                ofNullable(builder.nationality)
+                        .orElseThrow(() -> new IllegalArgumentException("nationality must not be null"))
+        );
     }
 
     public static FirstNameStep builder() {

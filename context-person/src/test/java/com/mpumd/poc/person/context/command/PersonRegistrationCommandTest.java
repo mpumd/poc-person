@@ -13,7 +13,6 @@ import java.time.ZonedDateTime;
 import static com.mpumd.poc.person.context.aggregat.Gender.ALIEN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PersonRegistrationCommandTest {
     EasyRandom easyRandom = new EasyRandom();
@@ -26,23 +25,20 @@ class PersonRegistrationCommandTest {
     }
 
     @Test
-    void shouldBuildOK() {
-        var birthDate = ZonedDateTime.now();
-        PersonRegistrationCommand pb = PersonRegistrationCommand.builder()
+    void OK_buildCommandByBuilder() {
+        var builder = PersonRegistrationCommand.builder();
+        PersonRegistrationCommand cmd = builder
                 .firstName("mpu")
                 .lastName("md")
-                .birthDate(birthDate)
+                .birthDate(ZonedDateTime.now())
                 .birthPlace("nowwhere")
                 .gender(ALIEN)
                 .nationality(Nationality.FR)
                 .build();
 
-        assertEquals(pb.firstName(), "mpu");
-        assertEquals(pb.lastName(), "md");
-        assertEquals(pb.birthDate(), birthDate);
-        assertEquals(pb.birthPlace(), "nowwhere");
-        assertEquals(pb.gender(), ALIEN);
-        assertEquals(pb.nationality(), Nationality.FR);
+        assertThat(cmd)
+                .usingRecursiveComparison()
+                .isEqualTo(builder);
     }
 
     @ParameterizedTest
