@@ -4,6 +4,7 @@ package com.mpumd.poc.person.context.aggregat;
 import com.mpumd.poc.person.context.command.GenderChangeCommand;
 import com.mpumd.poc.person.context.command.InformPhysicalAppearanceCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
+import com.mpumd.poc.test.RandomRecordFiller;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.assertj.core.api.InstanceOfAssertFactories;
@@ -41,8 +42,8 @@ class PersonTest {
     PersonRegistrationCommand prc;
 
     @BeforeEach
-    void setUp() {
-        prc = easyRandom.nextObject(PersonRegistrationCommand.class);
+    void setUp() throws Exception {
+        prc = RandomRecordFiller.fillRandomly(PersonRegistrationCommand.class);
         assertThat(prc).hasNoNullFieldsOrProperties();
     }
 

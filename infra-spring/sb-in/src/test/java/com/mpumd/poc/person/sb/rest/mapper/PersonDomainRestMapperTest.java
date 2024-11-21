@@ -4,9 +4,9 @@ import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.command.GenderChangeCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
-import com.mpumd.poc.person.sb.rest.RandomRecordFiller;
 import com.mpumd.poc.person.sb.rest.resource.GenderChangeResource;
 import com.mpumd.poc.person.sb.rest.resource.RegisterPersonResource;
+import com.mpumd.poc.test.RandomRecordFiller;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
