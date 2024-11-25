@@ -25,7 +25,11 @@
     </modules>
 
     <properties>
-        <java.version>22</java.version>
+        <java.version>23</java.version>
+        <!-- TODO wait the update of spring dependencies to manage this version or greater -->
+        <lombok.version>1.18.36</lombok.version>
+        <!-- https://dzone.com/articles/using-lombok-library-witk-jdk-23 -->
+        <maven.compiler.proc>full</maven.compiler.proc>
 
         <springdoc-openapi-starter.version>2.6.0</springdoc-openapi-starter.version>
         <spring-boot.version>3.3.5</spring-boot.version>
@@ -33,6 +37,7 @@
         <easy-random.version>5.0.0</easy-random.version>
         <datafaker.version>2.3.1</datafaker.version>
 
+        <!-- BDD -->
         <cucumber-bom.version>7.20.1</cucumber-bom.version>
     </properties>
 
@@ -87,6 +92,11 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
 
             <dependency> <!-- openapi -->
                 <groupId>org.springdoc</groupId>
@@ -123,12 +133,6 @@
             <!--                    </exclusion>-->
             <!--                </exclusions>-->
             <!--            </dependency>-->
-
-            <dependency>
-                <groupId>com.mpumd.poc.test</groupId>
-                <artifactId>test-lib</artifactId>
-                <version>1.0-SNAPSHOT</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -203,6 +207,7 @@
             <groupId>com.mpumd.poc.test</groupId>
             <artifactId>test-lib</artifactId>
             <scope>test</scope>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
