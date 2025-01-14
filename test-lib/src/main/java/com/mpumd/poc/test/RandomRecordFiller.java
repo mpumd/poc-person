@@ -23,77 +23,46 @@ public class RandomRecordFiller {
     public static <T extends Record> T fillRandomly(Class<T> recordClass, Map<String, Object> replacementFields) {
         RecordComponent[] fields = recordClass.getRecordComponents();
         Object[] args = new Object[fields.length];
+        Class<?>[] parameterTypes = new Class<?>[fields.length];
 
         for (int i = 0; i < fields.length; i++) {
             RecordComponent field = fields[i];
             String fieldName = field.getName();
             Class<?> fieldType = field.getType();
 
-            if (replacementFields.containsKey(fieldName)) {
-                args[i] = convertToType(replacementFields.get(fieldName), fieldType);
-            } else {
-                args[i] = generateRandomValue(fieldType);
-            }
-        }
+            args[i] = replacementFields.containsKey(fieldName)
+                    ? replacementFields.get(fieldName)
+                    : generateRandomValue(fieldType);
 
-        Class<?>[] parameterTypes = new Class<?>[fields.length];
-        for (int i = 0; i < fields.length; i++) {
             parameterTypes[i] = fields[i].getType();
         }
-        Constructor<T> constructor = recordClass.getDeclaredConstructor(parameterTypes);
 
+        Constructor<T> constructor = recordClass.getDeclaredConstructor(parameterTypes);
         return constructor.newInstance(args);
     }
 
-    private static Object generateRandomValue(Class<?> type) {
-        if (type == int.class || type == Integer.class) {
-            return random.nextInt(Integer.MAX_VALUE);
-        } else if (type == long.class || type == Long.class) {
-            return random.nextLong(Long.MAX_VALUE);
-        } else if (type == double.class || type == Double.class) {
-            return random.nextDouble(Double.MAX_VALUE);
-        } else if (type == boolean.class || type == Boolean.class) {
-            return random.nextBoolean();
-        } else if (type == UUID.class) {
-            return UUID.randomUUID();
-        } else if (type == String.class) {
-            return generateRandomString(30);
-        } else if (TemporalAccessor.class.isAssignableFrom(type)) {
-            return generateRandomDate(type);
-        } else if (type.isEnum()) {
-            Enum<?>[] enumConstants = (Enum<?>[]) type.getEnumConstants();
-            return enumConstants[random.nextInt(enumConstants.length)];
-        }
-        throw new UnsupportedOperationException("Type not supported : " + type);
-    }
-
-    private static Object convertToType(Object value, Class<?> type) {
-        if (type.isInstance(value)) {
-            return value;
-        }
-        if (value instanceof String) {
-            String stringValue = (String) value;
-            if (type == int.class || type == Integer.class) {
-                return Integer.parseInt(stringValue);
-            } else if (type == long.class || type == Long.class) {
-                return Long.parseLong(stringValue);
-            } else if (type == double.class || type == Double.class) {
-                return Double.parseDouble(stringValue);
-            } else if (type == boolean.class || type == Boolean.class) {
-                return Boolean.parseBoolean(stringValue);
-            } else if (type.isEnum()) {
-                return Enum.valueOf((Class<Enum>) type, stringValue);
-            } else if (LocalDate.class.isAssignableFrom(type)) {
-                return LocalDate.parse(stringValue);
-            } else if (LocalDateTime.class.isAssignableFrom(type)) {
-                return LocalDateTime.parse(stringValue);
-            } else if (ZonedDateTime.class.isAssignableFrom(type)) {
-                return ZonedDateTime.parse(stringValue);
-            } else if (Instant.class.isAssignableFrom(type)) {
-                return Instant.parse(stringValue);
+    static Object generateRandomValue(Class<?> type) {
+        return switch (type) {
+            case Class<?> c when c == int.class || c == Integer.class ->
+                    random.nextInt(Integer.MAX_VALUE);
+            case Class<?> c when c == long.class || c == Long.class ->
+                    random.nextLong(Long.MAX_VALUE);
+            case Class<?> c when c == double.class || c == Double.class ->
+                    random.nextDouble(Double.MAX_VALUE);
+            case Class<?> c when c == boolean.class || c == Boolean.class ->
+                    random.nextBoolean();
+            case Class<?> c when c == UUID.class ->
+                    UUID.randomUUID();
+            case Class<?> c when c == String.class ->
+                    generateRandomString(30);
+            case Class<?> c when TemporalAccessor.class.isAssignableFrom(c) ->
+                    generateRandomDate(c);
+            case Class<?> c when c.isEnum() -> {
+                Enum<?>[] enumConstants = (Enum<?>[]) c.getEnumConstants();
+                yield enumConstants[random.nextInt(enumConstants.length)];
             }
-        }
-        throw new UnsupportedOperationException("Type not supported from " + value.getClass() + " to " + type);
+            default -> throw new UnsupportedOperationException("Type not supported : " + type);
+        };
     }
 
     private static TemporalAccessor generateRandomDate(Class<?> type) {
