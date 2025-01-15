@@ -2,7 +2,10 @@ package com.mpumd.poc.person.sb;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import lombok.Getter;
-import org.junit.platform.suite.api.*;
+import org.junit.platform.suite.api.ConfigurationParameter;
+import org.junit.platform.suite.api.IncludeEngines;
+import org.junit.platform.suite.api.SelectDirectories;
+import org.junit.platform.suite.api.Suite;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -14,8 +17,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.List;
-
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -23,15 +24,23 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 // *** Cucumber Junit Runner
 @Suite
 @IncludeEngines("cucumber")
-@SelectFiles({
-        // TODO how to match a folder instead of a specific file ?
-//        @SelectFile("../../application/src/test/resources/com/mpumd/poc/person/application/feature/registerPerson.feature"),
-        @SelectFile("../../application/src/test/resources/com/mpumd/poc/person/application/feature/changeSex.feature")
-})
+@SelectDirectories("../../application/src/test/resources/com/mpumd/poc/person/application/feature")
+// TODO restrict by glue path doesn't work here. Instead of, we have a warning
+/* without a glue path, cucumber search in all the classpath and ca throw a warning wher it can't read.
+WARNING: Failed to load methods of class 'net.bytebuddy.agent.VirtualMachine$ForHotSpot$Connection$ForJnaWindowsNamedPipe$Factory'.
+By default Cucumber scans the entire classpath for step definitions.
+You can restrict this by configuring the glue path.
+...
+...
+...
+java.lang.NoClassDefFoundError: com/sun/jna/platform/win32/Win32Exception
+
+*/
+// unfortunatly, I did find a way to indicate a package outside of the current classpath.
+// @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.mpumd.poc.person.application.feature")
+
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
 @ConfigurationParameter(key = FILTER_TAGS_PROPERTY_NAME, value = "not @disabled")
-// root package in glue property to target the CucumberContextConfiguration annotation
-// @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.mpumd.poc.person.sb")
 
 // *** Cucumber Spring Configuration
 // This annotations could be move outside here in a CucumberSpringConfiguration class
@@ -52,12 +61,12 @@ public class PersonApplicationBDDIT {
     /* DEV : activate the block to fix the port and easy use an SQL client
      * to finally inspect manually the updated schema
      */
-    static {
-        // Internal PostgreSQL port
-        dbContainer.withExposedPorts(5432);
-        // Bind host port 5432 to container port 5432
-        dbContainer.setPortBindings(List.of("5432:5432"));
-    }
+//    static {
+//        // Internal PostgreSQL port
+//        dbContainer.withExposedPorts(5432);
+//        // Bind host port 5432 to container port 5432
+//        dbContainer.setPortBindings(List.of("5432:5432"));
+//    }
 
     @Getter
     private JdbcClient jdbcClient;

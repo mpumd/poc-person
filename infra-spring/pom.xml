@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.5</version>
+        <version>3.4.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -26,13 +26,11 @@
 
     <properties>
         <java.version>23</java.version>
-        <!-- TODO wait the update of spring dependencies to manage this version or greater -->
-        <lombok.version>1.18.36</lombok.version>
         <!-- https://dzone.com/articles/using-lombok-library-witk-jdk-23 -->
         <maven.compiler.proc>full</maven.compiler.proc>
 
         <springdoc-openapi-starter.version>2.6.0</springdoc-openapi-starter.version>
-        <spring-boot.version>3.3.5</spring-boot.version>
+        <spring-boot.version>3.4.1</spring-boot.version>
 
         <easy-random.version>5.0.0</easy-random.version>
         <datafaker.version>2.3.1</datafaker.version>
@@ -79,23 +77,11 @@
 
             <!-- framework -->
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>de.codecentric</groupId>
                 <artifactId>spring-boot-admin-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
             </dependency>
 
             <dependency> <!-- openapi -->

@@ -8,7 +8,7 @@ Feature: change gender of a person during the life
     And gender is "Female",
     And nationality is "Canadian"
 
-  Scenario: Ellen want to become a men, OK
+  Scenario: Ellen wants to become a men, OK
     Given I give the current date "2020-08-21T10:04", and the gender "male" and an uuid
     When I engage the changeSex business act
     Then I see the history of gender like bellow in the order
@@ -16,7 +16,7 @@ Feature: change gender of a person during the life
       | female | 1987-02-21T02:42:00 |
       | male   | 2020-08-21T10:04    |
 
-  Scenario Outline: Ellen want to become a <gender>, KO
+  Scenario Outline: Ellen wants to become a <gender>, KO
     Given I give the current date "<changedate>", and the gender "<gender>" and an uuid
     When I engage the changeSex business act
     Then The system refuse to change the gender with the following message "<message>"
