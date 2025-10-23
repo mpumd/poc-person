@@ -17,14 +17,14 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <java.version>23</java.version>
+        <java.version>21</java.version>
         <!-- TODO wait the update of spring dependencies to manage this version or greater -->
         <maven.compiler.proc>full</maven.compiler.proc>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- only for manager version of dependencies -->
-        <spring-boot-dependencies.version>3.4.1</spring-boot-dependencies.version>
+        <spring-boot-dependencies.version>3.5.5</spring-boot-dependencies.version>
 
         <!-- Test -->
         <datafaker.version>2.3.1</datafaker.version>
