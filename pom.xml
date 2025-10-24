@@ -20,13 +20,12 @@
         <!-- Test -->
         <instancio-junit.version>5.5.1</instancio-junit.version>
         <datafaker.version>2.5.2</datafaker.version>
+        <cucumber-bom.version>7.20.1</cucumber-bom.version>
         <!-- CI pitest -->
         <pitest-maven.version>1.17.1</pitest-maven.version>
         <pitest-junit5-plugin.version>1.2.1</pitest-junit5-plugin.version>
         <pitest-maven.include.scope>com.mpumd.poc.person*</pitest-maven.include.scope>
         <pitest-maven.exclude.scope>com.mpumd.poc.person.test*</pitest-maven.exclude.scope>
-        <!-- BDD -->
-        <cucumber-bom.version>7.20.1</cucumber-bom.version>
     </properties>
 
     <packaging>pom</packaging>

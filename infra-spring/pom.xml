@@ -32,10 +32,7 @@
         <springdoc-openapi-starter.version>2.6.0</springdoc-openapi-starter.version>
         <spring-boot.version>3.5.5</spring-boot.version>
 
-        <easy-random.version>5.0.0</easy-random.version>
         <instancio-junit.version>5.5.1</instancio-junit.version>
-
-        <!-- BDD -->
         <cucumber-bom.version>7.20.1</cucumber-bom.version>
     </properties>
 
@@ -176,12 +173,6 @@
             <groupId>org.instancio</groupId>
             <artifactId>instancio-junit</artifactId>
             <version>${instancio-junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jeasy</groupId>
-            <artifactId>easy-random-core</artifactId>
-            <version>${easy-random.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
