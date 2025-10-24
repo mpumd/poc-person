@@ -10,12 +10,4 @@
 
     <artifactId>context-person</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.mpumd.poc.test</groupId>
-            <artifactId>test-lib</artifactId>
-            <scope>test</scope>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
 </project>

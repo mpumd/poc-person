@@ -2,7 +2,7 @@ package com.mpumd.poc.person.context.query;
 
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Person;
-import org.jeasy.random.EasyRandom;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZonedDateTime;
@@ -11,8 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PersonSearchQueryTest {
-
-    EasyRandom easyRandom = new EasyRandom();
 
     @Test
     void shouldFullFillQuery() {
@@ -33,7 +31,7 @@ class PersonSearchQueryTest {
 
     @Test
     void constructWithPerson() {
-        var person = easyRandom.nextObject(Person.class);
+        var person = Instancio.create(Person.class);
         assertThat(person).hasNoNullFieldsOrProperties();
 
         PersonSearchQuery query = new PersonSearchQuery(person);

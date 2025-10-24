@@ -5,7 +5,7 @@ import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
-import org.jeasy.random.EasyRandom;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -19,11 +19,9 @@ import static org.mockito.Mockito.mock;
 
 class PersonDomainJPAMapperTest {
 
-    EasyRandom easyRandom = new EasyRandom();
-
     @Test
     void mapAllFilledValuesFromAggregatToJPAEntities() {
-        var aggregatRoot = easyRandom.nextObject(Person.class);
+        var aggregatRoot = Instancio.create(Person.class);
         assertThat(aggregatRoot).hasNoNullFieldsOrProperties();
 
         PersonEntity entity = PersonDomainJPAMapper.toJpa(aggregatRoot);
@@ -93,7 +91,7 @@ class PersonDomainJPAMapperTest {
 
     @Test
     void mapAllFilledValuesFromJPAEntitiesToAggregat() {
-        var entity = easyRandom.nextObject(PersonEntity.class);
+        var entity = Instancio.create(PersonEntity.class);
         assertThat(entity).hasNoNullFieldsOrProperties();
         ReflectionTestUtils.setField(entity, "nationality", Nationality.FR.toString());
 

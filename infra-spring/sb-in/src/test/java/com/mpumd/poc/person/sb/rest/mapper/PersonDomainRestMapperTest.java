@@ -6,26 +6,26 @@ import com.mpumd.poc.person.context.command.GenderChangeCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.sb.rest.resource.GenderChangeResource;
 import com.mpumd.poc.person.sb.rest.resource.RegisterPersonResource;
-import com.mpumd.poc.test.RandomRecordFiller;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.instancio.Select.field;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 
 class PersonDomainRestMapperTest {
 
     @Test
-    void mapAllFilledValuesFromPersonRegisterResourceToCmd() throws Exception {
-        var resource = RandomRecordFiller.fillRandomly(RegisterPersonResource.class, Map.of(
-                "gender", Gender.ALIEN.toString().toLowerCase(),
-                "nationality", Nationality.TT.toString()
-        ));
+    void mapAllFilledValuesFromPersonRegisterResourceToCmd() {
+        var resource = Instancio.of(RegisterPersonResource.class)
+                .set(field("gender"), Gender.ALIEN.toString().toLowerCase())
+                .set(field("nationality"), Nationality.TT.toString())
+                .create();
         assertThat(resource).hasNoNullFieldsOrProperties();
 
         PersonRegistrationCommand command = PersonDomainRestMapper.toDomain(resource);
@@ -34,7 +34,6 @@ class PersonDomainRestMapperTest {
                 .usingRecursiveComparison()
                 .ignoringFields("gender", "nationality")
                 .isEqualTo(resource);
-
         assertThat(resource.gender()).isEqualToIgnoringCase(command.gender().name());
         assertThat(resource.nationality()).isEqualToIgnoringCase(command.nationality().name());
     }

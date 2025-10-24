@@ -6,8 +6,8 @@ import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
 import com.mpumd.poc.person.sb.jpa.mapper.PersonDomainJPAMapper;
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.jeasy.random.EasyRandom;
-import org.jeasy.random.EasyRandomParameters;
+import org.instancio.GeneratorSpecProvider;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,12 +32,15 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.instancio.Select.all;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.eq;
@@ -57,6 +60,11 @@ class PersonJpaAdapterITest {
 
     private static JdbcClient jdbcClient;
 
+    static GeneratorSpecProvider<LocalDateTime> localDateTimeSpecTruncator = generators -> generators
+            .temporal()
+            .localDateTime()
+            .truncatedTo(ChronoUnit.MICROS);
+
     /* DEV : activate the block to fix the port and easy use an SQL client
      * to finally inspect manually the updated schema
      */
@@ -66,8 +74,6 @@ class PersonJpaAdapterITest {
         // Bind host port 5432 to container port 5432
         dbContainer.setPortBindings(List.of("5432:5432"));
     }
-
-    private static EasyRandom easyRandom;
 
     @Autowired
     PersonJpaAdapter adapter;
@@ -81,10 +87,6 @@ class PersonJpaAdapterITest {
 
     @BeforeAll
     static void beforeAll() {
-        easyRandom = new EasyRandom(new EasyRandomParameters()
-                .collectionSizeRange(5, 5)
-                .randomizerRegistry(new CustomTemporalConfigRandomizerRegistry())
-        );
         jdbcClient = JdbcClient.create(new DriverManagerDataSource(
                 dbContainer.getJdbcUrl(),
                 dbContainer.getUsername(),
@@ -123,7 +125,10 @@ class PersonJpaAdapterITest {
     // TODO how to track the usage of the hibernate converter with spy it an verify ?
     @Test
     void pushInDBWithoutError() {
-        Person aggregatRoot = easyRandom.nextObject(Person.class);
+        Person aggregatRoot = Instancio.of(Person.class)
+                .generate(all(LocalDateTime.class), localDateTimeSpecTruncator)
+                .create();
+
         assertThat(aggregatRoot).hasNoNullFieldsOrProperties();
 
         try (var mapper = mockStatic(PersonDomainJPAMapper.class, InvocationOnMock::callRealMethod)) {
@@ -151,7 +156,10 @@ class PersonJpaAdapterITest {
     @Test
     void pullFromDBWithoutError() {
         // GIVEN entity
-        PersonEntity givenEntity = easyRandom.nextObject(PersonEntity.class);
+        PersonEntity givenEntity = Instancio.of(PersonEntity.class)
+                .generate(all(LocalDateTime.class), localDateTimeSpecTruncator)
+                .create();
+
         ReflectionTestUtils.setField(givenEntity, "nationality", Nationality.FR.name());
         assertThat(givenEntity).hasNoNullFieldsOrProperties();
         forcePersistInDB(() -> entityManager.persist(givenEntity));
@@ -196,19 +204,19 @@ class PersonJpaAdapterITest {
             String queryLastName, String dbLastName,
             boolean exist) {
         // given
-        var query = easyRandom.nextObject(PersonSearchQuery.class);
+        var query = Instancio.create(PersonSearchQuery.class);
         ReflectionTestUtils.setField(query, "firstName", queryFirstName);
         ReflectionTestUtils.setField(query, "lastName", queryLastName);
         assertThat(query).hasNoNullFieldsOrProperties();
 
-        PersonEntity entity = easyRandom.nextObject(PersonEntity.class);
+        PersonEntity entity = Instancio.create(PersonEntity.class);
         entity.id(UUID.randomUUID());
         entity.firstName(dbFirstName);
         entity.lastName(dbLastName);
         entity.birthPlace(query.birthPlace());
         entity.birthDate(query.birthDate());
         entity.genderChangeHistory(Map.of(query.birthDate().toLocalDateTime(), query.gender()));
-        forcePersistInDB(()-> entityManager.persist(entity));
+        forcePersistInDB(() -> entityManager.persist(entity));
 
         try (var mapper = mockStatic(PersonDomainJPAMapper.class, InvocationOnMock::callRealMethod)) {
             // when then
@@ -220,11 +228,11 @@ class PersonJpaAdapterITest {
 
     @Test
     void isExistIsFalseIfDifferentPerson() {
-        var query = easyRandom.nextObject(PersonSearchQuery.class);
+        var query = Instancio.create(PersonSearchQuery.class);
         assertThat(query).hasNoNullFieldsOrProperties();
 
         // 2 persons in db
-        IntStream.range(0, 2).mapToObj(i -> easyRandom.nextObject(PersonEntity.class))
+        IntStream.range(0, 2).mapToObj(i -> Instancio.create(PersonEntity.class))
                 .peek(personEntity -> assertThat(personEntity).hasNoNullFieldsOrProperties())
                 .forEach(e -> forcePersistInDB(() -> entityManager.persist(e)));
 

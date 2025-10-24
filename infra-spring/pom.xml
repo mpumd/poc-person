@@ -33,7 +33,7 @@
         <spring-boot.version>3.5.5</spring-boot.version>
 
         <easy-random.version>5.0.0</easy-random.version>
-        <datafaker.version>2.3.1</datafaker.version>
+        <instancio-junit.version>5.5.1</instancio-junit.version>
 
         <!-- BDD -->
         <cucumber-bom.version>7.20.1</cucumber-bom.version>
@@ -173,6 +173,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.instancio</groupId>
+            <artifactId>instancio-junit</artifactId>
+            <version>${instancio-junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jeasy</groupId>
             <artifactId>easy-random-core</artifactId>
             <version>${easy-random.version}</version>
@@ -181,19 +187,6 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>net.datafaker</groupId>
-            <artifactId>datafaker</artifactId>
-            <version>${datafaker.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.mpumd.poc.test</groupId>
-            <artifactId>test-lib</artifactId>
-            <scope>test</scope>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

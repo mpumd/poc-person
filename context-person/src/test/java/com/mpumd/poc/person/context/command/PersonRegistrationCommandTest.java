@@ -1,7 +1,7 @@
 package com.mpumd.poc.person.context.command;
 
 import com.mpumd.poc.person.context.aggregat.Nationality;
-import org.jeasy.random.EasyRandom;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,12 +15,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PersonRegistrationCommandTest {
-    EasyRandom easyRandom = new EasyRandom();
+
     PersonRegistrationCommand.Builder prcBuilder;
 
     @BeforeEach
     void setUp() {
-        prcBuilder = easyRandom.nextObject(PersonRegistrationCommand.Builder.class);
+        prcBuilder = Instancio.create(PersonRegistrationCommand.Builder.class);
         assertThat(prcBuilder).hasNoNullFieldsOrProperties();
     }
 

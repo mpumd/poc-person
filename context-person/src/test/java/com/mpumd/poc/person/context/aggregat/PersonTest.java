@@ -4,20 +4,16 @@ package com.mpumd.poc.person.context.aggregat;
 import com.mpumd.poc.person.context.command.GenderChangeCommand;
 import com.mpumd.poc.person.context.command.InformPhysicalAppearanceCommand;
 import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
-import com.mpumd.poc.test.RandomRecordFiller;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.jeasy.random.EasyRandom;
-import org.jeasy.random.EasyRandomParameters;
-import org.jeasy.random.FieldPredicates;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -26,10 +22,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
-import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.instancio.Select.field;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -37,13 +33,10 @@ import static org.mockito.Mockito.*;
 class PersonTest {
 
     Faker faker = new Faker();
-    EasyRandom easyRandom = new EasyRandom();
-
-    PersonRegistrationCommand prc;
+    PersonRegistrationCommand prc = Instancio.create(PersonRegistrationCommand.class);
 
     @BeforeEach
-    void setUp() throws Exception {
-        prc = RandomRecordFiller.fillRandomly(PersonRegistrationCommand.class);
+    void setUp() {
         assertThat(prc).hasNoNullFieldsOrProperties();
     }
 
@@ -117,13 +110,10 @@ class PersonTest {
     @Test
     void should_informPhysicalAppearanceAndSetInstanceAttribut() {
         // generate fullfilled Person instance except physicalAppearance field
-        Predicate<Field> physicalAppearancePredicate = FieldPredicates
-                .named("physicalAppearance")
-                .and(FieldPredicates.inClass(Person.class));
-        var person = new EasyRandom(new EasyRandomParameters().excludeField(physicalAppearancePredicate))
-                .nextObject(Person.class);
+        var person = Instancio.of(Person.class)
+                .ignore(field("physicalAppearance"))
+                .create();
         assertThat(person).hasNoNullFieldsOrPropertiesExcept("physicalAppearance");
-
 
         InformPhysicalAppearanceCommand informPhysicalAppearanceCommand = mock();
 
@@ -145,7 +135,7 @@ class PersonTest {
     @Test
     @DisplayName("calcul a correct age related to the birthDate and an instant in the time ")
     void shouldCalculateCorrectAge() {
-        var person = easyRandom.nextObject(Person.class);
+        var person = Instancio.create(Person.class);
         assertThat(person).hasNoNullFieldsOrProperties();
 
         var birthDate = ZonedDateTime.of(
@@ -162,7 +152,7 @@ class PersonTest {
 
     @Test
     void canChangeOfSex() {
-        var person = easyRandom.nextObject(Person.class);
+        var person = Instancio.create(Person.class);
         assertThat(person).hasNoNullFieldsOrProperties();
 
         var history = new TreeMap(Map.of(person.birthDate().toLocalDateTime(), Gender.MALE));
@@ -181,7 +171,7 @@ class PersonTest {
 
     @Test
     void throwExWhenTryToChangeSexWithTheSameSex() {
-        var person = easyRandom.nextObject(Person.class);
+        var person = Instancio.create(Person.class);
         assertThat(person).hasNoNullFieldsOrProperties();
 
         var history = new TreeMap(Map.of(person.birthDate().toLocalDateTime(), Gender.FEMALE));
@@ -196,7 +186,7 @@ class PersonTest {
 
     @Test
     void throwExWhenChangeSexToAnAlien() {
-        var person = easyRandom.nextObject(Person.class);
+        var person = Instancio.create(Person.class);
         assertThat(person).hasNoNullFieldsOrProperties();
 
         var history = new TreeMap(Map.of(person.birthDate().toLocalDateTime(), Gender.MALE));
@@ -211,7 +201,7 @@ class PersonTest {
 
     @Test
     void throwExWhenTheChangeSexCmdIsNull() {
-        var person = easyRandom.nextObject(Person.class);
+        var person = Instancio.create(Person.class);
         assertThat(person).hasNoNullFieldsOrProperties();
 
         assertThatThrownBy(() -> person.changeSex(null))
