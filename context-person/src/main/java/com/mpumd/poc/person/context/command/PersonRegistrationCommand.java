@@ -7,7 +7,6 @@ import java.time.ZonedDateTime;
 
 import static java.util.Optional.ofNullable;
 
-//@Getter
 public record PersonRegistrationCommand(
         String firstName,
         String lastName,

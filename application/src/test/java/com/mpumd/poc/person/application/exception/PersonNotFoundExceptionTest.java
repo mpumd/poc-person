@@ -2,14 +2,15 @@ package com.mpumd.poc.person.application.exception;
 
 import org.junit.jupiter.api.Test;
 
-import static lombok.Lombok.sneakyThrow;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PersonNotFoundExceptionTest {
 
     @Test
     void throwExDefaultConstructor() {
-        assertThatThrownBy(() -> sneakyThrow(new PersonNotFoundException()))
+        assertThatThrownBy(() -> {
+            throw new PersonNotFoundException();
+        })
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasNoCause()
                 .hasMessage(null);
@@ -18,7 +19,9 @@ class PersonNotFoundExceptionTest {
 
     @Test
     void throwExWithMessage() {
-        assertThatThrownBy(() -> sneakyThrow(new PersonNotFoundException("Person not exist!")))
+        assertThatThrownBy(() -> {
+            throw new PersonNotFoundException("Person not exist!");
+        })
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Person not exist!")
                 .hasNoCause();
@@ -28,7 +31,9 @@ class PersonNotFoundExceptionTest {
     void throwExWithCause() {
         Throwable cause = new IllegalArgumentException("Underlying cause");
 
-        assertThatThrownBy(() -> sneakyThrow(new PersonNotFoundException(cause)))
+        assertThatThrownBy(() -> {
+            throw new PersonNotFoundException(cause);
+        })
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Underlying cause")
                 .cause()
@@ -41,7 +46,9 @@ class PersonNotFoundExceptionTest {
         String errorMessage = "Person not exist!";
         Throwable cause = new IllegalCallerException("Underlying cause");
 
-        assertThatThrownBy(() -> sneakyThrow(new PersonNotFoundException(errorMessage, cause)))
+        assertThatThrownBy(() -> {
+            throw new PersonNotFoundException(errorMessage, cause);
+        })
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Person not exist!")
                 .cause()

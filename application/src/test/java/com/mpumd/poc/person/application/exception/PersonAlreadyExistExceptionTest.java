@@ -2,14 +2,15 @@ package com.mpumd.poc.person.application.exception;
 
 import org.junit.jupiter.api.Test;
 
-import static lombok.Lombok.sneakyThrow;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PersonAlreadyExistExceptionTest {
 
     @Test
     void sneakyThrowDefaultConstructor() {
-        assertThatThrownBy(() -> sneakyThrow(new PersonAlreadyExistException()))
+        assertThatThrownBy(() -> {
+            throw new PersonAlreadyExistException();
+        })
                 .isInstanceOf(IllegalStateException.class)
                 .hasNoCause()
                 .hasMessage(null);
@@ -17,7 +18,9 @@ class PersonAlreadyExistExceptionTest {
 
     @Test
     void sneakyThrowWithFirstNameLastNameInMessage() {
-        assertThatThrownBy(() -> sneakyThrow(new PersonAlreadyExistException("john", "rambo")))
+        assertThatThrownBy(() -> {
+            throw new PersonAlreadyExistException("john", "rambo");
+        })
                 .isInstanceOf(IllegalStateException.class)
                 .hasNoCause()
                 .hasMessage("john rambo already exist !");
@@ -25,7 +28,9 @@ class PersonAlreadyExistExceptionTest {
 
     @Test
     void sneakyThrowWithMessage() {
-        assertThatThrownBy(() -> sneakyThrow(new PersonAlreadyExistException("Person already exist!")))
+        assertThatThrownBy(() -> {
+            throw new PersonAlreadyExistException("Person already exist!");
+        })
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Person already exist!")
                 .hasNoCause();
@@ -35,7 +40,9 @@ class PersonAlreadyExistExceptionTest {
     void sneakyThrowWithCause() {
         Throwable cause = new IllegalArgumentException("Underlying cause");
 
-        assertThatThrownBy(() -> sneakyThrow(new PersonAlreadyExistException(cause)))
+        assertThatThrownBy(() -> {
+            throw new PersonAlreadyExistException(cause);
+        })
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Underlying cause")
                 .cause()
@@ -48,7 +55,9 @@ class PersonAlreadyExistExceptionTest {
         String errorMessage = "Person already exist!";
         Throwable cause = new IllegalCallerException("Underlying cause");
 
-        assertThatThrownBy(() -> sneakyThrow(new PersonAlreadyExistException(errorMessage, cause)))
+        assertThatThrownBy(() -> {
+            throw new PersonAlreadyExistException(errorMessage, cause);
+        })
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Person already exist!")
                 .cause()
