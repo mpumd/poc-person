@@ -3,7 +3,7 @@ package com.mpumd.poc.person.sb.jpa.mapper;
 import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
-import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
+import com.mpumd.poc.person.sb.jpa.entity.PersonJPAEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -14,8 +14,8 @@ import static java.util.Optional.ofNullable;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PersonDomainJPAMapper {
 
-    public static PersonEntity toJpa(Person person) {
-        var builder = PersonEntity.builder()
+    public static PersonJPAEntity toJpa(Person person) {
+        var builder = PersonJPAEntity.builder()
                 .id(person.id())
                 .firstName(person.firstName())
                 .lastName(person.lastName())
@@ -33,8 +33,8 @@ public final class PersonDomainJPAMapper {
         return builder.build();
     }
 
-    public static PersonEntity toJpa(PersonSearchQuery query) {
-        var builder = PersonEntity.builder()
+    public static PersonJPAEntity toJpa(PersonSearchQuery query) {
+        var builder = PersonJPAEntity.builder()
                 .firstName(query.firstName())
                 .lastName(query.lastName())
                 .birthDate(query.birthDate())
@@ -47,7 +47,7 @@ public final class PersonDomainJPAMapper {
         return builder.build();
     }
 
-    public static Person toDomain(PersonEntity jpaEntity) {
+    public static Person toDomain(PersonJPAEntity jpaEntity) {
         return Person.builderFromRepository()
                 .id(jpaEntity.id())
                 .firstName(jpaEntity.firstName())

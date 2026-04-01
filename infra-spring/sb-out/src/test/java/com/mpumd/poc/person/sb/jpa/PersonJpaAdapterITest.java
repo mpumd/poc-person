@@ -3,7 +3,7 @@ package com.mpumd.poc.person.sb.jpa;
 import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
-import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
+import com.mpumd.poc.person.sb.jpa.entity.PersonJPAEntity;
 import com.mpumd.poc.person.sb.jpa.mapper.PersonDomainJPAMapper;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.instancio.GeneratorSpecProvider;
@@ -141,7 +141,7 @@ class PersonJpaAdapterITest {
                     .first()
                     .asInstanceOf(InstanceOfAssertFactories.MAP)
                     .isNotEmpty();
-            PersonEntity result = entityManager.find(PersonEntity.class, aggregatRoot.id());
+            PersonJPAEntity result = entityManager.find(PersonJPAEntity.class, aggregatRoot.id());
             assertThat(result)
                     .usingRecursiveComparison()
                     .withEnumStringComparison()
@@ -156,7 +156,7 @@ class PersonJpaAdapterITest {
     @Test
     void pullFromDBWithoutError() {
         // GIVEN entity
-        PersonEntity givenEntity = Instancio.of(PersonEntity.class)
+        PersonJPAEntity givenEntity = Instancio.of(PersonJPAEntity.class)
                 .generate(all(LocalDateTime.class), localDateTimeSpecTruncator)
                 .create();
 
@@ -184,7 +184,7 @@ class PersonJpaAdapterITest {
             verify(personSpringRepo).findById(eq(givenEntity.id()));
 
             // THEN loadEntity = givenEntity
-            var loadedEntityCaptor = ArgumentCaptor.forClass(PersonEntity.class);
+            var loadedEntityCaptor = ArgumentCaptor.forClass(PersonJPAEntity.class);
             mapper.verify(() -> PersonDomainJPAMapper.toDomain(loadedEntityCaptor.capture()));
             assertThat(loadedEntityCaptor.getValue())
                     .usingRecursiveComparison()
@@ -209,7 +209,7 @@ class PersonJpaAdapterITest {
         ReflectionTestUtils.setField(query, "lastName", queryLastName);
         assertThat(query).hasNoNullFieldsOrProperties();
 
-        PersonEntity entity = Instancio.create(PersonEntity.class);
+        PersonJPAEntity entity = Instancio.create(PersonJPAEntity.class);
         entity.id(UUID.randomUUID());
         entity.firstName(dbFirstName);
         entity.lastName(dbLastName);
@@ -232,7 +232,7 @@ class PersonJpaAdapterITest {
         assertThat(query).hasNoNullFieldsOrProperties();
 
         // 2 persons in db
-        IntStream.range(0, 2).mapToObj(i -> Instancio.create(PersonEntity.class))
+        IntStream.range(0, 2).mapToObj(i -> Instancio.create(PersonJPAEntity.class))
                 .peek(personEntity -> assertThat(personEntity).hasNoNullFieldsOrProperties())
                 .forEach(e -> forcePersistInDB(() -> entityManager.persist(e)));
 

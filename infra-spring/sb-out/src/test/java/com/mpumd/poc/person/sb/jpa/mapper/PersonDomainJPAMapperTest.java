@@ -4,7 +4,7 @@ import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
-import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
+import com.mpumd.poc.person.sb.jpa.entity.PersonJPAEntity;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -24,7 +24,7 @@ class PersonDomainJPAMapperTest {
         var aggregatRoot = Instancio.create(Person.class);
         assertThat(aggregatRoot).hasNoNullFieldsOrProperties();
 
-        PersonEntity entity = PersonDomainJPAMapper.toJpa(aggregatRoot);
+        PersonJPAEntity entity = PersonDomainJPAMapper.toJpa(aggregatRoot);
 
         assertThat(entity)
                 .isNotNull()
@@ -38,7 +38,7 @@ class PersonDomainJPAMapperTest {
         Person aggregatRoot = mock();
         assertThat(aggregatRoot).hasAllNullFieldsOrProperties();
 
-        PersonEntity entity = PersonDomainJPAMapper.toJpa(aggregatRoot);
+        PersonJPAEntity entity = PersonDomainJPAMapper.toJpa(aggregatRoot);
 
         assertThat(entity)
                 .isNotNull()
@@ -58,7 +58,7 @@ class PersonDomainJPAMapperTest {
         assertThat(query).hasNoNullFieldsOrProperties();
 
         // when
-        PersonEntity entity = PersonDomainJPAMapper.toJpa(query);
+        PersonJPAEntity entity = PersonDomainJPAMapper.toJpa(query);
 
         // then entity
         assertThat(entity)
@@ -80,7 +80,7 @@ class PersonDomainJPAMapperTest {
         assertThat(query).hasAllNullFieldsOrProperties();
 
         // when
-        PersonEntity entity = PersonDomainJPAMapper.toJpa(query);
+        PersonJPAEntity entity = PersonDomainJPAMapper.toJpa(query);
 
         // then entity
         assertThat(entity)
@@ -91,7 +91,7 @@ class PersonDomainJPAMapperTest {
 
     @Test
     void mapAllFilledValuesFromJPAEntitiesToAggregat() {
-        var entity = Instancio.create(PersonEntity.class);
+        var entity = Instancio.create(PersonJPAEntity.class);
         assertThat(entity).hasNoNullFieldsOrProperties();
         ReflectionTestUtils.setField(entity, "nationality", Nationality.FR.toString());
 
@@ -107,7 +107,7 @@ class PersonDomainJPAMapperTest {
 
     @Test
     void mapAllNullValuesFromJPAEntitiesToAggregat() {
-        PersonEntity entity = mock();
+        PersonJPAEntity entity = mock();
         assertThat(entity).hasAllNullFieldsOrProperties();
 
         Person aggregateRoot = PersonDomainJPAMapper.toDomain(entity);

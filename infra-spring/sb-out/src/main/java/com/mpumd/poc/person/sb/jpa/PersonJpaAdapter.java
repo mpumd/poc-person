@@ -3,7 +3,7 @@ package com.mpumd.poc.person.sb.jpa;
 import com.mpumd.poc.person.context.PersonPersistanceRepository;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
-import com.mpumd.poc.person.sb.jpa.entity.PersonEntity;
+import com.mpumd.poc.person.sb.jpa.entity.PersonJPAEntity;
 import com.mpumd.poc.person.sb.jpa.mapper.PersonDomainJPAMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -23,22 +23,25 @@ public class PersonJpaAdapter implements PersonPersistanceRepository {
     @Override
     public Optional<Person> pull(UUID uuid) {
         return personSpringRepo.findById(uuid)
-                .map(e ->PersonDomainJPAMapper.toDomain(e));
+                .map(e -> PersonDomainJPAMapper.toDomain(e));
     }
 
     @Override
     public boolean isExist(PersonSearchQuery queryPerson) {
+        PersonJPAEntity jpa = PersonDomainJPAMapper.toJpa(queryPerson);
         var example = Example.of(
-                PersonDomainJPAMapper.toJpa(queryPerson),
-                ExampleMatcher.matching()
-                        .withIgnoreCase("firstName", "lastName")
+                jpa,
+                ExampleMatcher.matching().withIgnoreCase("firstName", "lastName")
         );
+
         return personSpringRepo.findOne(example).isPresent();
     }
 
     @Override
     public void push(Person person) {
-        PersonEntity jpa = PersonDomainJPAMapper.toJpa(person);
+        PersonJPAEntity jpa = PersonDomainJPAMapper.toJpa(person);
         personSpringRepo.save(jpa);
     }
+
+
 }

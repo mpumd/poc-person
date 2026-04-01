@@ -21,10 +21,9 @@ public class PersonApplicationSpringBootRunnerDev {
                 .toRealPath()
                 .toString();
 
-        PersonApplicationSpringBootRunner.main(new String[]{
+        PersonApplicationSpringBootRunner.main(
                 "--spring.profiles.active=dev",
-                "--spring.docker.compose.file=" + dockerComposePath + "/compose.yaml"
-        });
+                "--spring.docker.compose.file=" + dockerComposePath + "/compose.yaml");
     }
 
 

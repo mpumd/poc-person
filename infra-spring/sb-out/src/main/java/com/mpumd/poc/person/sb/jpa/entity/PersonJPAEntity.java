@@ -17,7 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Table(name = "PERSON")
 @Entity
-public class PersonEntity {
+public class PersonJPAEntity {
 
     @Id
     @Column(name = "id", length = 36, unique = true)
