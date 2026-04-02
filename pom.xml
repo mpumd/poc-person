@@ -15,12 +15,14 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- only for manager version of dependencies -->
-        <spring-boot-dependencies.version>3.5.5</spring-boot-dependencies.version>
+        <spring-boot.version>3.5.13</spring-boot.version>
+        <!-- override sb dependencies version -->
+        <junit-bom.version>5.14.3</junit-bom.version>
 
         <!-- Test -->
         <instancio-junit.version>5.5.1</instancio-junit.version>
         <datafaker.version>2.5.2</datafaker.version>
-        <cucumber-bom.version>7.20.1</cucumber-bom.version>
+        <cucumber-bom.version>7.34.3</cucumber-bom.version>
 
         <!-- CI pitest -->
         <pitest-maven.version>1.17.1</pitest-maven.version>
@@ -35,15 +37,22 @@
         <module>context-person</module>
         <module>application</module>
         <module>infra-spring</module>
-<!--        <module>test-lib</module>-->
+        <!--        <module>test-lib</module>-->
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit-bom.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot-dependencies.version}</version>
+                <version>${spring-boot.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -139,11 +148,11 @@
                 <!-- BUG maven 4 https://github.com/apache/maven-apache-parent/issues/265
                     in attemps of the correction, this following fix plugin management version config like bellow
                 -->
-<!--                <plugin>-->
-<!--                    <groupId>org.apache.maven.plugin-tools</groupId>-->
-<!--                    <artifactId>maven-plugin-annotations</artifactId>-->
-<!--                    <version>3.11.0</version>-->
-<!--                </plugin>-->
+                <!--                <plugin>-->
+                <!--                    <groupId>org.apache.maven.plugin-tools</groupId>-->
+                <!--                    <artifactId>maven-plugin-annotations</artifactId>-->
+                <!--                    <version>3.11.0</version>-->
+                <!--                </plugin>-->
             </plugins>
         </pluginManagement>
         <plugins>
@@ -181,7 +190,7 @@
                         <param>${pitest-maven.exclude.scope}</param>
                     </excludedClasses>
                     <excludedTestClasses>
-                         <param>${pitest-maven.exclude.scope}</param>
+                        <param>${pitest-maven.exclude.scope}</param>
                     </excludedTestClasses>
                     <mutators>
                         <!-- https://pitest.org/quickstart/mutators/ -->

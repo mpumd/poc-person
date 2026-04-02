@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.5</version>
+        <version>3.5.13</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -29,11 +29,15 @@
         <!-- https://dzone.com/articles/using-lombok-library-witk-jdk-23 -->
         <maven.compiler.proc>full</maven.compiler.proc>
 
-        <springdoc-openapi-starter.version>2.6.0</springdoc-openapi-starter.version>
-        <spring-boot.version>3.5.5</spring-boot.version>
+
+        <spring-boot.version>3.5.13</spring-boot.version>
+        <spring-boot-admin-dependencies.version>3.5.8</spring-boot-admin-dependencies.version>
+        <springdoc-openapi-starter.version>2.8.16</springdoc-openapi-starter.version>
+        <!-- override sb dependencies version -->
+        <junit-bom.version>5.14.3</junit-bom.version>
 
         <instancio-junit.version>5.5.1</instancio-junit.version>
-        <cucumber-bom.version>7.20.1</cucumber-bom.version>
+        <cucumber-bom.version>7.34.3</cucumber-bom.version>
     </properties>
 
     <dependencyManagement>
@@ -76,7 +80,7 @@
             <dependency>
                 <groupId>de.codecentric</groupId>
                 <artifactId>spring-boot-admin-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
+                <version>${spring-boot-admin-dependencies.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -93,6 +97,13 @@
             </dependency>
 
             <!-- test -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit-bom.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-bom</artifactId>
@@ -187,11 +198,11 @@
                 <!-- BUG maven 4 https://github.com/apache/maven-apache-parent/issues/265
                     in attemps of the correction, this following fix plugin management version config like bellow
                 -->
-<!--                <plugin>-->
-<!--                    <groupId>org.apache.maven.plugin-tools</groupId>-->
-<!--                    <artifactId>maven-plugin-annotations</artifactId>-->
-<!--                    <version>3.11.0</version>-->
-<!--                </plugin>-->
+                <!--                <plugin>-->
+                <!--                    <groupId>org.apache.maven.plugin-tools</groupId>-->
+                <!--                    <artifactId>maven-plugin-annotations</artifactId>-->
+                <!--                    <version>3.11.0</version>-->
+                <!--                </plugin>-->
             </plugins>
         </pluginManagement>
         <plugins>

@@ -41,7 +41,6 @@ java.lang.NoClassDefFoundError: com/sun/jna/platform/win32/Win32Exception
 
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
 @ConfigurationParameter(key = FILTER_TAGS_PROPERTY_NAME, value = "not @disabled")
-
 // *** Cucumber Spring Configuration
 // This annotations could be move outside here in a CucumberSpringConfiguration class
 @CucumberContextConfiguration // pretty same behavior of @ComponentScan
