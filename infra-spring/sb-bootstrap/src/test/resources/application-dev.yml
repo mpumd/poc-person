@@ -1,0 +1,14 @@
+server:
+  port: 8090
+
+springdoc:
+  swagger-ui:
+    enabled: true # default true
+
+#logging:
+#  level:
+#    org.springframework.web: DEBUG
+#    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE
+#    org.springdoc: DEBUG
+#    org.springframework.boot.actuate.endpoint.web.servlet: DEBUG
+#    org.springframework.boot.web.servlet.ServletRegistrationBean: DEBUG

@@ -13,6 +13,7 @@ import java.nio.file.Path;
 
 // for intellij local runner
 public class PersonApplicationSpringBootRunnerDev {
+
     public static void main(String[] args) throws IOException, URISyntaxException {
         final var uri = Thread.currentThread().getContextClassLoader().getResource("").toURI();
         final var dockerComposePath = Path.of(uri)
