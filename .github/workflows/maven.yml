@@ -38,13 +38,13 @@ jobs:
 
       # build env
       - name: Build with Maven
-        run: mvn -B install --file pom.xml
-#        &&
-#          mvn spring-boot:build-image
-#            -DskipTests
-#            -Pnative
-#            -pl infra-spring/sb-bootstrap
-#            --file pom.xml
+        run: mvn -B install -Popenapi-spec-generator --file pom.xml
+    #        &&
+    #          mvn spring-boot:build-image
+    #            -DskipTests
+    #            -Pnative
+    #            -pl infra-spring/sb-bootstrap
+    #            --file pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
 #    - name: Update dependency graph
