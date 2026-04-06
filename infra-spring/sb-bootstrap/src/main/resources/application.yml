@@ -36,6 +36,7 @@ springdoc:
     enabled: false # default true
   api-docs:
     path: /api-docs
+    enabled: false # default true
 
 management:
   endpoints.web.exposure.include: "*"

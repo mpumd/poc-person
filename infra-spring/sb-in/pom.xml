@@ -31,4 +31,5 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
     </dependencies>
+
 </project>

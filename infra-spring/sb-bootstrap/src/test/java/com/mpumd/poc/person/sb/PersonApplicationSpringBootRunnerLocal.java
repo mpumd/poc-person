@@ -12,7 +12,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 
 // for intellij local runner
-public class PersonApplicationSpringBootRunnerDev {
+public class PersonApplicationSpringBootRunnerLocal {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         final var uri = Thread.currentThread().getContextClassLoader().getResource("").toURI();
@@ -23,7 +23,7 @@ public class PersonApplicationSpringBootRunnerDev {
                 .toString();
 
         PersonApplicationSpringBootRunner.main(
-                "--spring.profiles.active=dev",
+                "--spring.profiles.active=local",
                 "--spring.docker.compose.file=" + dockerComposePath + "/compose.yaml");
     }
 
