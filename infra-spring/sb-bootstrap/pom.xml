@@ -76,58 +76,71 @@
     </build>
 
     <profiles>
-        <!--        <profile>-->
-        <!--            <id>openapi</id>-->
-        <!--            <build>-->
-        <!--                <plugins>-->
-        <!--                    <plugin>-->
-        <!--                        <groupId>org.springframework.boot</groupId>-->
-        <!--                        <artifactId>spring-boot-maven-plugin</artifactId>-->
-        <!--                        <configuration combine.children="append">-->
-        <!--                            <jvmArguments>-Dspring.application.admin.enabled=true</jvmArguments>-->
-        <!--                            <profiles>-->
-        <!--                                <profile>local</profile>-->
-        <!--                            </profiles>-->
-        <!--                        </configuration>-->
-        <!--                        <executions>-->
-        <!--                            <execution>-->
-        <!--                                <id>start-for-openapi</id>-->
-        <!--                                <phase>post-integration-test</phase>-->
-        <!--                                <goals>-->
-        <!--                                    <goal>start</goal>-->
-        <!--                                </goals>-->
-        <!--                            </execution>-->
-        <!--                            <execution>-->
-        <!--                                <id>stop-for-openapi</id>-->
-        <!--                                <phase>verify</phase>-->
-        <!--                                <goals>-->
-        <!--                                    <goal>stop</goal>-->
-        <!--                                </goals>-->
-        <!--                            </execution>-->
-        <!--                        </executions>-->
-        <!--                    </plugin>-->
-        <!--                    <plugin>-->
-        <!--                        <groupId>org.springdoc</groupId>-->
-        <!--                        <artifactId>springdoc-openapi-maven-plugin</artifactId>-->
-        <!--                        <version>${springdoc-openapi-plugin.version}</version>-->
-        <!--                        <configuration>-->
-        <!--                            <apiDocsUrl>http://localhost:8090/spring/api-docs.yaml</apiDocsUrl>-->
-        <!--                            <outputDir>${project.basedir}/../sb-in</outputDir>-->
-        <!--                            <outputFileName>openapi.yaml</outputFileName>-->
-        <!--                        </configuration>-->
-        <!--                        <executions>-->
-        <!--                            <execution>-->
-        <!--                                <id>generate-openapi</id>-->
-        <!--                                <phase>post-integration-test</phase>-->
-        <!--                                <goals>-->
-        <!--                                    <goal>generate</goal>-->
-        <!--                                </goals>-->
-        <!--                            </execution>-->
-        <!--                        </executions>-->
-        <!--                    </plugin>-->
-        <!--                </plugins>-->
-        <!--            </build>-->
-        <!--        </profile>-->
+        <profile>
+            <id>openapi-spec-generator</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration combine.children="append">
+                            <jvmArguments>
+                                -Dspring.application.admin.enabled=disabled
+                                -Dspringdoc.api-docs.enabled=true
+                                -Dserver.port=8090
+                                -Dserver.servlet.context-path=/
+                            </jvmArguments>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>start-for-springdoc-plugin</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>stop-for-springdoc-plugin</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springdoc</groupId>
+                        <artifactId>springdoc-openapi-maven-plugin</artifactId>
+                        <version>${springdoc-openapi-plugin.version}</version>
+                        <configuration>
+                            <apiDocsUrl>http://localhost:8090/api-docs.yaml</apiDocsUrl>
+                            <!-- <outputDir>${project.build.outputDirectory}</outputDir>-->
+                            <outputFileName>openapi.yaml</outputFileName>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>generate-openapi-yaml</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>generate-openapi-json</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <apiDocsUrl>http://localhost:8090/api-docs</apiDocsUrl>
+                                    <outputFileName>openapi.json</outputFileName>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <!-- FIXME instead of replicate the profile here, find a way to merge the plugin's configs -->
             <!-- with combine.children="append" anywhere -->
