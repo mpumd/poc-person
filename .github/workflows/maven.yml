@@ -15,7 +15,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build and test:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,13 +35,10 @@ jobs:
         run: mvn -v
 
       - name: Build
-        run: mvn -B package -DskipTests -Popenapi-spec-generator --file pom.xml
+        run: mvn -B package -DskipTests --file pom.xml
 
-      - name: Unit Tests
-        run: mvn -B test --file pom.xml
-
-      - name: Integration Tests
-        run: mvn -B verify -DskipTests --file pom.xml
+      - name: UTs, ITs and generate openapi spec
+        run: mvn -B verify -Popenapi-spec-generator --file pom.xml
 
 
     #        &&
