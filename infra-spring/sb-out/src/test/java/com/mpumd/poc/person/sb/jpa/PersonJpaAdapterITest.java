@@ -22,6 +22,7 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
@@ -54,7 +55,7 @@ class PersonJpaAdapterITest {
 //        <include>*.conf</include>
 //      </includes>
 //    </resource>
-    // @Container
+    @Container
     @ServiceConnection
     static final PostgreSQLContainer dbContainer = new PostgreSQLContainer("postgres:17-alpine");
 
@@ -68,10 +69,7 @@ class PersonJpaAdapterITest {
         dbContainer.setPortBindings(List.of("5432:5432"));
     }*/
 
-    static GeneratorSpecProvider<LocalDateTime> localDateTimeInstancioConf = generators -> generators
-            .temporal()
-            .localDateTime()
-            .truncatedTo(ChronoUnit.MICROS);
+    static GeneratorSpecProvider<LocalDateTime> localDateTimeInstancioConf = generators -> generators.temporal().localDateTime().truncatedTo(ChronoUnit.MICROS);
 
     @Autowired
     PersonJpaAdapter adapter;
@@ -109,9 +107,7 @@ class PersonJpaAdapterITest {
     @Test
     void pushInDBWithoutError() {
         // given
-        Person aggregatRoot = Instancio.of(Person.class)
-                .generate(all(LocalDateTime.class), localDateTimeInstancioConf)
-                .create();
+        Person aggregatRoot = Instancio.of(Person.class).generate(all(LocalDateTime.class), localDateTimeInstancioConf).create();
         assertThat(aggregatRoot).hasNoNullFieldsOrProperties();
 
         try (var mapper = mockStatic(PersonDomainJPAMapper.class, InvocationOnMock::callRealMethod)) {
@@ -119,17 +115,9 @@ class PersonJpaAdapterITest {
             forcePersistInDB(() -> adapter.push(aggregatRoot));
 
             // then
-            assertThat(jdbcClient.sql("SELECT * FROM person").query().listOfRows())
-                    .hasSize(1)
-                    .first()
-                    .asInstanceOf(InstanceOfAssertFactories.MAP)
-                    .isNotEmpty();
+            assertThat(jdbcClient.sql("SELECT * FROM person").query().listOfRows()).hasSize(1).first().asInstanceOf(InstanceOfAssertFactories.MAP).isNotEmpty();
             PersonJPAEntity result = entityManager.find(PersonJPAEntity.class, aggregatRoot.id());
-            assertThat(result)
-                    .usingRecursiveComparison()
-                    .withEnumStringComparison()
-                    .ignoringFields("genderChangeHistory")
-                    .isEqualTo(aggregatRoot);
+            assertThat(result).usingRecursiveComparison().withEnumStringComparison().ignoringFields("genderChangeHistory").isEqualTo(aggregatRoot);
 
             assertThat(result.genderChangeHistory()).containsExactlyInAnyOrderEntriesOf(aggregatRoot.genderChangeHistory());
             mapper.verify(() -> PersonDomainJPAMapper.toJpa(aggregatRoot));
@@ -139,9 +127,7 @@ class PersonJpaAdapterITest {
     @Test
     void pullFromDBWithoutError() {
         // given entity
-        PersonJPAEntity givenEntity = Instancio.of(PersonJPAEntity.class)
-                .generate(all(LocalDateTime.class), localDateTimeInstancioConf)
-                .create();
+        PersonJPAEntity givenEntity = Instancio.of(PersonJPAEntity.class).generate(all(LocalDateTime.class), localDateTimeInstancioConf).create();
         ReflectionTestUtils.setField(givenEntity, "nationality", Nationality.FR.name());
         assertThat(givenEntity).hasNoNullFieldsOrProperties();
         forcePersistInDB(() -> entityManager.persist(givenEntity));
@@ -152,40 +138,26 @@ class PersonJpaAdapterITest {
 
             // then
             // data exist in db no only inside the hibernate cache
-            assertThat(jdbcClient.sql("SELECT * FROM person").query().listOfRows())
-                    .hasSize(1)
-                    .first()
-                    .asInstanceOf(InstanceOfAssertFactories.MAP)
-                    .isNotEmpty();
+            assertThat(jdbcClient.sql("SELECT * FROM person").query().listOfRows()).hasSize(1).first().asInstanceOf(InstanceOfAssertFactories.MAP).isNotEmpty();
             // then aggregateRoot = givenJpaEntity
-            assertThat(aggregateRoot)
-                    .usingRecursiveComparison()
-                    .withEnumStringComparison()
-                    .ignoringFields("physicalAppearance")
-                    .isEqualTo(givenEntity);
+            assertThat(aggregateRoot).usingRecursiveComparison().withEnumStringComparison().ignoringFields("physicalAppearance").isEqualTo(givenEntity);
 
             verify(personSpringRepo).findById(eq(givenEntity.id()));
 
             // THEN loadEntity = givenEntity
             var loadedEntityCaptor = ArgumentCaptor.forClass(PersonJPAEntity.class);
             mapper.verify(() -> PersonDomainJPAMapper.toDomain(loadedEntityCaptor.capture()));
-            assertThat(loadedEntityCaptor.getValue())
-                    .usingRecursiveComparison()
-                    .isEqualTo(givenEntity);
+            assertThat(loadedEntityCaptor.getValue()).usingRecursiveComparison().isEqualTo(givenEntity);
         }
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "mpu, mpu, md, md, true",  // exact match ok
+    @CsvSource({"mpu, mpu, md, md, true",  // exact match ok
             "mpu, MPU, md, MD, true",  // ignore case ok
             "mpu, cge, md, MD, false",  // firstName is different
             "mpu, MPU, md, test, false",  // lastName is different
     })
-    void isExistIsTrueIfPersonInsideDB(
-            String queryFirstName, String dbFirstName,
-            String queryLastName, String dbLastName,
-            boolean exist) {
+    void isExistIsTrueIfPersonInsideDB(String queryFirstName, String dbFirstName, String queryLastName, String dbLastName, boolean exist) {
         // given
         var query = Instancio.create(PersonSearchQuery.class);
         ReflectionTestUtils.setField(query, "firstName", queryFirstName);
@@ -215,9 +187,7 @@ class PersonJpaAdapterITest {
         assertThat(query).hasNoNullFieldsOrProperties();
 
         // 2 persons in db
-        IntStream.range(0, 2).mapToObj(i -> Instancio.create(PersonJPAEntity.class))
-                .peek(personEntity -> assertThat(personEntity).hasNoNullFieldsOrProperties())
-                .forEach(e -> forcePersistInDB(() -> entityManager.persist(e)));
+        IntStream.range(0, 2).mapToObj(i -> Instancio.create(PersonJPAEntity.class)).peek(personEntity -> assertThat(personEntity).hasNoNullFieldsOrProperties()).forEach(e -> forcePersistInDB(() -> entityManager.persist(e)));
 
         assertThat(jdbcClient.sql("SELECT * FROM person").query().listOfRows()).hasSize(2);
         try (var mapper = mockStatic(PersonDomainJPAMapper.class, InvocationOnMock::callRealMethod)) {

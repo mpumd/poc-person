@@ -64,20 +64,15 @@ public class PersonApplicationBDDIT {
 //        // Bind host port 5432 to container port 5432
 //        dbContainer.setPortBindings(List.of("5432:5432"));
 //    }
-    
+
     @Getter
     JdbcClient jdbcClient;
     @Getter
     RestClient restClient;
-//    @Getter
-//    RestTestClient restTestClient;
 
     PersonApplicationBDDIT(@Value("http://localhost:${local.server.port}${server.servlet.context-path:}") URI uri) {
         restClient = RestClient.builder().baseUrl(uri).build();
         jdbcClient = JdbcClient.create(new DriverManagerDataSource(dbContainer.getJdbcUrl(), dbContainer.getUsername(), dbContainer.getPassword()));
-//        restTestClient = RestTestClient.bindToServer()
-//                .baseUrl(uri.toString())
-//                .build();
     }
 
     @io.cucumber.java.BeforeAll
