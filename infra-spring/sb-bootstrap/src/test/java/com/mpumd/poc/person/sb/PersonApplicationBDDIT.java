@@ -55,6 +55,21 @@ public class PersonApplicationBDDIT {
     @ServiceConnection
     private static final PostgreSQLContainer dbContainer = new PostgreSQLContainer("postgres:17-alpine");
 
+    static {
+        // force to start the container before spring context
+        if (dbContainer.isRunning()) {
+            dbContainer.stop();
+        }
+        dbContainer.start();
+    }
+
+    @io.cucumber.java.AfterAll
+    public static void afterAll() {
+        dbContainer.stop();
+    }
+
+
+
     /* DEV : activate the block to fix the port and easy use an SQL client
      * to finally inspect manually the updated schema
      */
@@ -75,15 +90,4 @@ public class PersonApplicationBDDIT {
         jdbcClient = JdbcClient.create(new DriverManagerDataSource(dbContainer.getJdbcUrl(), dbContainer.getUsername(), dbContainer.getPassword()));
     }
 
-    @io.cucumber.java.BeforeAll
-    static void beforeAll() {
-        // It's possible to start the container before Spring context initialization so @ServiceConnection can resolve the DataSource URL
-        // using static block instead
-        dbContainer.start();
-    }
-
-    @io.cucumber.java.AfterAll
-    public static void afterAll() {
-        dbContainer.stop();
-    }
 }
