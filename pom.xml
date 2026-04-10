@@ -29,7 +29,6 @@
         <pitest-junit5-plugin.version>1.2.1</pitest-junit5-plugin.version>
         <pitest-maven.include.scope>com.mpumd.poc.person*</pitest-maven.include.scope>
         <pitest-maven.exclude.scope>com.mpumd.poc.person.test*</pitest-maven.exclude.scope>
-        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
     </properties>
 
     <packaging>pom</packaging>
@@ -157,13 +156,11 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven-compiler-plugin.version}</version>
                     <configuration>
                         <annotationProcessorPaths>
                             <path>
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
-                                <!--                                <version>1.18.40</version>-->
                             </path>
                         </annotationProcessorPaths>
                     </configuration>
