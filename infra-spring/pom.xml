@@ -30,7 +30,7 @@
         <!-- https://dzone.com/articles/using-lombok-library-witk-jdk-23 -->
         <maven.compiler.proc>full</maven.compiler.proc>
 
-        <spring-boot.version>4.0.5</spring-boot.version>
+        <spring-boot.version>${project.parent.version}</spring-boot.version>
         <spring-boot-admin-dependencies.version>4.0.2</spring-boot-admin-dependencies.version>
         <!-- openapi + swagger -->
         <springdoc-openapi-bom.version>3.0.2</springdoc-openapi-bom.version>

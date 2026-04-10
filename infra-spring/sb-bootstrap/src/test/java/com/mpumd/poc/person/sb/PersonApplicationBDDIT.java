@@ -27,25 +27,18 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @IncludeEngines("cucumber")
 @SelectDirectories("../../application/src/test/resources/com/mpumd/poc/person/application/feature")
 // TODO restrict by glue path doesn't work here. Instead of, we have a warning
-/* without a glue path, cucumber search in all the classpath and ca throw a warning wher it can't read.
-WARNING: Failed to load methods of class 'net.bytebuddy.agent.VirtualMachine$ForHotSpot$Connection$ForJnaWindowsNamedPipe$Factory'.
-By default Cucumber scans the entire classpath for step definitions.
-You can restrict this by configuring the glue path.
-...
-...
-...
-java.lang.NoClassDefFoundError: com/sun/jna/platform/win32/Win32Exception
-
-*/
 // unfortunatly, I did find a way to indicate a package outside of the current classpath.
 // @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.mpumd.poc.person.application.feature")
-
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
 @ConfigurationParameter(key = FILTER_TAGS_PROPERTY_NAME, value = "not @disabled")
 // *** Cucumber Spring Configuration
 // This annotations could be move outside here in a CucumberSpringConfiguration class
 @CucumberContextConfiguration // pretty same behavior of @ComponentScan
-@SpringBootTest(classes = {PersonApplicationSpringBootRunner.class}, webEnvironment = RANDOM_PORT, properties = "spring.profiles.active=test")
+@SpringBootTest(
+        classes = {PersonApplicationSpringBootRunner.class},
+        webEnvironment = RANDOM_PORT,
+        properties = "spring.profiles.active=test"
+)
 // test profile is required to track the production config
 @Testcontainers(disabledWithoutDocker = true)
 // This class is a spring bean injectable, so you can inject the client inside features test
