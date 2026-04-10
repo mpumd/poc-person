@@ -7,6 +7,6 @@ import lombok.experimental.StandardException;
 public class PersonAlreadyExistException extends IllegalStateException {
 
     public PersonAlreadyExistException(String firstName, String lastName) {
-        super(String.format("%s %s already exist !", firstName, lastName));
+        super("%s %s already exist !".formatted(firstName, lastName));
     }
 }

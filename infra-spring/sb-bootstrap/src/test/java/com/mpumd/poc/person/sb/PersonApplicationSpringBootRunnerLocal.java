@@ -14,7 +14,7 @@ import java.nio.file.Path;
 // for intellij local runner
 public class PersonApplicationSpringBootRunnerLocal {
 
-    public static void main(String[] args) throws IOException, URISyntaxException {
+    void main() throws IOException, URISyntaxException {
         final var uri = Thread.currentThread().getContextClassLoader().getResource("").toURI();
         final var dockerComposePath = Path.of(uri)
                 .resolve("../../")

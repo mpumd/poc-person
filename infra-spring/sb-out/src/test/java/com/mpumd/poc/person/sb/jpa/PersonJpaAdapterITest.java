@@ -94,7 +94,7 @@ class PersonJpaAdapterITest {
         // transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_DEFAULT);
         // Edit : Use commit and rollback transaction from @DataJpaTest instead
         // transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-        transactionTemplate.execute(status -> {
+        transactionTemplate.execute(_ -> {
             persistCaller.run();
             entityManager.flush(); // force to save in db
             entityManager.clear(); // clean cache
@@ -187,7 +187,7 @@ class PersonJpaAdapterITest {
         assertThat(query).hasNoNullFieldsOrProperties();
 
         // 2 persons in db
-        IntStream.range(0, 2).mapToObj(i -> Instancio.create(PersonJPAEntity.class)).peek(personEntity -> assertThat(personEntity).hasNoNullFieldsOrProperties()).forEach(e -> forcePersistInDB(() -> entityManager.persist(e)));
+        IntStream.range(0, 2).mapToObj(_ -> Instancio.create(PersonJPAEntity.class)).peek(personEntity -> assertThat(personEntity).hasNoNullFieldsOrProperties()).forEach(e -> forcePersistInDB(() -> entityManager.persist(e)));
 
         assertThat(jdbcClient.sql("SELECT * FROM person").query().listOfRows()).hasSize(2);
         try (var mapper = mockStatic(PersonDomainJPAMapper.class, InvocationOnMock::callRealMethod)) {

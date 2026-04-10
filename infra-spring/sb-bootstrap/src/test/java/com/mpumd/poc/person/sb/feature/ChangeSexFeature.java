@@ -161,7 +161,7 @@ public class ChangeSexFeature {
                 .collect(Collectors.toMap(
                         map -> LocalDateTime.parse(map.get("changeDate")),
                         map -> Gender.valueOfName(map.get("gender")),
-                        (existing, replacement) -> existing,
+                        (existing, _) -> existing,
                         LinkedHashMap::new
                 ));
 
@@ -176,7 +176,7 @@ public class ChangeSexFeature {
                 .collect(Collectors.toMap(
                         map -> java.sql.Timestamp.class.cast(map.get("change_date")).toLocalDateTime(),
                         map -> Gender.valueOfName((String) map.get("gender")),
-                        (existing, replacement) -> existing,
+                        (existing, _) -> existing,
                         LinkedHashMap::new
                 ));
 

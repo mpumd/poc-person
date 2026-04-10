@@ -88,7 +88,7 @@ public class PersonApplicationServiceTest {
 
             // then
             assertEquals(
-                    queryConstructorMock.constructed().get(0),
+                    queryConstructorMock.constructed().getFirst(),
                     queryCaptorFromRepo.getValue()
             );
             assertEquals(result, uuid);
@@ -102,7 +102,7 @@ public class PersonApplicationServiceTest {
         given(personPersistanceRepository.isExist(queryPassedToRepo.capture())).willReturn(true);
 
         try (var mockedStatic = mockStatic(Person.class);
-             var queryConstructorMock = mockConstruction(PersonSearchQuery.class, (queryMock, context) -> {
+             var queryConstructorMock = mockConstruction(PersonSearchQuery.class, (queryMock, _) -> {
                  when(queryMock.firstName()).thenReturn("mpu");
                  when(queryMock.lastName()).thenReturn("md");
              })

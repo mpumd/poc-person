@@ -107,7 +107,7 @@ public class ChangeSexFeature {
     public void callChangeSex() {
         try {
             var command = new GenderChangeCommand(
-                    personRepoInMemory.persons().get(0).id(),
+                    personRepoInMemory.persons().getFirst().id(),
                     newGender,
                     changeGenderDate
             );
@@ -124,11 +124,11 @@ public class ChangeSexFeature {
                 .collect(Collectors.toMap(
                         map -> LocalDateTime.parse(map.get("changeDate")),
                         map -> Gender.valueOfName(map.get("gender")),
-                        (existing, replacement) -> existing,
+                        (existing, _) -> existing,
                         LinkedHashMap::new
                 ));
 
-        assertThat(personRepoInMemory.persons().get(0))
+        assertThat(personRepoInMemory.persons().getFirst())
                 .extracting("genderChangeHistory")
                 .asInstanceOf(InstanceOfAssertFactories.MAP)
                 .hasSize(2)

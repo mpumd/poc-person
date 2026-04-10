@@ -8,7 +8,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <java.version>21</java.version>
+        <java.version>25</java.version>
         <!-- TODO wait the update of spring dependencies to manage this version or greater -->
         <maven.compiler.proc>full</maven.compiler.proc>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -29,6 +29,7 @@
         <pitest-junit5-plugin.version>1.2.1</pitest-junit5-plugin.version>
         <pitest-maven.include.scope>com.mpumd.poc.person*</pitest-maven.include.scope>
         <pitest-maven.exclude.scope>com.mpumd.poc.person.test*</pitest-maven.exclude.scope>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
     </properties>
 
     <packaging>pom</packaging>
@@ -153,6 +154,20 @@
                 <!--                    <artifactId>maven-plugin-annotations</artifactId>-->
                 <!--                    <version>3.11.0</version>-->
                 <!--                </plugin>-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <!--                                <version>1.18.40</version>-->
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
