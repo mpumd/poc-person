@@ -4,6 +4,7 @@ import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.sb.jpa.converter.ISO8601ZonedDateTimeConverter;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -15,19 +16,21 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+
 @Table(name = "PERSON")
 @Entity
 public class PersonJPAEntity {
 
     @Id
     @Column(name = "id", length = 36, unique = true)
-    private UUID id;
+    UUID id;
 
     @Column(name = "first_name")
-    private String firstName;
+    String firstName;
 
     @Column(name = "last_name")
-    private String lastName;
+    String lastName;
 
     @ElementCollection
     @CollectionTable(
@@ -38,18 +41,18 @@ public class PersonJPAEntity {
     @Enumerated(EnumType.STRING)
 //    @MapKeyJdbcType(TimestampJdbcType.class)
 //    @MapKeyJavaType(LocalDateTimeJavaType.class)
-    private Map<LocalDateTime, Gender> genderChangeHistory;
+    Map<LocalDateTime, Gender> genderChangeHistory;
 
     @Column(name = "birth_date")
     @Convert(converter = ISO8601ZonedDateTimeConverter.class)
-    private ZonedDateTime birthDate;
+    ZonedDateTime birthDate;
 
     @Column(name = "birth_place")
-    private String birthPlace;
+    String birthPlace;
 
     @Column(name = "nationality")
     // TODO we can use this enum type here and use the jakarta converter to convert in string at persist
 //    @Enumerated(EnumType.STRING)
-    private String nationality;
+    String nationality;
 }
 

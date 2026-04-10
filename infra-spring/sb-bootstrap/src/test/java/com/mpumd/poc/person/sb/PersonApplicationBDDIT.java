@@ -6,7 +6,6 @@ import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
 import org.junit.platform.suite.api.SelectDirectories;
 import org.junit.platform.suite.api.Suite;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -49,7 +48,7 @@ java.lang.NoClassDefFoundError: com/sun/jna/platform/win32/Win32Exception
         webEnvironment = RANDOM_PORT,
         properties = "spring.profiles.active=test") // test profile is required to track the production config
 @Testcontainers(disabledWithoutDocker = true)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 // This class is a spring bean injectable, so you can inject the client inside features test
 public class PersonApplicationBDDIT {
 
@@ -70,7 +69,7 @@ public class PersonApplicationBDDIT {
     @Getter
     private JdbcClient jdbcClient;
     @Getter
-    private RestClient restClient;
+    private TestRestClient restClient;
 
     /* static { dbContainer.start(); } */
 

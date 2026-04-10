@@ -8,33 +8,25 @@ import com.mpumd.poc.person.sb.jpa.mapper.PersonDomainJPAMapper;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.instancio.GeneratorSpecProvider;
 import org.instancio.Instancio;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.InvocationOnMock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
@@ -48,61 +40,51 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 
 @DataJpaTest
-@Testcontainers(disabledWithoutDocker = true)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Testcontainers
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({PersonJpaAdapter.class})
 class PersonJpaAdapterITest {
 
-    // TODO extract the postgres image name outside of here, anywhere who is possible de change easier it
-    @Container
+    // TODO extract postgres image version using
+//        <resource>
+//    <directory>${project.basedir}</directory>
+//      <filtering>true</filtering>
+//      <includes>
+//        <include>compose.yaml</include>
+//        <include>*.conf</include>
+//      </includes>
+//    </resource>
+    // @Container
     @ServiceConnection
-    private static final PostgreSQLContainer dbContainer = new PostgreSQLContainer("postgres:17-alpine");
+    static final PostgreSQLContainer dbContainer = new PostgreSQLContainer("postgres:17-alpine");
 
-    private static JdbcClient jdbcClient;
-
-    static GeneratorSpecProvider<LocalDateTime> localDateTimeSpecTruncator = generators -> generators
-            .temporal()
-            .localDateTime()
-            .truncatedTo(ChronoUnit.MICROS);
-
-    /* DEV : activate the block to fix the port and easy use an SQL client
-     * to finally inspect manually the updated schema
+    /* DEV : activate the block to fix the port and easy use an SQL client to
+     * finally inspect manually the updated schema
      */
-    static {
+    /*static {
         // Internal PostgreSQL port
         dbContainer.withExposedPorts(5432);
         // Bind host port 5432 to container port 5432
         dbContainer.setPortBindings(List.of("5432:5432"));
-    }
+    }*/
+
+    static GeneratorSpecProvider<LocalDateTime> localDateTimeInstancioConf = generators -> generators
+            .temporal()
+            .localDateTime()
+            .truncatedTo(ChronoUnit.MICROS);
 
     @Autowired
     PersonJpaAdapter adapter;
+
     @Autowired
     TestEntityManager entityManager;
     @Autowired
     TransactionTemplate transactionTemplate;
+    @Autowired
+    JdbcClient jdbcClient;
 
     @MockitoSpyBean
     PersonSpringRepo personSpringRepo;
-
-    @BeforeAll
-    static void beforeAll() {
-        jdbcClient = JdbcClient.create(new DriverManagerDataSource(
-                dbContainer.getJdbcUrl(),
-                dbContainer.getUsername(),
-                dbContainer.getPassword()
-        ));
-    }
-
-    @AfterAll
-    static void afterAll() {
-        dbContainer.close();
-    }
-
-    @BeforeEach
-    void setUp() {
-        jdbcClient.sql("DELETE FROM PERSON").update();
-    }
 
     /* Why this method ?
      * Because, it's necessary to create a Component with SpringBoot to proxify a new transaction except if
@@ -111,8 +93,9 @@ class PersonJpaAdapterITest {
      * and finally you never test the writing of data in db and they stay in cache of hibernate during the test.
      * */
     private void forcePersistInDB(Runnable persistCaller) {
-        transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_DEFAULT);
-        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        // transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_DEFAULT);
+        // Edit : Use commit and rollback transaction from @DataJpaTest instead
+        // transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         transactionTemplate.execute(status -> {
             persistCaller.run();
             entityManager.flush(); // force to save in db
@@ -125,10 +108,10 @@ class PersonJpaAdapterITest {
     // TODO how to track the usage of the hibernate converter with spy it an verify ?
     @Test
     void pushInDBWithoutError() {
+        // given
         Person aggregatRoot = Instancio.of(Person.class)
-                .generate(all(LocalDateTime.class), localDateTimeSpecTruncator)
+                .generate(all(LocalDateTime.class), localDateTimeInstancioConf)
                 .create();
-
         assertThat(aggregatRoot).hasNoNullFieldsOrProperties();
 
         try (var mapper = mockStatic(PersonDomainJPAMapper.class, InvocationOnMock::callRealMethod)) {
@@ -155,26 +138,26 @@ class PersonJpaAdapterITest {
 
     @Test
     void pullFromDBWithoutError() {
-        // GIVEN entity
+        // given entity
         PersonJPAEntity givenEntity = Instancio.of(PersonJPAEntity.class)
-                .generate(all(LocalDateTime.class), localDateTimeSpecTruncator)
+                .generate(all(LocalDateTime.class), localDateTimeInstancioConf)
                 .create();
-
         ReflectionTestUtils.setField(givenEntity, "nationality", Nationality.FR.name());
         assertThat(givenEntity).hasNoNullFieldsOrProperties();
         forcePersistInDB(() -> entityManager.persist(givenEntity));
 
         try (var mapper = mockStatic(PersonDomainJPAMapper.class, InvocationOnMock::callRealMethod)) {
-            // WHEN
+            // when
             Person aggregateRoot = adapter.pull(givenEntity.id()).get();
 
-            // THEN data exist in db no only inside the hibernate cache
+            // then
+            // data exist in db no only inside the hibernate cache
             assertThat(jdbcClient.sql("SELECT * FROM person").query().listOfRows())
                     .hasSize(1)
                     .first()
                     .asInstanceOf(InstanceOfAssertFactories.MAP)
                     .isNotEmpty();
-            // THEN aggregateRoot = givenJpaEntity
+            // then aggregateRoot = givenJpaEntity
             assertThat(aggregateRoot)
                     .usingRecursiveComparison()
                     .withEnumStringComparison()

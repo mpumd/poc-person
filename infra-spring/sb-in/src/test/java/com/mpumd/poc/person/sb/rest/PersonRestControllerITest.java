@@ -1,6 +1,5 @@
 package com.mpumd.poc.person.sb.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mpumd.poc.person.application.exception.PersonAlreadyExistException;
 import com.mpumd.poc.person.application.exception.PersonNotFoundException;
 import com.mpumd.poc.person.context.command.GenderChangeCommand;
@@ -15,7 +14,9 @@ import org.mockito.Mock;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
+import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,10 +31,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(properties = {
-        "spring.jackson.deserialization.adjust-dates-to-context-time-zone=false",
-        // usefull for ISO8601 date like 1965-02-15T02:37:00-07:00
-})
+@WebMvcTest
+@AutoConfigureJsonTesters
 class PersonRestControllerITest {
 
     @MockitoBean
@@ -43,7 +42,7 @@ class PersonRestControllerITest {
     MockMvc mockMvc;
 
     @Autowired
-    ObjectMapper objectMapper;
+    JacksonTester jsonMapper;
 
     @Mock
     PersonRegistrationCommand registerCmd;
@@ -86,7 +85,7 @@ class PersonRestControllerITest {
 
             JSONAssert.assertEquals(
                     registerPayload,
-                    objectMapper.writeValueAsString(resourceCaptor.getValue()),
+                    jsonMapper.write(resourceCaptor.getValue()).getJson(),
                     JSONCompareMode.STRICT
             );
         }
@@ -140,9 +139,10 @@ class PersonRestControllerITest {
                             .content(changeSexPayload))
                     .andExpect(status().isCreated());
 
+
             JSONAssert.assertEquals(
                     changeSexPayload,
-                    objectMapper.writeValueAsString(resourceCaptor.getValue()),
+                    jsonMapper.write(resourceCaptor.getValue()).getJson(),
                     JSONCompareMode.STRICT
             );
         }
