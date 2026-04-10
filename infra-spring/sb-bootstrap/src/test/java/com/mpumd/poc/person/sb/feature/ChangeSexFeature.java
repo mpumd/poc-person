@@ -112,7 +112,7 @@ public class ChangeSexFeature {
         );
 
         String jsonResponse = restClient.post()
-                .uri("/spring/person")
+                .uri("/person")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(registerPayload)
                 .retrieve()
@@ -139,7 +139,7 @@ public class ChangeSexFeature {
     public void callChangeSex() {
         try {
             restClient.post()
-                    .uri("/spring/person/" + currentPersonId + "/gender")
+                    .uri("/person/" + currentPersonId + "/gender")
                     .contentType(MediaType.APPLICATION_JSON)
                     .body("""
                             {

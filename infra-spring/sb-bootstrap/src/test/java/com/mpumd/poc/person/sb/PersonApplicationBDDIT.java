@@ -6,8 +6,8 @@ import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
 import org.junit.platform.suite.api.SelectDirectories;
 import org.junit.platform.suite.api.Suite;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -15,6 +15,8 @@ import org.springframework.web.client.RestClient;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.net.URI;
 
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
@@ -43,12 +45,9 @@ java.lang.NoClassDefFoundError: com/sun/jna/platform/win32/Win32Exception
 // *** Cucumber Spring Configuration
 // This annotations could be move outside here in a CucumberSpringConfiguration class
 @CucumberContextConfiguration // pretty same behavior of @ComponentScan
-@SpringBootTest(
-        classes = {PersonApplicationSpringBootRunner.class},
-        webEnvironment = RANDOM_PORT,
-        properties = "spring.profiles.active=test") // test profile is required to track the production config
+@SpringBootTest(classes = {PersonApplicationSpringBootRunner.class}, webEnvironment = RANDOM_PORT, properties = "spring.profiles.active=test")
+// test profile is required to track the production config
 @Testcontainers(disabledWithoutDocker = true)
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 // This class is a spring bean injectable, so you can inject the client inside features test
 public class PersonApplicationBDDIT {
 
@@ -65,28 +64,26 @@ public class PersonApplicationBDDIT {
 //        // Bind host port 5432 to container port 5432
 //        dbContainer.setPortBindings(List.of("5432:5432"));
 //    }
-
+    
     @Getter
-    private JdbcClient jdbcClient;
+    JdbcClient jdbcClient;
     @Getter
-    private TestRestClient restClient;
+    RestClient restClient;
+//    @Getter
+//    RestTestClient restTestClient;
 
-    /* static { dbContainer.start(); } */
-
-    PersonApplicationBDDIT(@LocalServerPort int port) {
-        restClient = RestClient.builder()
-                .baseUrl("http://localhost:" + port)
-                .build();
-
-        jdbcClient = JdbcClient.create(new DriverManagerDataSource(
-                dbContainer.getJdbcUrl(),
-                dbContainer.getUsername(),
-                dbContainer.getPassword()
-        ));
+    PersonApplicationBDDIT(@Value("http://localhost:${local.server.port}${server.servlet.context-path:}") URI uri) {
+        restClient = RestClient.builder().baseUrl(uri).build();
+        jdbcClient = JdbcClient.create(new DriverManagerDataSource(dbContainer.getJdbcUrl(), dbContainer.getUsername(), dbContainer.getPassword()));
+//        restTestClient = RestTestClient.bindToServer()
+//                .baseUrl(uri.toString())
+//                .build();
     }
 
     @io.cucumber.java.BeforeAll
-    public static void setupAll() {
+    static void beforeAll() {
+        // It's possible to start the container before Spring context initialization so @ServiceConnection can resolve the DataSource URL
+        // using static block instead
         dbContainer.start();
     }
 
