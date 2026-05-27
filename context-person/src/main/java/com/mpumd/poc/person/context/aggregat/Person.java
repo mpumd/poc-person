@@ -48,7 +48,6 @@ public class Person {
 
     private Person(@NonNull PersonRegistrationCommand cmd, @NonNull UUID id) {
         var birthDateTruncateMillis = cmd.birthDate().truncatedTo(ChronoUnit.SECONDS);
-
         this.id = id;
         this.firstName = cmd.firstName();
         this.lastName = cmd.lastName();
