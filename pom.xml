@@ -7,23 +7,26 @@
     <version>1.0-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
         <java.version>25</java.version>
-        <!-- TODO wait the update of spring dependencies to manage this version or greater -->
+        <!-- compiler -->
         <maven.compiler.proc>full</maven.compiler.proc>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <nullability-maven-plugin.version>0.4.0</nullability-maven-plugin.version>
 
+        <!-- BOM -->
         <!-- only for manager version of dependencies -->
-        <spring-boot.version>4.0.5</spring-boot.version>
-        <!-- override sb dependencies version -->
-        <junit-bom.version>5.14.3</junit-bom.version>
+        <spring-boot.version>4.0.6</spring-boot.version>
+        <junit-bom.version>5.14.3</junit-bom.version> <!-- override sb dependencies version -->
+
+        <!-- Lib build / AOT -->
+        <vavr.version>1.0.1</vavr.version>
+        <jilt.version>1.9.1</jilt.version>
 
         <!-- Test -->
         <instancio-junit.version>5.5.1</instancio-junit.version>
         <datafaker.version>2.5.2</datafaker.version>
         <cucumber-bom.version>7.34.3</cucumber-bom.version>
-
         <!-- CI pitest -->
         <pitest-maven.version>1.17.1</pitest-maven.version>
         <pitest-junit5-plugin.version>1.2.1</pitest-junit5-plugin.version>
@@ -67,7 +70,7 @@
     </dependencyManagement>
 
     <dependencies>
-        <!--##### Build #####-->
+        <!--##### Build / AOT #####-->
         <!-- like lombok or SB configuration processor -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -75,8 +78,25 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>cc.jilt</groupId>
+            <artifactId>jilt</artifactId>
+            <version>${jilt.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!--##### Run #####-->
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr</artifactId>
+            <version>${vavr.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -128,7 +148,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- generator of fake data like firstname -->
+        <!-- data fake generator for test -->
         <dependency>
             <groupId>org.instancio</groupId>
             <artifactId>instancio-junit</artifactId>
@@ -145,6 +165,7 @@
     <build>
         <pluginManagement>
             <plugins>
+
                 <!-- BUG maven 4 https://github.com/apache/maven-apache-parent/issues/265
                     in attemps of the correction, this following fix plugin management version config like bellow
                 -->
@@ -161,6 +182,11 @@
                             <path>
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
+                            </path>
+                            <path>
+                                <groupId>cc.jilt</groupId>
+                                <artifactId>jilt</artifactId>
+                                <version>${jilt.version}</version>
                             </path>
                         </annotationProcessorPaths>
                     </configuration>
@@ -196,6 +222,22 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <!-- https://ik.am/entries/900/en -->
+                <groupId>am.ik.maven</groupId>
+                <artifactId>nullability-maven-plugin</artifactId>
+                <version>${nullability-maven-plugin.version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>configure</goal>
+                            <!-- generate package-info.java with @NullMarked on each subpackage -->
+                            <goal>generate-package-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <!-- mutation testing to increase the test resilience -->
                 <groupId>org.pitest</groupId>

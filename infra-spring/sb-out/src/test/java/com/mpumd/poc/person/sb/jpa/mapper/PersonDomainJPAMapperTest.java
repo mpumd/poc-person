@@ -114,7 +114,7 @@ class PersonDomainJPAMapperTest {
 
         assertThat(aggregateRoot)
                 .isNotNull()
-                .hasAllNullFieldsOrPropertiesExcept("genderChangeHistory");
+                .hasAllNullFieldsOrPropertiesExcept("genderChangeHistory", "physicalAppearance");
 
         assertThat(aggregateRoot.genderChangeHistory()).isEmpty();
     }

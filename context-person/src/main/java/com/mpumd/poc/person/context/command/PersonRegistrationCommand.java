@@ -2,122 +2,69 @@ package com.mpumd.poc.person.context.command;
 
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+import org.jilt.Builder;
+import org.jilt.BuilderStyle;
 
 import java.time.ZonedDateTime;
 
 import static java.util.Optional.ofNullable;
 
-public record PersonRegistrationCommand(
-        String firstName,
-        String lastName,
-        ZonedDateTime birthDate,
-        String birthPlace,
-        Gender gender,
-        Nationality nationality) {
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+public class PersonRegistrationCommand {
+    String firstName;
+    String lastName;
+    ZonedDateTime birthDate;
+    String birthPlace;
+    Gender gender;
+    Nationality nationality;
 
-    // We must call the canonical contructor because it's an obligation
-    private PersonRegistrationCommand(Builder builder) {
-        this(
-                ofNullable(builder.firstName)
-                        .filter(s -> !s.isBlank())
-                        .orElseThrow(() -> new IllegalArgumentException("firstName must not be empty")),
-                ofNullable(builder.lastName)
-                        .filter(s -> !s.isBlank())
-                        .orElseThrow(() -> new IllegalArgumentException("lastName must not be empty")),
-                ofNullable(builder.birthDate)
-                        .orElseThrow(() -> new IllegalArgumentException("birthDate must not be null")),
-                ofNullable(builder.birthPlace)
-                        .filter(s -> !s.isBlank())
-                        .orElseThrow(() -> new IllegalArgumentException("birthPlace must not be empty")),
-                ofNullable(builder.gender)
-                        .orElseThrow(() -> new IllegalArgumentException("gender must not be null")),
-                ofNullable(builder.nationality)
-                        .orElseThrow(() -> new IllegalArgumentException("nationality must not be null"))
-        );
+    @Builder(style = BuilderStyle.STAGED)
+    PersonRegistrationCommand(String firstName, String lastName, ZonedDateTime birthDate, String birthPlace, Gender gender, Nationality nationality) {
+        this.firstName = ofNullable(firstName)
+                .filter(s -> !s.isBlank())
+                .orElseThrow(() -> new IllegalArgumentException("firstName must not be empty"));
+        this.lastName = ofNullable(lastName)
+                .filter(s -> !s.isBlank())
+                .orElseThrow(() -> new IllegalArgumentException("lastName must not be empty"));
+        this.birthDate = ofNullable(birthDate)
+                .orElseThrow(() -> new IllegalArgumentException("birthDate must not be null"));
+        this.birthPlace = ofNullable(birthPlace)
+                .filter(s -> !s.isBlank())
+                .orElseThrow(() -> new IllegalArgumentException("birthPlace must not be empty"));
+        this.gender = ofNullable(gender)
+                .orElseThrow(() -> new IllegalArgumentException("gender must not be null"));
+        this.nationality = ofNullable(nationality)
+                .orElseThrow(() -> new IllegalArgumentException("nationality must not be null"));
     }
 
-    public static FirstNameStep builder() {
-        return new Builder();
+    public String firstName() {
+        return firstName;
     }
 
-    static class Builder implements FirstNameStep, LastNameStep, BirthDateStep, GenderStep, BirthPlaceStep, BuildStep, NationalityStep {
-        private String firstName;
-        private String lastName;
-        private ZonedDateTime birthDate;
-        private Gender gender;
-        private String birthPlace;
-        private Nationality nationality;
-
-        private Builder() {
-        }
-
-        @Override
-        public LastNameStep firstName(String firstName) {
-            this.firstName = firstName;
-            return this;
-        }
-
-        @Override
-        public BirthDateStep lastName(String lastName) {
-            this.lastName = lastName;
-            return this;
-        }
-
-        @Override
-        public BirthPlaceStep birthDate(ZonedDateTime birthDate) {
-            this.birthDate = birthDate;
-            return this;
-        }
-
-        @Override
-        public GenderStep birthPlace(String birthPlace) {
-            this.birthPlace = birthPlace;
-            return this;
-        }
-
-        @Override
-        public NationalityStep gender(Gender gender) {
-            this.gender = gender;
-            return this;
-        }
-
-        @Override
-        public BuildStep nationality(Nationality nationality) {
-            this.nationality = nationality;
-            return this;
-        }
-
-        @Override
-        public PersonRegistrationCommand build() {
-            return new PersonRegistrationCommand(this);
-        }
+    public String lastName() {
+        return lastName;
     }
 
-    public interface FirstNameStep {
-        LastNameStep firstName(String firstName);
+    public ZonedDateTime birthDate() {
+        return birthDate;
     }
 
-    public interface LastNameStep {
-        BirthDateStep lastName(String lastName);
+    public String birthPlace() {
+        return birthPlace;
     }
 
-    public interface BirthDateStep {
-        BirthPlaceStep birthDate(ZonedDateTime birthDate);
+    public Gender gender() {
+        return gender;
     }
 
-    public interface BirthPlaceStep {
-        GenderStep birthPlace(String birthPlace);
+    public Nationality nationality() {
+        return nationality;
     }
 
-    public interface GenderStep {
-        NationalityStep gender(Gender gender);
-    }
-
-    public interface NationalityStep {
-        BuildStep nationality(Nationality nationality);
-    }
-
-    public interface BuildStep {
-        PersonRegistrationCommand build();
+    // fluent API
+    public static PersonRegistrationCommandBuilders.FirstName builder() {
+        return PersonRegistrationCommandBuilder.personRegistrationCommand();
     }
 }

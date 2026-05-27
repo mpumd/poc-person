@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.5</version>
+        <version>4.0.6</version>
         <relativePath/>
         <!-- lookup parent from repository -->
     </parent>
@@ -31,9 +31,9 @@
         <maven.compiler.proc>full</maven.compiler.proc>
 
         <spring-boot.version>${project.parent.version}</spring-boot.version>
-        <spring-boot-admin-dependencies.version>4.0.2</spring-boot-admin-dependencies.version>
+        <spring-boot-admin-dependencies.version>4.0.4</spring-boot-admin-dependencies.version>
         <!-- openapi + swagger -->
-        <springdoc-openapi-bom.version>3.0.2</springdoc-openapi-bom.version>
+        <springdoc-openapi-bom.version>3.0.3</springdoc-openapi-bom.version>
         <springdoc-openapi-plugin.version>1.5</springdoc-openapi-plugin.version>
 
         <instancio-junit.version>5.5.1</instancio-junit.version>

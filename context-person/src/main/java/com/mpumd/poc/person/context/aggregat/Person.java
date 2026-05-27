@@ -29,7 +29,7 @@ public class Person {
     private final Nationality nationality;
     //    private final BiometricPrint biometricPrint; // facial recognition, fingerprint recognition, and iris recognition.
 
-    private PhysicalAppearance physicalAppearance;
+    private PhysicalAppearance physicalAppearance = PhysicalAppearance.EMPTY;
 //    private final Personality personality;
 //    private final Career career;
 //  private final Health
@@ -72,7 +72,12 @@ public class Person {
     }
 
     public void informPhysicalAppearance(InformPhysicalAppearanceCommand cmd) {
-        this.physicalAppearance = PhysicalAppearance.inform(cmd);
+        this.physicalAppearance = PhysicalAppearance.inform()
+                .size(cmd.size())
+                .weight(cmd.weight())
+                .eyesColor(cmd.eyesColor())
+                .hairColor(cmd.hairColor())
+                .build();
     }
 
     public short calculateAge() {

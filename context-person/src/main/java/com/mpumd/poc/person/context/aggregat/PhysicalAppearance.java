@@ -1,7 +1,7 @@
 package com.mpumd.poc.person.context.aggregat;
 
-import com.mpumd.poc.person.context.command.InformPhysicalAppearanceCommand;
-import lombok.NonNull;
+import org.jilt.Builder;
+import org.jilt.BuilderStyle;
 
 import static java.util.Optional.ofNullable;
 
@@ -10,23 +10,37 @@ public class PhysicalAppearance {
     private final short weight; // kilogramme
     private final EyesColor eyesColor;
     private final HairColor hairColor;
-
     // private final byte[] face;
 
-    private PhysicalAppearance(@NonNull InformPhysicalAppearanceCommand cmd) {
-        this.size = ofNullable(cmd.size())
-                .filter(size -> size > 0)
-                .orElseThrow(() -> new IllegalArgumentException("value was " + cmd.size() + " but size is always positive"));
-        this.weight = ofNullable(cmd.weight())
-                .filter(weight -> weight > 0)
-                .orElseThrow(() -> new IllegalArgumentException("value was " + cmd.weight() + " but weight is always positive"));
-        this.eyesColor = ofNullable(cmd.eyesColor())
-                .orElseThrow(() -> new IllegalArgumentException("eyesColor can't be empty"));
-        this.hairColor = ofNullable(cmd.hairColor())
-                .orElseThrow(() ->  new IllegalArgumentException("hairColor can't be empty"));
+    // EMPTY value use like @MonotonicNonNull from checkerframework
+    static final PhysicalAppearance EMPTY = new PhysicalAppearance(
+            (short) 1,
+            (short) 1,
+            EyesColor.BLACK,
+            HairColor.BLACK);
+
+    // creation entry
+    @Builder(style = BuilderStyle.STAGED)
+    PhysicalAppearance(short size, short weight, EyesColor eyesColor, HairColor hairColor) {
+        this.size = isPositiveOrThrow(size, "size");
+        this.weight = isPositiveOrThrow(weight, "weight");
+        this.eyesColor = isPresentOrThrow(eyesColor, "eyesColor");
+        this.hairColor = isPresentOrThrow(hairColor, "hairColor");
     }
 
-    public static PhysicalAppearance inform(InformPhysicalAppearanceCommand cmd) {
-        return new PhysicalAppearance(cmd);
+    // factory method introduce the first builder method
+    public static PhysicalAppearanceBuilders.Size inform() {
+        return PhysicalAppearanceBuilder.physicalAppearance();
+    }
+
+    private static <T> T isPresentOrThrow(T val, String fieldName) {
+        return ofNullable(val).orElseThrow(() -> new IllegalArgumentException("%s can't be empty".formatted(fieldName)));
+    }
+
+    private static short isPositiveOrThrow(short val, String fieldName) {
+        if (val <= 0) {
+            throw new IllegalArgumentException("value was %s but %s is always positive".formatted(val, fieldName));
+        }
+        return val;
     }
 }

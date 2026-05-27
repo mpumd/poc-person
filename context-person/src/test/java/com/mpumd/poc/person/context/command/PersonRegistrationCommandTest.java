@@ -16,11 +16,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PersonRegistrationCommandTest {
 
-    PersonRegistrationCommand.Builder prcBuilder;
+    PersonRegistrationCommandBuilder prcBuilder;
 
     @BeforeEach
     void setUp() {
-        prcBuilder = Instancio.create(PersonRegistrationCommand.Builder.class);
+        prcBuilder = Instancio.create(PersonRegistrationCommandBuilder.class);
         assertThat(prcBuilder).hasNoNullFieldsOrProperties();
     }
 

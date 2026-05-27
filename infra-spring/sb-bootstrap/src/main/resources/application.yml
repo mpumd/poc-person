@@ -1,4 +1,7 @@
 server:
+  threads:
+    virtual:
+      enabled: true
   servlet:
     context-path: /spring
 

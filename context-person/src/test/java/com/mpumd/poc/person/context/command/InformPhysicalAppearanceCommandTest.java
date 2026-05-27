@@ -4,12 +4,24 @@ import com.mpumd.poc.person.context.aggregat.EyesColor;
 import com.mpumd.poc.person.context.aggregat.HairColor;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 class InformPhysicalAppearanceCommandTest {
 
+    InformPhysicalAppearanceCommandBuilder builder;
+
+//    @BeforeEach
+//    void setUp() {
+//        builder = Instancio.create(InformPhysicalAppearanceCommandBuilder.class);
+//        ReflectionTestUtils.setField(builder, "size", (short) 175);
+//        ReflectionTestUtils.setField(builder, "weight", (short) 75);
+//        assertThat(builder).hasNoNullFieldsOrProperties();
+//    }
+
     @Test
-    void buildOK() {
+    void OK() {
         var cmd = InformPhysicalAppearanceCommand.builder()
                 .size((short) 175)
                 .weight((short) 75)
@@ -17,10 +29,28 @@ class InformPhysicalAppearanceCommandTest {
                 .hairColor(HairColor.BLACK)
                 .build();
 
-
-        assertEquals(cmd.size(), 175);
-        assertEquals(cmd.weight(), 75);
-        assertEquals(cmd.eyesColor(), EyesColor.GREEN);
-        assertEquals(cmd.hairColor(), HairColor.BLACK);
+        assertEquals(175, cmd.size());
+        assertEquals(75, cmd.weight());
+        assertEquals(EyesColor.GREEN, cmd.eyesColor());
+        assertEquals(HairColor.BLACK, cmd.hairColor());
     }
+
+    @Test
+    void OK_empty() {
+        var cmd = InformPhysicalAppearanceCommand.builder()
+                .size((short) 0)
+                .weight((short) 0)
+                .eyesColor(null)
+                .hairColor(null)
+                .build();
+
+        assertThat(cmd)
+                .isNotNull();
+        assertEquals(0, cmd.size());
+        assertEquals(0, cmd.weight());
+        assertThat(cmd.eyesColor()).isNull();
+        assertThat(cmd.hairColor()).isNull();
+    }
+
+
 }
