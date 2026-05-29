@@ -1,5 +1,6 @@
 package com.mpumd.poc.person.context.aggregat;
 
+import com.mpumd.poc.person.context.builder.PhysicalAppearanceBuilders;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

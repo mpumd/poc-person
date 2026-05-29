@@ -1,7 +1,7 @@
 package com.mpumd.poc.person.context.command;
 
 import com.mpumd.poc.person.context.aggregat.Nationality;
-import com.mpumd.poc.person.context.command.builder.PersonRegistrationCommandBuilder;
+import com.mpumd.poc.person.context.builder.PersonRegistrationCommandBuilder;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

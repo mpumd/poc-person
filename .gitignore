@@ -25,6 +25,7 @@ replay_pid*
 
 # IntelliJ IDEA config file
 .idea/
+.junie/
 
 # Generated compilation files
 *.iml

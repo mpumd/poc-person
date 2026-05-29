@@ -1,3 +1,5 @@
+
+
 package com.mpumd.poc.person.context.command;
 
 import com.mpumd.poc.person.context.aggregat.Gender;
@@ -13,8 +15,8 @@ public record GenderChangeCommand(
         LocalDateTime changeDate) {
 
     public GenderChangeCommand {
-        id = ofNullable(id).orElseThrow(() -> new IllegalArgumentException("id is marked non-null but is null"));
-        gender = ofNullable(gender).orElseThrow(() -> new IllegalArgumentException("gender is marked non-null but is null"));
-        changeDate = ofNullable(changeDate).orElseThrow(() -> new IllegalArgumentException("changeDate is marked non-null but is null"));
+        ofNullable(id).orElseThrow(() -> new IllegalArgumentException("id is marked non-null but is null"));
+        ofNullable(gender).orElseThrow(() -> new IllegalArgumentException("gender is marked non-null but is null"));
+        ofNullable(changeDate).orElseThrow(() -> new IllegalArgumentException("changeDate is marked non-null but is null"));
     }
 }

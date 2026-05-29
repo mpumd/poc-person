@@ -1,5 +1,7 @@
 package com.mpumd.poc.person.context.aggregat;
 
+import com.mpumd.poc.person.context.builder.PhysicalAppearanceBuilder;
+import com.mpumd.poc.person.context.builder.PhysicalAppearanceBuilders;
 import org.jilt.Builder;
 import org.jilt.BuilderStyle;
 
@@ -20,8 +22,8 @@ public class PhysicalAppearance {
             HairColor.BLACK);
 
     // creation entry
-    @Builder(style = BuilderStyle.STAGED)
-    PhysicalAppearance(short size, short weight, EyesColor eyesColor, HairColor hairColor) {
+    @Builder(style = BuilderStyle.STAGED, packageName = "com.mpumd.poc.person.context.builder")
+    public PhysicalAppearance(short size, short weight, EyesColor eyesColor, HairColor hairColor) {
         this.size = isPositiveOrThrow(size, "size");
         this.weight = isPositiveOrThrow(weight, "weight");
         this.eyesColor = isPresentOrThrow(eyesColor, "eyesColor");

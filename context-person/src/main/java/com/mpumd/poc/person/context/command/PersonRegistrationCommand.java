@@ -2,8 +2,8 @@ package com.mpumd.poc.person.context.command;
 
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
-import com.mpumd.poc.person.context.command.builder.PersonRegistrationCommandBuilder;
-import com.mpumd.poc.person.context.command.builder.PersonRegistrationCommandBuilders;
+import com.mpumd.poc.person.context.builder.PersonRegistrationCommandBuilder;
+import com.mpumd.poc.person.context.builder.PersonRegistrationCommandBuilders;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -26,7 +26,7 @@ public class PersonRegistrationCommand {
     Gender gender;
     Nationality nationality;
 
-    @Builder(style = BuilderStyle.STAGED, packageName = "com.mpumd.poc.person.context.command.builder")
+    @Builder(style = BuilderStyle.STAGED, packageName = "com.mpumd.poc.person.context.builder")
     public PersonRegistrationCommand(String firstName, String lastName, ZonedDateTime birthDate, String birthPlace, Gender gender, Nationality nationality) {
         this.firstName = ofNullable(firstName)
                 .filter(s -> !s.isBlank())
