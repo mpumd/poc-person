@@ -27,7 +27,7 @@ jobs:
           distribution: 'liberica'
           cache: maven
 
-      - uses: stCarolas/setup-maven@v5
+      - uses: stCarolas/setup-maven@v5.1
         with:
           maven-version: 4.0.0-rc-5
 
