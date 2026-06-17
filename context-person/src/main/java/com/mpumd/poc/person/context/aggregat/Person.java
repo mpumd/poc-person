@@ -1,11 +1,7 @@
 package com.mpumd.poc.person.context.aggregat;
 
-import com.mpumd.poc.person.context.command.GenderChangeCommand;
-import com.mpumd.poc.person.context.command.InformPhysicalAppearanceCommand;
-import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
@@ -14,6 +10,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
+
+import static java.util.Optional.ofNullable;
 
 @Slf4j
 @Getter
@@ -42,19 +40,39 @@ public class Person {
 
 //    private final SignificantPossessions significantPossessions;
 
-    public static Person register(PersonRegistrationCommand cmd) {
-        return new Person(cmd, UUID.randomUUID());
+    public static Person register(String firstName, String lastName,
+                                  ZonedDateTime birthDate, String birthPlace,
+                                  Gender gender, Nationality nationality) {
+        var validFirstName = notBlank(firstName, "firstName must not be empty");
+        var validLastName = notBlank(lastName, "lastName must not be empty");
+        var validBirthDate = ofNullable(birthDate)
+                .orElseThrow(() -> new IllegalArgumentException("birthDate must not be null"));
+        var validBirthPlace = notBlank(birthPlace, "birthPlace must not be empty");
+        var validGender = ofNullable(gender)
+                .orElseThrow(() -> new IllegalArgumentException("gender must not be null"));
+        var validNationality = ofNullable(nationality)
+                .orElseThrow(() -> new IllegalArgumentException("nationality must not be null"));
+
+        return new Person(validFirstName, validLastName, validBirthDate, validBirthPlace, validGender, validNationality, UUID.randomUUID());
     }
 
-    private Person(@NonNull PersonRegistrationCommand cmd, @NonNull UUID id) {
-        var birthDateTruncateMillis = cmd.birthDate().truncatedTo(ChronoUnit.SECONDS);
+    private static <T> String notBlank(String val, String fieldName) {
+        return ofNullable(val)
+                .filter(s -> !s.isBlank())
+                .orElseThrow(() -> new IllegalArgumentException(fieldName));
+    }
+
+    private Person(String firstName, String lastName,
+                   ZonedDateTime birthDate, String birthPlace,
+                   Gender gender, Nationality nationality, UUID id) {
+        var birthDateTruncateMillis = birthDate.truncatedTo(ChronoUnit.SECONDS);
         this.id = id;
-        this.firstName = cmd.firstName();
-        this.lastName = cmd.lastName();
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.birthDate = birthDateTruncateMillis;
-        this.birthPlace = cmd.birthPlace();
-        this.nationality = cmd.nationality();
-        this.genderChangeHistory.put(birthDateTruncateMillis.toLocalDateTime(), cmd.gender());
+        this.birthPlace = birthPlace;
+        this.nationality = nationality;
+        this.genderChangeHistory.put(birthDateTruncateMillis.toLocalDateTime(), gender);
     }
 
     // TODO maybe it exist a better way like a pattern to instanciate the person ; a protected constructor or abstract factory...
@@ -70,12 +88,12 @@ public class Person {
         this.genderChangeHistory.putAll(genders);
     }
 
-    public void informPhysicalAppearance(InformPhysicalAppearanceCommand cmd) {
+    public void informPhysicalAppearance(short size, short weight, EyesColor eyesColor, HairColor hairColor) {
         this.physicalAppearance = PhysicalAppearance.inform()
-                .size(cmd.size())
-                .weight(cmd.weight())
-                .eyesColor(cmd.eyesColor())
-                .hairColor(cmd.hairColor())
+                .size(size)
+                .weight(weight)
+                .eyesColor(eyesColor)
+                .hairColor(hairColor)
                 .build();
     }
 
@@ -84,13 +102,13 @@ public class Person {
     }
 
     // TODO move to physicalAppearance
-    public void changeSex(@NonNull GenderChangeCommand command) {
-        if (Gender.ALIEN.equals(command.gender())) {
+    public void changeSex(Gender gender, LocalDateTime changeDate) {
+        if (Gender.ALIEN.equals(gender)) {
             throw new IllegalArgumentException("%s can't become a Alien. No sugery exist to do that".formatted(lastName));
-        } else if (this.genderChangeHistory.lastEntry().getValue().equals(command.gender())) {
-            throw new IllegalArgumentException("%s is already a %s".formatted(lastName, command.gender()));
+        } else if (this.genderChangeHistory.lastEntry().getValue().equals(gender)) {
+            throw new IllegalArgumentException("%s is already a %s".formatted(lastName, gender));
         }
 
-        genderChangeHistory.putIfAbsent(command.changeDate(), command.gender());
+        genderChangeHistory.putIfAbsent(changeDate, gender);
     }
 }

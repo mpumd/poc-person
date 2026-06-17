@@ -1,0 +1,23 @@
+
+
+
+package com.mpumd.poc.person.application.command;
+
+import com.mpumd.poc.person.context.aggregat.Gender;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import static java.util.Optional.ofNullable;
+
+public record GenderChangeCommand(
+        UUID id,
+        Gender gender,
+        LocalDateTime changeDate) {
+
+    public GenderChangeCommand {
+        ofNullable(id).orElseThrow(() -> new IllegalArgumentException("id is marked non-null but is null"));
+        ofNullable(gender).orElseThrow(() -> new IllegalArgumentException("gender is marked non-null but is null"));
+        ofNullable(changeDate).orElseThrow(() -> new IllegalArgumentException("changeDate is marked non-null but is null"));
+    }
+}

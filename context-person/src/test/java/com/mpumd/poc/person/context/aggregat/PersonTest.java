@@ -1,16 +1,15 @@
 package com.mpumd.poc.person.context.aggregat;
 
 
-import com.mpumd.poc.person.context.command.GenderChangeCommand;
-import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.instancio.Instancio;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
@@ -25,18 +24,11 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
 @Slf4j
 class PersonTest {
 
     Faker faker = new Faker();
-    PersonRegistrationCommand prc = Instancio.create(PersonRegistrationCommand.class);
-
-    @BeforeEach
-    void setUp() {
-        assertThat(prc).hasNoNullFieldsOrProperties();
-    }
 
     @Test
     @Tag("PITestIgnore")
@@ -45,23 +37,50 @@ class PersonTest {
         assertEquals(Person.class.getDeclaredFields().length, 9);
     }
 
-    @Test
-    void KO_NullCommand() {
-        assertThatThrownBy(() -> Person.register(null))
+    @ParameterizedTest
+    @NullAndEmptySource
+    void KO_firstName(String val) {
+        assertThatThrownBy(() -> Person.register(val, "last", ZonedDateTime.now(), "place", Gender.MALE, Nationality.FR))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("cmd is marked non-null but is null");
+                .hasMessage("firstName must not be empty");
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void KO_lastName(String val) {
+        assertThatThrownBy(() -> Person.register("first", val, ZonedDateTime.now(), "place", Gender.MALE, Nationality.FR))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("lastName must not be empty");
     }
 
     @Test
-    void KO_NullUUID() {
-        try (var mockedUUID = mockStatic(UUID.class)) {
-            mockedUUID.when(UUID::randomUUID).thenReturn(null);
-            assertThatThrownBy(() -> Person.register(prc))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("id is marked non-null but is null");
-        }
+    void KO_birthDate() {
+        assertThatThrownBy(() -> Person.register("first", "last", null, "place", Gender.MALE, Nationality.FR))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("birthDate must not be null");
     }
 
+    @ParameterizedTest
+    @NullAndEmptySource
+    void KO_birthPlace(String val) {
+        assertThatThrownBy(() -> Person.register("first", "last", ZonedDateTime.now(), val, Gender.MALE, Nationality.FR))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("birthPlace must not be empty");
+    }
+
+    @Test
+    void KO_gender() {
+        assertThatThrownBy(() -> Person.register("first", "last", ZonedDateTime.now(), "place", null, Nationality.FR))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("gender must not be null");
+    }
+
+    @Test
+    void KO_nationality() {
+        assertThatThrownBy(() -> Person.register("first", "last", ZonedDateTime.now(), "place", Gender.MALE, null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("nationality must not be null");
+    }
 
     @Test
     void OK_personAggregateRoot() {
@@ -78,16 +97,8 @@ class PersonTest {
         var birthPlace = faker.space().planet();
         var nationality = Nationality.TT;
 
-        var prc = mock(PersonRegistrationCommand.class);
-        when(prc.firstName()).thenReturn(firstName);
-        when(prc.lastName()).thenReturn(lastName);
-        when(prc.birthDate()).thenReturn(birthDate);
-        when(prc.gender()).thenReturn(gender);
-        when(prc.birthPlace()).thenReturn(birthPlace);
-        when(prc.nationality()).thenReturn(nationality);
-
         // when
-        Person person = Person.register(prc);
+        Person person = Person.register(firstName, lastName, birthDate, birthPlace, gender, nationality);
 
         var birthDateWithNoMilliSec = birthDate.truncatedTo(ChronoUnit.SECONDS);
 
@@ -155,9 +166,8 @@ class PersonTest {
         var history = new TreeMap(Map.of(person.birthDate().toLocalDateTime(), Gender.MALE));
         ReflectionTestUtils.setField(person, "genderChangeHistory", history);
         var changeDate = LocalDateTime.now();
-        var changeSexCommand = new GenderChangeCommand(UUID.randomUUID(), Gender.FEMALE, changeDate);
 
-        person.changeSex(changeSexCommand);
+        person.changeSex(Gender.FEMALE, changeDate);
 
         assertThat(person)
                 .extracting("genderChangeHistory")
@@ -174,9 +184,8 @@ class PersonTest {
         var history = new TreeMap(Map.of(person.birthDate().toLocalDateTime(), Gender.FEMALE));
         ReflectionTestUtils.setField(person, "genderChangeHistory", history);
         var changeDate = LocalDateTime.now();
-        var changeSexCommand = new GenderChangeCommand(UUID.randomUUID(), Gender.FEMALE, changeDate);
 
-        assertThatThrownBy(() -> person.changeSex(changeSexCommand))
+        assertThatThrownBy(() -> person.changeSex(Gender.FEMALE, changeDate))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("%s is already a FEMALE", person.lastName());
     }
@@ -189,20 +198,10 @@ class PersonTest {
         var history = new TreeMap(Map.of(person.birthDate().toLocalDateTime(), Gender.MALE));
         ReflectionTestUtils.setField(person, "genderChangeHistory", history);
         var changeDate = LocalDateTime.now();
-        var changeSexCommand = new GenderChangeCommand(UUID.randomUUID(), Gender.ALIEN, changeDate);
 
-        assertThatThrownBy(() -> person.changeSex(changeSexCommand))
+        assertThatThrownBy(() -> person.changeSex(Gender.ALIEN, changeDate))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("%s can't become a Alien. No sugery exist to do that", person.lastName());
     }
 
-    @Test
-    void throwExWhenTheChangeSexCmdIsNull() {
-        var person = Instancio.create(Person.class);
-        assertThat(person).hasNoNullFieldsOrProperties();
-
-        assertThatThrownBy(() -> person.changeSex(null))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("command is marked non-null but is null");
-    }
 }

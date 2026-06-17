@@ -2,8 +2,8 @@ package com.mpumd.poc.person.sb.rest.mapper;
 
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
-import com.mpumd.poc.person.context.command.GenderChangeCommand;
-import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
+import com.mpumd.poc.person.application.command.GenderChangeCommand;
+import com.mpumd.poc.person.application.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.sb.rest.resource.GenderChangeResource;
 import com.mpumd.poc.person.sb.rest.resource.RegisterPersonResource;
 import org.instancio.Instancio;

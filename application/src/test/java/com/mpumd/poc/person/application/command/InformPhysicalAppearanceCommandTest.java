@@ -1,4 +1,4 @@
-package com.mpumd.poc.person.context.command;
+package com.mpumd.poc.person.application.command;
 
 import com.mpumd.poc.person.context.aggregat.EyesColor;
 import com.mpumd.poc.person.context.aggregat.HairColor;
