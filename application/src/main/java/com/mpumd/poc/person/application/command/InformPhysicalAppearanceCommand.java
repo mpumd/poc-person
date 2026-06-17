@@ -1,5 +1,6 @@
 package com.mpumd.poc.person.application.command;
 
+import com.mpumd.poc.person.application.builder.InformPhysicalAppearanceCommandBuilders;
 import com.mpumd.poc.person.context.aggregat.EyesColor;
 import com.mpumd.poc.person.context.aggregat.HairColor;
 
@@ -14,7 +15,7 @@ public record InformPhysicalAppearanceCommand(
         EyesColor eyesColor,
         HairColor hairColor) {
 
-    public static com.mpumd.poc.person.application.builder.InformPhysicalAppearanceCommandBuilders.Size builder() {
+    public static InformPhysicalAppearanceCommandBuilders.Size builder() {
         return InformPhysicalAppearanceCommandBuilder.informPhysicalAppearanceCommand();
     }
 }

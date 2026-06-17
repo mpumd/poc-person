@@ -4,15 +4,14 @@ import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import com.mpumd.poc.person.sb.jpa.entity.PersonJPAEntity;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
 import static java.util.Optional.ofNullable;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PersonDomainJPAMapper {
+    private PersonDomainJPAMapper() {
+    }
 
     public static PersonJPAEntity toJpa(Person person) {
         var builder = PersonJPAEntity.builder()

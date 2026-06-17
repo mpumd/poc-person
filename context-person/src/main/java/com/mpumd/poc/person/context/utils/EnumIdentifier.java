@@ -1,10 +1,11 @@
 package com.mpumd.poc.person.context.utils;
 
 import lombok.NonNull;
-import lombok.experimental.UtilityClass;
 
-@UtilityClass
-public class EnumIdentifier {
+public final class EnumIdentifier {
+
+    private EnumIdentifier() {
+    }
 
     // TODO we can use the string names + equalsIgnoreCase instead of uppercase.
     public static <T extends Enum<T>> T valueOfInsensitiveName(@NonNull Class<T> enumClass, @NonNull String name) {
