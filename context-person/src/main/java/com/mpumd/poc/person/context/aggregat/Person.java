@@ -1,7 +1,9 @@
 package com.mpumd.poc.person.context.aggregat;
 
+
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import static com.mpumd.poc.person.context.utils.ObjectsUtils.notBlank;
 import static java.util.Optional.ofNullable;
 
 @Slf4j
@@ -43,40 +46,25 @@ public class Person {
     public static Person register(String firstName, String lastName,
                                   ZonedDateTime birthDate, String birthPlace,
                                   Gender gender, Nationality nationality) {
-        var validFirstName = notBlank(firstName, "firstName must not be empty");
-        var validLastName = notBlank(lastName, "lastName must not be empty");
-        var validBirthDate = ofNullable(birthDate)
-                .orElseThrow(() -> new IllegalArgumentException("birthDate must not be null"));
-        var validBirthPlace = notBlank(birthPlace, "birthPlace must not be empty");
-        var validGender = ofNullable(gender)
-                .orElseThrow(() -> new IllegalArgumentException("gender must not be null"));
-        var validNationality = ofNullable(nationality)
-                .orElseThrow(() -> new IllegalArgumentException("nationality must not be null"));
+        ofNullable(birthDate).orElseThrow(() -> new IllegalArgumentException("birthDate must not be null"));
+        ofNullable(gender).orElseThrow(() -> new IllegalArgumentException("gender must not be null"));
+        ofNullable(nationality).orElseThrow(() -> new IllegalArgumentException("nationality must not be null"));
 
-        return new Person(validFirstName, validLastName, validBirthDate, validBirthPlace, validGender, validNationality, UUID.randomUUID());
-    }
-
-    private static <T> String notBlank(String val, String fieldName) {
-        return ofNullable(val)
-                .filter(s -> !s.isBlank())
-                .orElseThrow(() -> new IllegalArgumentException(fieldName));
-    }
-
-    private Person(String firstName, String lastName,
-                   ZonedDateTime birthDate, String birthPlace,
-                   Gender gender, Nationality nationality, UUID id) {
         var birthDateTruncateMillis = birthDate.truncatedTo(ChronoUnit.SECONDS);
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthDate = birthDateTruncateMillis;
-        this.birthPlace = birthPlace;
-        this.nationality = nationality;
-        this.genderChangeHistory.put(birthDateTruncateMillis.toLocalDateTime(), gender);
+
+        return Person.allArgsBuilder()
+                .id(UUID.randomUUID())
+                .firstName(notBlank(firstName, "firstName must not be empty"))
+                .lastName(notBlank(lastName, "lastName must not be empty"))
+                .birthDate(birthDateTruncateMillis)
+                .birthPlace(notBlank(birthPlace, "birthPlace must not be empty"))
+                .genders(Map.of(birthDateTruncateMillis.toLocalDateTime(), gender))
+                .nationality(nationality)
+                .build();
     }
 
     // TODO maybe it exist a better way like a pattern to instanciate the person ; a protected constructor or abstract factory...
-    @Builder(builderMethodName = "builderFromRepository")
+    @Builder(builderMethodName = "allArgsBuilder")
     private Person(UUID id, String firstName, String lastName, ZonedDateTime birthDate, String birthPlace,
                    Map<LocalDateTime, Gender> genders, Nationality nationality) {
         this.id = id;
@@ -102,7 +90,8 @@ public class Person {
     }
 
     // TODO move to physicalAppearance
-    public void changeSex(Gender gender, LocalDateTime changeDate) {
+    public void changeSex(@NonNull Gender gender,
+                          @NonNull LocalDateTime changeDate) {
         if (Gender.ALIEN.equals(gender)) {
             throw new IllegalArgumentException("%s can't become a Alien. No sugery exist to do that".formatted(lastName));
         } else if (this.genderChangeHistory.lastEntry().getValue().equals(gender)) {

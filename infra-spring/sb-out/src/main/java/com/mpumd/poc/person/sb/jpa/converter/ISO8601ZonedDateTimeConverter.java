@@ -2,6 +2,7 @@ package com.mpumd.poc.person.sb.jpa.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import org.jspecify.annotations.Nullable;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,7 +21,7 @@ public class ISO8601ZonedDateTimeConverter implements AttributeConverter<ZonedDa
     private static final DateTimeFormatter ISO8601_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
     @Override
-    public String convertToDatabaseColumn(ZonedDateTime zdt) {
+    public @Nullable String convertToDatabaseColumn(ZonedDateTime zdt) {
         if (zdt == null) {
             return null;
         }
@@ -28,7 +29,7 @@ public class ISO8601ZonedDateTimeConverter implements AttributeConverter<ZonedDa
     }
 
     @Override
-    public ZonedDateTime convertToEntityAttribute(String value) {
+    public @Nullable ZonedDateTime convertToEntityAttribute(String value) {
         if (value == null) {
             return null;
         }

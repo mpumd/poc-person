@@ -47,14 +47,16 @@ public final class PersonDomainJPAMapper {
     }
 
     public static Person toDomain(PersonJPAEntity jpaEntity) {
-        return Person.builderFromRepository()
+        var personBuilder = Person.allArgsBuilder()
                 .id(jpaEntity.id())
                 .firstName(jpaEntity.firstName())
                 .lastName(jpaEntity.lastName())
                 .birthDate(jpaEntity.birthDate())
-                .birthPlace(jpaEntity.birthPlace())
-                .nationality(ofNullable(jpaEntity.nationality()).map(Nationality::valueOfName).orElse(null))
-                .genders(ofNullable(jpaEntity.genderChangeHistory()).orElse(Map.of()))
-                .build();
+                .birthPlace(jpaEntity.birthPlace());
+
+                ofNullable(jpaEntity.nationality()).map(Nationality::valueOfName).ifPresent(personBuilder::nationality);
+                ofNullable(jpaEntity.genderChangeHistory()).ifPresent(personBuilder::genders);
+
+                return personBuilder.build();
     }
 }

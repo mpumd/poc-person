@@ -19,7 +19,6 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -156,6 +155,26 @@ class PersonTest {
 
         long expectedAge = ChronoUnit.YEARS.between(birthDate, ZonedDateTime.now());
         assertEquals(expectedAge, person.calculateAge(), "the age calcule must be " + expectedAge);
+    }
+
+    @Test
+    void throwExWhenChangeSexWithNullGender() {
+        var person = Instancio.create(Person.class);
+        assertThat(person).hasNoNullFieldsOrProperties();
+
+        assertThatThrownBy(() -> person.changeSex(null, LocalDateTime.now()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("gender is marked non-null but is null");
+    }
+
+    @Test
+    void throwExWhenChangeSexWithNullChangeDate() {
+        var person = Instancio.create(Person.class);
+        assertThat(person).hasNoNullFieldsOrProperties();
+
+        assertThatThrownBy(() -> person.changeSex(Gender.FEMALE, null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("changeDate is marked non-null but is null");
     }
 
     @Test

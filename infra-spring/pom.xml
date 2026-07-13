@@ -29,6 +29,7 @@
         <java.version>25</java.version>
         <!-- https://dzone.com/articles/using-lombok-library-witk-jdk-23 -->
         <maven.compiler.proc>full</maven.compiler.proc>
+        <nullability-maven-plugin.version>0.4.0</nullability-maven-plugin.version>
 
         <spring-boot.version>${project.parent.version}</spring-boot.version>
         <spring-boot-admin-dependencies.version>4.0.4</spring-boot-admin-dependencies.version>
@@ -133,6 +134,13 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
 
         <!--##### Test #####-->
         <dependency>
@@ -195,6 +203,22 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <!-- https://ik.am/entries/900/en -->
+                <groupId>am.ik.maven</groupId>
+                <artifactId>nullability-maven-plugin</artifactId>
+                <version>${nullability-maven-plugin.version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>configure</goal>
+                            <!-- generate package-info.java with @NullMarked on each subpackage -->
+                            <goal>generate-package-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
