@@ -5,7 +5,6 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,7 +12,7 @@ class GenderChangeCommandTest {
 
     @Test
     void OK() {
-        val cmd = new GenderChangeCommand(UUID.randomUUID(), Gender.FEMALE, LocalDateTime.now());
+        val cmd = new GenderChangeCommand(Gender.FEMALE, LocalDateTime.now());
         assertThat(cmd).hasNoNullFieldsOrProperties();
     }
 }

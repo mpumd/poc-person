@@ -25,7 +25,7 @@ public class PersonAppSvc extends PersonApplicationService {
 
     @Transactional
     @Override
-    public void changeSex(GenderChangeCommand command) {
-        super.changeSex(command);
+    public void changeSex(UUID id, GenderChangeCommand command) {
+        super.changeSex(id, command);
     }
 }

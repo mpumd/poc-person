@@ -106,12 +106,8 @@ public class ChangeSexFeature {
     @When("I engage the changeSex business act")
     public void callChangeSex() {
         try {
-            var command = new GenderChangeCommand(
-                    personRepoInMemory.persons().getFirst().id(),
-                    newGender,
-                    changeGenderDate
-            );
-            applicationService.changeSex(command);
+            var command = new GenderChangeCommand(newGender, changeGenderDate);
+            applicationService.changeSex(personRepoInMemory.persons().getFirst().id(), command);
         } catch (Exception ex) {
             exceptions.add(ex);
         }

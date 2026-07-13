@@ -26,9 +26,8 @@ public final class PersonDomainRestMapper {
                 .build();
     }
 
-    public static GenderChangeCommand toDomain(UUID uuid, GenderChangeResource resource) {
+    public static GenderChangeCommand toDomain(GenderChangeResource resource) {
         return new GenderChangeCommand(
-                uuid,
                 Gender.valueOfName(resource.gender()),
                 resource.changeDate()
         );

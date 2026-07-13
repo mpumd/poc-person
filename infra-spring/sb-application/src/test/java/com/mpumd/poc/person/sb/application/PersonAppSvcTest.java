@@ -47,9 +47,10 @@ class PersonAppSvcTest {
     @Test
     void shouldCallSuperChangeSex() {
         var captor = ArgumentCaptor.forClass(GenderChangeCommand.class);
-        doNothing().when((PersonApplicationService)personAppSvc).changeSex(captor.capture());
+        UUID id = UUID.randomUUID();
+        doNothing().when((PersonApplicationService)personAppSvc).changeSex(eq(id), captor.capture());
 
-        personAppSvc.changeSex(genderChangeCommand);
+        personAppSvc.changeSex(id, genderChangeCommand);
 
         assertEquals(captor.getValue(), genderChangeCommand);
     }

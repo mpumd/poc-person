@@ -57,6 +57,6 @@ public class PersonRestController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/person/{id}/gender")
     public void changeSex(@PathVariable UUID id, @RequestBody GenderChangeResource genderChangeResource) {
-        personAppSvc.changeSex(PersonDomainRestMapper.toDomain(id, genderChangeResource));
+        personAppSvc.changeSex(id, PersonDomainRestMapper.toDomain(genderChangeResource));
     }
 }

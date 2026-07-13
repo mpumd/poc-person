@@ -29,9 +29,9 @@ public abstract class PersonApplicationService {
         return person.id();
     }
 
-    public void changeSex(@NonNull GenderChangeCommand command) {
-        Person person = personPersistanceRepository.pull(command.id()).orElseThrow(
-                () -> new PersonNotFoundException(command.id()));
+    public void changeSex(@NonNull UUID id, @NonNull GenderChangeCommand command) {
+        Person person = personPersistanceRepository.pull(id).orElseThrow(
+                () -> new PersonNotFoundException(id));
 
         person.changeSex(command.gender(), command.changeDate());
         personPersistanceRepository.push(person);

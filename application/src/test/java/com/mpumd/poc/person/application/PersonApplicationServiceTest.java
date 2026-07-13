@@ -133,9 +133,8 @@ public class PersonApplicationServiceTest {
     @Test
     void changeSexOfAPerson() {
         given(personPersistanceRepository.pull(uuid)).willReturn(Optional.of(personAggregateRoot));
-        given(genderChangeCommand.id()).willReturn(uuid);
 
-        assertDoesNotThrow(() -> personApplicationService.changeSex(genderChangeCommand));
+        assertDoesNotThrow(() -> personApplicationService.changeSex(uuid, genderChangeCommand));
 
         verify(personAggregateRoot).changeSex(genderChangeCommand.gender(), genderChangeCommand.changeDate());
         verify(personPersistanceRepository).push(personAggregateRoot);
@@ -144,9 +143,8 @@ public class PersonApplicationServiceTest {
     @Test
     void changeSexThrowNotFoundIfUnknowId() {
         given(personPersistanceRepository.pull(uuid)).willReturn(Optional.empty());
-        doReturn(uuid).when(genderChangeCommand).id();
 
-        assertThatThrownBy(() -> personApplicationService.changeSex(genderChangeCommand))
+        assertThatThrownBy(() -> personApplicationService.changeSex(uuid, genderChangeCommand))
                 .isInstanceOf(PersonNotFoundException.class)
                 .hasMessage("The person with if %s doesn't exist !", uuid);
 

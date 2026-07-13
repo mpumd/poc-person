@@ -24,7 +24,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -131,8 +130,8 @@ class PersonRestControllerITest {
     void changeSex201() throws Exception {
         try (var mapperMock = mockStatic(PersonDomainRestMapper.class)) {
             var resourceCaptor = ArgumentCaptor.forClass(GenderChangeResource.class);
-            mapperMock.when(() -> PersonDomainRestMapper.toDomain(eq(id), resourceCaptor.capture())).thenReturn(genderChangeCmd);
-            doNothing().when(appService).changeSex(genderChangeCmd);
+            mapperMock.when(() -> PersonDomainRestMapper.toDomain(resourceCaptor.capture())).thenReturn(genderChangeCmd);
+            doNothing().when(appService).changeSex(id, genderChangeCmd);
 
             mockMvc.perform(post("/person/" + id + "/gender")
                             .contentType("application/json")
@@ -151,8 +150,8 @@ class PersonRestControllerITest {
     @Test
     void changeSex422() throws Exception {
         try (var mapperMock = mockStatic(PersonDomainRestMapper.class)) {
-            mapperMock.when(() -> PersonDomainRestMapper.toDomain(eq(id), any(GenderChangeResource.class))).thenReturn(genderChangeCmd);
-            doThrow(new PersonNotFoundException("person not found with id " + id)).when(appService).changeSex(genderChangeCmd);
+            mapperMock.when(() -> PersonDomainRestMapper.toDomain(any(GenderChangeResource.class))).thenReturn(genderChangeCmd);
+            doThrow(new PersonNotFoundException("person not found with id " + id)).when(appService).changeSex(id, genderChangeCmd);
 
             mockMvc.perform(post("/person/" + id + "/gender")
                             .contentType("application/json")

@@ -7,12 +7,10 @@ import com.mpumd.poc.person.application.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.sb.rest.resource.GenderChangeResource;
 import com.mpumd.poc.person.sb.rest.resource.RegisterPersonResource;
 import org.instancio.Instancio;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.instancio.Select.field;
@@ -61,17 +59,13 @@ class PersonDomainRestMapperTest {
     @Test
     void mapAllFilledValuesFromChangeSexCommandToAggregat() {
         var resource = new GenderChangeResource("FeMale", LocalDateTime.now());
-        UUID uuid = UUID.randomUUID();
 
-        GenderChangeCommand command = PersonDomainRestMapper.toDomain(uuid, resource);
+        GenderChangeCommand command = PersonDomainRestMapper.toDomain(resource);
 
         assertThat(command)
                 .usingRecursiveComparison()
                 .withEqualsForFields((Enum e, String s) -> e.name().equalsIgnoreCase(s), "gender")
-                .ignoringFields("id")
                 .isEqualTo(resource);
-
-        Assertions.assertEquals(uuid, command.id());
     }
 
     @Test
@@ -82,7 +76,7 @@ class PersonDomainRestMapperTest {
         try (var commandConstructor = mockConstruction(GenderChangeCommand.class)) {
 
             // when
-            PersonDomainRestMapper.toDomain(null, resource);
+            PersonDomainRestMapper.toDomain(resource);
 
             // then
             assertThat(commandConstructor.constructed())
