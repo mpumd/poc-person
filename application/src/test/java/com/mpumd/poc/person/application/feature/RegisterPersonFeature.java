@@ -5,7 +5,7 @@ import com.mpumd.poc.person.application.PersonPersistanceInMemory;
 import com.mpumd.poc.person.application.exception.PersonAlreadyExistException;
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
-import com.mpumd.poc.person.application.command.PersonRegistrationCommand;
+import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;

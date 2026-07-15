@@ -2,8 +2,8 @@ package com.mpumd.poc.person.sb.rest;
 
 import com.mpumd.poc.person.application.exception.PersonAlreadyExistException;
 import com.mpumd.poc.person.application.exception.PersonNotFoundException;
-import com.mpumd.poc.person.application.command.GenderChangeCommand;
-import com.mpumd.poc.person.application.command.PersonRegistrationCommand;
+import com.mpumd.poc.person.context.command.GenderChangeCommand;
+import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.sb.application.PersonAppSvc;
 import com.mpumd.poc.person.sb.rest.mapper.PersonDomainRestMapper;
 import com.mpumd.poc.person.sb.rest.resource.GenderChangeResource;

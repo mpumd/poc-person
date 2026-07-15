@@ -2,12 +2,11 @@ package com.mpumd.poc.person.sb.rest.mapper;
 
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
-import com.mpumd.poc.person.application.command.GenderChangeCommand;
-import com.mpumd.poc.person.application.command.PersonRegistrationCommand;
+import com.mpumd.poc.person.context.command.GenderChangeCommand;
+import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.sb.rest.resource.GenderChangeResource;
 import com.mpumd.poc.person.sb.rest.resource.RegisterPersonResource;
 import org.instancio.Instancio;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -22,8 +21,8 @@ class PersonDomainRestMapperTest {
     @Test
     void mapAllFilledValuesFromPersonRegisterResourceToCmd() {
         var resource = Instancio.of(RegisterPersonResource.class)
-                .set(field("gender"), Gender.ALIEN.toString().toLowerCase())
-                .set(field("nationality"), Nationality.TT.toString())
+                .generate(field("gender"), gen -> gen.enumOf(Gender.class).as(g -> g.name().toLowerCase()))
+                .generate(field("nationality"), gen -> gen.enumOf(Nationality.class).asString())
                 .create();
         assertThat(resource).hasNoNullFieldsOrProperties();
 
@@ -31,10 +30,10 @@ class PersonDomainRestMapperTest {
 
         assertThat(command)
                 .usingRecursiveComparison()
-                .ignoringFields("gender", "nationality")
+                .withEqualsForFields(
+                        (Enum<?> e, String s) -> e.name().equalsIgnoreCase(s),
+                        "gender", "nationality")
                 .isEqualTo(resource);
-        assertThat(resource.gender()).isEqualToIgnoringCase(command.gender().name());
-        assertThat(resource.nationality()).isEqualToIgnoringCase(command.nationality().name());
     }
 
     @Test
@@ -69,7 +68,6 @@ class PersonDomainRestMapperTest {
     }
 
     @Test
-    @Disabled // TODO command move mandatory field
     void mapAllNullValuesFromChangeSexCommandToAggregat() {
         // given
         var resource = new GenderChangeResource(null, null);

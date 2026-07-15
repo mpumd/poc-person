@@ -1,11 +1,11 @@
 package com.mpumd.poc.person.application;
 
-import com.mpumd.poc.person.application.command.GenderChangeCommand;
-import com.mpumd.poc.person.application.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.application.exception.PersonAlreadyExistException;
 import com.mpumd.poc.person.application.exception.PersonNotFoundException;
 import com.mpumd.poc.person.context.PersonPersistanceRepository;
 import com.mpumd.poc.person.context.aggregat.Person;
+import com.mpumd.poc.person.context.command.GenderChangeCommand;
+import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public abstract class PersonApplicationService {
     private final PersonPersistanceRepository personPersistanceRepository;
 
     public UUID register(PersonRegistrationCommand cmd) {
-        Person person = Person.register(cmd.firstName(), cmd.lastName(), cmd.birthDate(), cmd.birthPlace(), cmd.gender(), cmd.nationality());
+        Person person = Person.register(cmd);
         var searchQuery = new PersonSearchQuery(person);
         if (personPersistanceRepository.isExist(searchQuery)) {
             throw new PersonAlreadyExistException(searchQuery.firstName(), searchQuery.lastName());
@@ -29,11 +29,11 @@ public abstract class PersonApplicationService {
         return person.id();
     }
 
-    public void changeSex(@NonNull UUID id, @NonNull GenderChangeCommand command) {
+    public void changeSex(@NonNull UUID id, GenderChangeCommand command) {
         Person person = personPersistanceRepository.pull(id).orElseThrow(
                 () -> new PersonNotFoundException(id));
 
-        person.changeSex(command.gender(), command.changeDate());
+        person.changeSex(command);
         personPersistanceRepository.push(person);
     }
 }

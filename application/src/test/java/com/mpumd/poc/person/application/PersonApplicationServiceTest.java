@@ -1,13 +1,13 @@
 package com.mpumd.poc.person.application;
 
-import com.mpumd.poc.person.application.command.GenderChangeCommand;
-import com.mpumd.poc.person.application.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.application.exception.PersonAlreadyExistException;
 import com.mpumd.poc.person.application.exception.PersonNotFoundException;
 import com.mpumd.poc.person.context.PersonPersistanceRepository;
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.aggregat.Person;
+import com.mpumd.poc.person.context.command.GenderChangeCommand;
+import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,10 +81,7 @@ public class PersonApplicationServiceTest {
         try (var personMockedStatic = mockStatic(Person.class);
              var queryConstructorMock = mockConstruction(PersonSearchQuery.class)) {
 
-            personMockedStatic.when(() -> Person.register(
-                    command.firstName(), command.lastName(), command.birthDate(),
-                    command.birthPlace(), command.gender(), command.nationality()
-            )).thenReturn(personAggregateRoot);
+            personMockedStatic.when(() -> Person.register(command)).thenReturn(personAggregateRoot);
 
             // when
             UUID result = personApplicationService.register(command);
@@ -122,10 +119,7 @@ public class PersonApplicationServiceTest {
                     .isEqualTo(queryPassedToRepo.getValue());
 
 
-            mockedStatic.verify(() -> Person.register(
-                    command.firstName(), command.lastName(), command.birthDate(),
-                    command.birthPlace(), command.gender(), command.nationality()
-            ));
+            mockedStatic.verify(() -> Person.register(command));
             verify(personPersistanceRepository, never()).push(personAggregateRoot);
         }
     }
@@ -136,7 +130,7 @@ public class PersonApplicationServiceTest {
 
         assertDoesNotThrow(() -> personApplicationService.changeSex(uuid, genderChangeCommand));
 
-        verify(personAggregateRoot).changeSex(genderChangeCommand.gender(), genderChangeCommand.changeDate());
+        verify(personAggregateRoot).changeSex(genderChangeCommand);
         verify(personPersistanceRepository).push(personAggregateRoot);
     }
 
@@ -148,7 +142,7 @@ public class PersonApplicationServiceTest {
                 .isInstanceOf(PersonNotFoundException.class)
                 .hasMessage("The person with if %s doesn't exist !", uuid);
 
-        verify(personAggregateRoot, never()).changeSex(any(), any());
+        verify(personAggregateRoot, never()).changeSex(any());
         verify(personPersistanceRepository, never()).push(personAggregateRoot);
     }
 }

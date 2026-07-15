@@ -1,6 +1,8 @@
 package com.mpumd.poc.person.context.aggregat;
 
 
+import com.mpumd.poc.person.context.command.GenderChangeCommand;
+import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -12,9 +14,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
-
-import static com.mpumd.poc.person.context.utils.ObjectsUtils.notBlank;
-import static java.util.Optional.ofNullable;
 
 @Slf4j
 @Getter
@@ -43,23 +42,17 @@ public class Person {
 
 //    private final SignificantPossessions significantPossessions;
 
-    public static Person register(String firstName, String lastName,
-                                  ZonedDateTime birthDate, String birthPlace,
-                                  Gender gender, Nationality nationality) {
-        ofNullable(birthDate).orElseThrow(() -> new IllegalArgumentException("birthDate must not be null"));
-        ofNullable(gender).orElseThrow(() -> new IllegalArgumentException("gender must not be null"));
-        ofNullable(nationality).orElseThrow(() -> new IllegalArgumentException("nationality must not be null"));
-
-        var birthDateTruncateMillis = birthDate.truncatedTo(ChronoUnit.SECONDS);
+    public static Person register(@NonNull PersonRegistrationCommand cmd) {
+        var birthDateTruncateMillis = cmd.birthDate().truncatedTo(ChronoUnit.SECONDS);
 
         return Person.allArgsBuilder()
                 .id(UUID.randomUUID())
-                .firstName(notBlank(firstName, "firstName must not be empty"))
-                .lastName(notBlank(lastName, "lastName must not be empty"))
+                .firstName(cmd.firstName())
+                .lastName(cmd.lastName())
                 .birthDate(birthDateTruncateMillis)
-                .birthPlace(notBlank(birthPlace, "birthPlace must not be empty"))
-                .genders(Map.of(birthDateTruncateMillis.toLocalDateTime(), gender))
-                .nationality(nationality)
+                .birthPlace(cmd.birthPlace())
+                .genders(Map.of(birthDateTruncateMillis.toLocalDateTime(), cmd.gender()))
+                .nationality(cmd.nationality())
                 .build();
     }
 
@@ -90,14 +83,13 @@ public class Person {
     }
 
     // TODO move to physicalAppearance
-    public void changeSex(@NonNull Gender gender,
-                          @NonNull LocalDateTime changeDate) {
-        if (Gender.ALIEN.equals(gender)) {
+    public void changeSex(@NonNull GenderChangeCommand cmd) {
+        if (Gender.ALIEN.equals(cmd.gender())) {
             throw new IllegalArgumentException("%s can't become a Alien. No sugery exist to do that".formatted(lastName));
-        } else if (this.genderChangeHistory.lastEntry().getValue().equals(gender)) {
-            throw new IllegalArgumentException("%s is already a %s".formatted(lastName, gender));
+        } else if (this.genderChangeHistory.lastEntry().getValue().equals(cmd.gender())) {
+            throw new IllegalArgumentException("%s is already a %s".formatted(lastName, cmd.gender()));
         }
 
-        genderChangeHistory.putIfAbsent(changeDate, gender);
+        genderChangeHistory.putIfAbsent(cmd.changeDate(), cmd.gender());
     }
 }

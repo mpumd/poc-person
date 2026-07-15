@@ -4,11 +4,13 @@ import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.aggregat.Person;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import com.mpumd.poc.person.sb.jpa.entity.PersonJPAEntity;
+import org.jspecify.annotations.NullUnmarked;
 
 import java.util.Map;
 
 import static java.util.Optional.ofNullable;
 
+@NullUnmarked // the mapper is not under null control because it doesn't know if the value is mandatory or not.
 public final class PersonDomainJPAMapper {
     private PersonDomainJPAMapper() {
     }

@@ -1,16 +1,16 @@
 package com.mpumd.poc.person.sb.rest.mapper;
 
-import com.mpumd.poc.person.application.command.GenderChangeCommand;
-import com.mpumd.poc.person.application.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
+import com.mpumd.poc.person.context.command.GenderChangeCommand;
+import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import com.mpumd.poc.person.sb.rest.resource.GenderChangeResource;
 import com.mpumd.poc.person.sb.rest.resource.RegisterPersonResource;
-
-import java.util.UUID;
+import org.jspecify.annotations.NullUnmarked;
 
 import static java.util.Optional.ofNullable;
 
+@NullUnmarked // the mapper is not under null control because it doesn't know if the value is mandatory or not.
 public final class PersonDomainRestMapper {
     private PersonDomainRestMapper() {
     }
@@ -28,7 +28,7 @@ public final class PersonDomainRestMapper {
 
     public static GenderChangeCommand toDomain(GenderChangeResource resource) {
         return new GenderChangeCommand(
-                Gender.valueOfName(resource.gender()),
+                ofNullable(resource.gender()).map(Gender::valueOfName).orElse(null),
                 resource.changeDate()
         );
     }

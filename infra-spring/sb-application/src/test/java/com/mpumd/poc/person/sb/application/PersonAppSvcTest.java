@@ -2,8 +2,8 @@ package com.mpumd.poc.person.sb.application;
 
 import com.mpumd.poc.person.application.PersonApplicationService;
 import com.mpumd.poc.person.context.PersonPersistanceRepository;
-import com.mpumd.poc.person.application.command.GenderChangeCommand;
-import com.mpumd.poc.person.application.command.PersonRegistrationCommand;
+import com.mpumd.poc.person.context.command.GenderChangeCommand;
+import com.mpumd.poc.person.context.command.PersonRegistrationCommand;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
