@@ -3,6 +3,8 @@ package com.mpumd.poc.person.sb.jpa.mapper;
 import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.context.aggregat.Nationality;
 import com.mpumd.poc.person.context.aggregat.Person;
+import com.mpumd.poc.person.context.exception.PersonRehydrationException;
+import com.mpumd.poc.person.context.utils.builder.PersonSnapshotBuilder;
 import com.mpumd.poc.person.context.query.PersonSearchQuery;
 import com.mpumd.poc.person.sb.jpa.entity.PersonJPAEntity;
 import org.instancio.Instancio;
@@ -15,7 +17,9 @@ import java.util.Map;
 
 import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class PersonDomainJPAMapperTest {
 
@@ -36,6 +40,7 @@ class PersonDomainJPAMapperTest {
     @Test
     void mapAllNullValuesFromAggregatToJPAEntities() {
         Person aggregatRoot = mock();
+        when(aggregatRoot.toMementoSnapshot()).thenReturn(PersonSnapshotBuilder.personSnapshot().build());
         assertThat(aggregatRoot).hasAllNullFieldsOrProperties();
 
         PersonJPAEntity entity = PersonDomainJPAMapper.toJpa(aggregatRoot);
@@ -106,16 +111,12 @@ class PersonDomainJPAMapperTest {
     }
 
     @Test
-    void mapAllNullValuesFromJPAEntitiesToAggregat() {
+    void throwRehydrationExWhenMapAllNullValuesFromJPAEntitiesToAggregat() {
         PersonJPAEntity entity = mock();
         assertThat(entity).hasAllNullFieldsOrProperties();
 
-        Person aggregateRoot = PersonDomainJPAMapper.toDomain(entity);
-
-        assertThat(aggregateRoot)
-                .isNotNull()
-                .hasAllNullFieldsOrPropertiesExcept("genderChangeHistory", "physicalAppearance");
-
-        assertThat(aggregateRoot.genderChangeHistory()).isEmpty();
+        assertThatThrownBy(() -> PersonDomainJPAMapper.toDomain(entity))
+                .isInstanceOf(PersonRehydrationException.class)
+                .hasMessage("id must not be null");
     }
 }

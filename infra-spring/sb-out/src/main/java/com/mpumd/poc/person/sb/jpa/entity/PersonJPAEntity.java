@@ -4,7 +4,6 @@ import com.mpumd.poc.person.context.aggregat.Gender;
 import com.mpumd.poc.person.sb.jpa.converter.ISO8601ZonedDateTimeConverter;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -16,8 +15,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
-
 @Table(name = "PERSON")
 @Entity
 public class PersonJPAEntity {
