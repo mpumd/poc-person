@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.6</version>
+        <version>4.1.0</version>
         <relativePath/>
         <!-- lookup parent from repository -->
     </parent>
@@ -27,18 +27,17 @@
 
     <properties>
         <java.version>25</java.version>
-        <!-- https://dzone.com/articles/using-lombok-library-witk-jdk-23 -->
         <maven.compiler.proc>full</maven.compiler.proc>
-        <nullability-maven-plugin.version>0.4.0</nullability-maven-plugin.version>
+        <nullability-maven-plugin.version>0.4.2</nullability-maven-plugin.version>
 
         <spring-boot.version>${project.parent.version}</spring-boot.version>
-        <spring-boot-admin-dependencies.version>4.0.4</spring-boot-admin-dependencies.version>
+        <spring-boot-admin-dependencies.version>4.1.2</spring-boot-admin-dependencies.version>
         <!-- openapi + swagger -->
         <springdoc-openapi-bom.version>3.0.3</springdoc-openapi-bom.version>
         <springdoc-openapi-plugin.version>1.5</springdoc-openapi-plugin.version>
 
-        <instancio-junit.version>5.5.1</instancio-junit.version>
-        <cucumber-bom.version>7.34.3</cucumber-bom.version>
+        <instancio-junit.version>5.6.0</instancio-junit.version>
+        <cucumber-bom.version>7.34.4</cucumber-bom.version>
     </properties>
 
     <dependencyManagement>
