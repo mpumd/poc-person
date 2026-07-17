@@ -79,7 +79,11 @@ public class PersonApplicationBDDIT {
     RestClient restClient;
 
     PersonApplicationBDDIT(@Value("http://localhost:${local.server.port}${server.servlet.context-path:}") URI uri) {
-        restClient = RestClient.builder().baseUrl(uri).build();
+        restClient = RestClient.builder()
+                .baseUrl(uri)
+                // features exercise use cases of both USER and ADMIN roles
+                .defaultHeaders(headers -> headers.setBasicAuth("admin", "admin"))
+                .build();
         jdbcClient = JdbcClient.create(new DriverManagerDataSource(dbContainer.getJdbcUrl(), dbContainer.getUsername(), dbContainer.getPassword()));
     }
 
