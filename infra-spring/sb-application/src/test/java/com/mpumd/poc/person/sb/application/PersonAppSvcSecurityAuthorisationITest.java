@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
  * code never runs, only the @PreAuthorize gate is under test.
  */
 @SpringJUnitConfig(classes = {
-        MethodSecurityConfig.class,
+        AuthorisationSecurityConfig.class,
         PersonAppSvcSecurityAuthorisationITest.Config.class
 })
 class PersonAppSvcSecurityAuthorisationITest {

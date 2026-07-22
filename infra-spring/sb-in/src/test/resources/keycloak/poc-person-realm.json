@@ -1,0 +1,68 @@
+{
+  "realm": "poc-person",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "roles": {
+    "realm": [
+      {
+        "name": "USER",
+        "description": "can act on an already registered person"
+      },
+      {
+        "name": "ADMIN",
+        "description": "can register a new person"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "poc-person-app",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "serviceAccountsEnabled": false,
+      "directAccessGrantsEnabled": true
+    }
+  ],
+  "users": [
+    {
+      "username": "rambo-admin",
+      "enabled": true,
+      "firstName": "John",
+      "lastName": "Rambo",
+      "email": "rambo-admin@poc.local",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "s3cr3t",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "ADMIN",
+        "USER"
+      ]
+    },
+    {
+      "username": "rambo-user",
+      "enabled": true,
+      "firstName": "John",
+      "lastName": "Rambo",
+      "email": "rambo-user@poc.local",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "s3cr3t",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "USER"
+      ]
+    }
+  ]
+}

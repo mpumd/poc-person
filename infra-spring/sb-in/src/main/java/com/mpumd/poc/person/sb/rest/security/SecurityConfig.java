@@ -2,6 +2,7 @@ package com.mpumd.poc.person.sb.rest.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,9 +16,13 @@ import org.springframework.security.web.SecurityFilterChain;
  * Authentication concern of the REST in-adapter.
  * Role based authorization is not handled here but on the application service
  * with method security, to stay protocol agnostic.
+ * <p>
+ * Default authority : the application itself, with in memory users.
+ * See {@link KeycloakSecurityConfig} for the delegated one.
  */
 @Configuration
 @EnableWebSecurity
+@Profile("!keycloak")
 public class SecurityConfig {
 
     @Bean

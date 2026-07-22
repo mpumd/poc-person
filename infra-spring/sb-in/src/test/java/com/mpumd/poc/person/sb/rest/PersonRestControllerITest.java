@@ -8,7 +8,6 @@ import com.mpumd.poc.person.sb.application.PersonAppSvc;
 import com.mpumd.poc.person.sb.rest.mapper.PersonDomainRestMapper;
 import com.mpumd.poc.person.sb.rest.resource.GenderChangeResource;
 import com.mpumd.poc.person.sb.rest.resource.RegisterPersonResource;
-import com.mpumd.poc.person.sb.rest.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -17,11 +16,9 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -36,11 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @AutoConfigureJsonTesters
-// authorization by role lives on the application service which is mocked here,
-// so only the authentication of the rest adapter is in the game : any mock
-// user passes, whatever its roles
-@Import(SecurityConfig.class)
-@WithMockUser
+@AutoConfigureMockMvc(addFilters = false) // Disable here, security tests are relocated into a security tests IT
 class PersonRestControllerITest {
 
     @Autowired
@@ -77,17 +70,6 @@ class PersonRestControllerITest {
     UUID id = UUID.randomUUID();
 
     @Test
-    @WithAnonymousUser
-    void register401WithoutAuthentication() throws Exception {
-        mockMvc.perform(post("/person")
-                        .contentType("application/json")
-                        .content(registerPayload))
-                .andExpect(status().isUnauthorized());
-
-        verifyNoInteractions(appService);
-    }
-
-    @Test
     void register201() throws Exception {
         try (var mapperMock = mockStatic(PersonDomainRestMapper.class)) {
             var resourceCaptor = ArgumentCaptor.forClass(RegisterPersonResource.class);
@@ -105,6 +87,7 @@ class PersonRestControllerITest {
                     jsonMapper.write(resourceCaptor.getValue()).getJson(),
                     JSONCompareMode.STRICT
             );
+
         }
     }
 
