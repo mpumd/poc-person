@@ -54,9 +54,7 @@ class PersonRestControllerKeycloakIT {
 
     static final String REALM = "poc-person";
     static final String CLIENT_ID = "poc-person-app";
-    // users declared in the realm import, with their realm roles
-    static final String SIMPLE_USER = "rambo-user";
-    // synthetic identity : role nature irrelevant, only proves access passes
+    // synthetic identity declared in the realm import : role nature irrelevant, only proves access passes
     static final String GRANTED_USER = "rambo-granted";
     static final String PASSWORD = "s3cr3t";
 
@@ -144,10 +142,11 @@ class PersonRestControllerKeycloakIT {
     }
 
     @Test
-    void register403_AccessDeniedException() {
+    void accessDeniedFromServiceBecomes403() {
         given(appService.register(any())).willThrow(new AccessDeniedException("Access Denied"));
+
         RestAssured.given()
-                .auth().oauth2(pushUserInKeycloakAndGetAccessToken(SIMPLE_USER))
+                .auth().oauth2(pushUserInKeycloakAndGetAccessToken(GRANTED_USER))
                 .contentType(JSON)
                 .body(registerPayload)
                 .port(port)
