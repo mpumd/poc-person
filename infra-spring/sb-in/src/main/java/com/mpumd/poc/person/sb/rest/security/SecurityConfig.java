@@ -33,15 +33,16 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // POC : monitoring (actuator + SB admin) and api doc stay open
-                        .requestMatchers("/actuator/**", "/admin/**", "/swagger-ui/**", "/api-docs*", "/api-docs/**").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/actuator/**", "/admin/**", "/swagger-ui/**", "/api-docs*", "/api-docs/**")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }
 
     @Bean
-    InMemoryUserDetailsManager userDetailsService() {
-        // POC : in-memory users with plain text password, never do that in real life
+    InMemoryUserDetailsManager registerUsersInMemory() {
         var user = User.withUsername("user").password("{noop}user").roles("USER").build();
         var admin = User.withUsername("admin").password("{noop}admin").roles("USER", "ADMIN").build();
         return new InMemoryUserDetailsManager(user, admin);

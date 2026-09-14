@@ -12,6 +12,14 @@
       {
         "name": "ADMIN",
         "description": "can register a new person"
+      },
+      {
+        "name": "OPS",
+        "description": "can reach the protected actuator endpoints"
+      },
+      {
+        "name": "GRANTED",
+        "description": "synthetic role for the sb-in security test : proves the keycloak -> spring authority bridge and that access passes, without coupling to a business role"
       }
     ]
   },
@@ -62,6 +70,42 @@
       ],
       "realmRoles": [
         "USER"
+      ]
+    },
+    {
+      "username": "rambo-ops",
+      "enabled": true,
+      "firstName": "John",
+      "lastName": "Rambo",
+      "email": "rambo-ops@poc.local",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "s3cr3t",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "OPS"
+      ]
+    },
+    {
+      "username": "rambo-granted",
+      "enabled": true,
+      "firstName": "John",
+      "lastName": "Rambo",
+      "email": "rambo-granted@poc.local",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "s3cr3t",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "GRANTED"
       ]
     }
   ]
