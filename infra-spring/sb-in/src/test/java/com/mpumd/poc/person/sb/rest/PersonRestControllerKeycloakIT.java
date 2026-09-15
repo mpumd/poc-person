@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 import static io.restassured.http.ContentType.JSON;
 import static io.restassured.http.ContentType.URLENC;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -58,10 +59,15 @@ class PersonRestControllerKeycloakIT {
     static final String GRANTED_USER = "rambo-granted";
     static final String PASSWORD = "s3cr3t";
 
-    /** one container per class, torn down by Ryuk at JVM exit. */
+    /**
+     * Reused across runs and modules when testcontainers.reuse.enable=true (~/.testcontainers.properties),
+     * otherwise one container per JVM, torn down by Ryuk.
+     * Shared with sb-bootstrap only if image and realm file stay byte identical : they feed the reuse hash.
+     */
     static final KeycloakContainer KEYCLOAK = new KeycloakContainer("quay.io/keycloak/keycloak:26.0")
             // the realm is the contract : same client and roles as prod, plus the test users.
-            .withRealmImportFile("/keycloak/poc-person-realm.json");
+            .withRealmImportFile("/keycloak/poc-person-realm.json")
+            .withReuse(true);
 
     static {
         KEYCLOAK.start();
@@ -199,7 +205,7 @@ class PersonRestControllerKeycloakIT {
     }
 
     static String pushUserInKeycloakAndGetAccessToken(String username) {
-        String token = RestAssured.given()
+        return RestAssured.given()
                 .baseUri(KEYCLOAK.getAuthServerUrl())
                 .contentType(URLENC)
                 .formParam("client_id", CLIENT_ID)
@@ -210,10 +216,9 @@ class PersonRestControllerKeycloakIT {
                 .post("/realms/{realm}/protocol/openid-connect/token", REALM)
                 .then()
                 .statusCode(HttpStatus.OK.value())
+                // assert token
+                .body("access_token", not(emptyOrNullString()))
                 .extract()
                 .path("access_token");
-
-        assertThat(token).isNotEmpty();
-        return token;
     }
 }

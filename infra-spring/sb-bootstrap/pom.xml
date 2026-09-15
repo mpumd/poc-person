@@ -30,7 +30,6 @@
             <artifactId>spring-boot-admin-starter-client</artifactId>
         </dependency>
 
-        <!-- BDD -->
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
@@ -44,7 +43,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-restclient-test</artifactId>
-            <!--            <artifactId>spring-boot-starter-webmvc-test</artifactId>-->
             <scope>test</scope>
         </dependency>
         <dependency>

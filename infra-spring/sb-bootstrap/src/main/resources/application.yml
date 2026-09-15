@@ -1,7 +1,4 @@
 server:
-  threads:
-    virtual:
-      enabled: true
   servlet:
     context-path: /spring
 
@@ -18,7 +15,6 @@ spring:
     admin:
       context-path: /admin
       client.url: http://localhost:${server.port}${server.servlet.context-path}/admin
-    show-sql: true
   liquibase:
     change-log: classpath:/db.changelog-master.sql
   threads.virtual.enabled: true # since jdk21
@@ -33,7 +29,10 @@ springdoc:
 
 management:
   endpoints.web.exposure.include: "*"
-  endpoint.health.show-details: always
+  endpoint.health:
+    # liveness / readiness groups exposed everywhere, not only when running on k8s
+    probes.enabled: true
+    show-details: always
   info:
     env:
       enabled: true
