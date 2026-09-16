@@ -75,20 +75,24 @@
                         </exclude>
                     </excludes>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>process-aot</id>
-                        <goals>
-                            <goal>process-aot</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>process-test-aot</id>
-                        <goals>
-                            <goal>process-test-aot</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <!-- AOT disabled : the pre-generated CGLIB proxies land in target/(test-)classes and get
+                     reused by the plain JVM ITs, which broke ActuatorAndAdminSecurityKeycloakIT in CI
+                     ("Cannot find matching method/constructor").
+                     AOT is still provided by the parent's profiles : -Pnative (process-aot), -PnativeTest (process-test-aot). -->
+                <!--                <executions>-->
+                <!--                    <execution>-->
+                <!--                        <id>process-aot</id>-->
+                <!--                        <goals>-->
+                <!--                            <goal>process-aot</goal>-->
+                <!--                        </goals>-->
+                <!--                    </execution>-->
+                <!--                    <execution>-->
+                <!--                        <id>process-test-aot</id>-->
+                <!--                        <goals>-->
+                <!--                            <goal>process-test-aot</goal>-->
+                <!--                        </goals>-->
+                <!--                    </execution>-->
+                <!--                </executions>-->
             </plugin>
         </plugins>
     </build>
