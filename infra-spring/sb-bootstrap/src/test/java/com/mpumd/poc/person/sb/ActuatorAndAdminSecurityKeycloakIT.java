@@ -46,7 +46,7 @@ class ActuatorAndAdminSecurityKeycloakIT {
 
     static final String REALM = "poc-person";
     static final String CLIENT_ID = "poc-person-app";
-    static final String OPS_USER = "rambo-ops";
+    static final String OPS_USER = "trautman-ops";
     static final String CLASSIC_USER = "rambo-user";
     static final String PASSWORD = "s3cr3t";
 
@@ -151,7 +151,7 @@ class ActuatorAndAdminSecurityKeycloakIT {
         return RestAssured.given()
                 .port(port)
                 .auth()
-                .oauth2(putUserAndGetToken(username))
+                .oauth2(accessTokenOf(username))
                 .when();
     }
 
@@ -159,7 +159,7 @@ class ActuatorAndAdminSecurityKeycloakIT {
      * users and roles come from the realm import, so a token
      * is a plain form post, no admin api needed.
      */
-    static String putUserAndGetToken(String username) {
+    static String accessTokenOf(String username) {
         return RestAssured.given()
                 .baseUri(KEYCLOAK.getAuthServerUrl())
                 .contentType(URLENC)

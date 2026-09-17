@@ -131,7 +131,7 @@ class PersonRestControllerKeycloakIT {
     @ParameterizedTest(name = "granted user passes on {0}")
     @MethodSource("businessRoutes")
     void everyBusinessRoutePassesForGrantedUser(Route route) {
-        call(RestAssured.given().auth().oauth2(pushUserInKeycloakAndGetAccessToken(GRANTED_USER)), route)
+        call(RestAssured.given().auth().oauth2(accessTokenOf(GRANTED_USER)), route)
                 .then()
                 .statusCode(not(HttpStatus.UNAUTHORIZED.value()))
                 .statusCode(not(HttpStatus.FORBIDDEN.value()));
@@ -139,8 +139,8 @@ class PersonRestControllerKeycloakIT {
 
     /** The keycloak realm role becomes a spring authority : the bridge every hasRole() relies on. */
     @Test
-    void pushRoleInKeycloak_check_convertToSpringAuthorities() {
-        var token = pushUserInKeycloakAndGetAccessToken(GRANTED_USER);
+    void realmRole_convertedToSpringAuthority() {
+        var token = accessTokenOf(GRANTED_USER);
         var authentication = jwtAuthenticationConverter.convert(jwtDecoder.decode(token));
         assertThat(authentication.getAuthorities())
                 .extracting(GrantedAuthority::getAuthority)
@@ -152,7 +152,7 @@ class PersonRestControllerKeycloakIT {
         given(appService.register(any())).willThrow(new AccessDeniedException("Access Denied"));
 
         RestAssured.given()
-                .auth().oauth2(pushUserInKeycloakAndGetAccessToken(GRANTED_USER))
+                .auth().oauth2(accessTokenOf(GRANTED_USER))
                 .contentType(JSON)
                 .body(registerPayload)
                 .port(port)
@@ -204,7 +204,11 @@ class PersonRestControllerKeycloakIT {
         return spec.port(port).when().request(route.httpMethod(), path);
     }
 
-    static String pushUserInKeycloakAndGetAccessToken(String username) {
+    /**
+     * users and roles come from the realm import, so a token
+     * is a plain form post, no admin api needed.
+     */
+    static String accessTokenOf(String username) {
         return RestAssured.given()
                 .baseUri(KEYCLOAK.getAuthServerUrl())
                 .contentType(URLENC)

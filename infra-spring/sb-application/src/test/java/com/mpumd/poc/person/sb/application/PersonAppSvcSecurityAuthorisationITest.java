@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -69,13 +68,13 @@ class PersonAppSvcSecurityAuthorisationITest {
     @WithMockUser(roles = "ADMIN")
     void changeSex_KO_ADMIN() {
         assertThatThrownBy(() -> personAppSvc.changeSex(null, null))
-                .isInstanceOf(AccessDeniedException.class);
+                .isInstanceOf(AuthorizationDeniedException.class);
     }
 
     @Test
     @WithMockUser(roles = {})
     void changeSex_KO_NO_ROLE() {
         assertThatThrownBy(() -> personAppSvc.changeSex(null, null))
-                .isInstanceOf(AccessDeniedException.class);
+                .isInstanceOf(AuthorizationDeniedException.class);
     }
 }
