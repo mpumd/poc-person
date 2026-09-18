@@ -24,6 +24,8 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -75,12 +77,12 @@ class PersonRestControllerKeycloakIT {
 
     @DynamicPropertySource
     static void keycloakIssuer(DynamicPropertyRegistry registry) {
-        // the port is drawn at startup, the issuer can only be known here
-        registry.add(
-                "spring.security.oauth2.resourceserver.jwt.issuer-uri",
-                () -> KEYCLOAK.getAuthServerUrl() + "/realms/" + REALM
-        );
+        registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () -> ISSUER);
     }
+
+    // the port is drawn at startup, the issuer can only be known once the container runs
+    static final String ISSUER = KEYCLOAK.getAuthServerUrl() + "/realms/" + REALM;
+    static final String UUID_FORMAT = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
 
     @MockitoBean
     PersonAppSvc appService;
@@ -135,6 +137,44 @@ class PersonRestControllerKeycloakIT {
                 .then()
                 .statusCode(not(HttpStatus.UNAUTHORIZED.value()))
                 .statusCode(not(HttpStatus.FORBIDDEN.value()));
+    }
+
+    /**
+     * The token keycloak really signs, the contract this api relies on : an access token
+     * of our client, issued by our realm, carrying the realm roles and the identity.
+     * Claims drawn at each call are asserted on their format only.
+     */
+    @Test
+    void accessToken_carriesTheExpectedClaims() {
+        var jwt = jwtDecoder.decode(accessTokenOf(GRANTED_USER));
+
+        assertThat(jwt.getClaims()).containsOnlyKeys(
+                "typ", "iss", "azp", "acr", "realm_access", "scope",           // authentication and authorization
+                "exp", "iat", "jti", "sid", "sub",                             // drawn at each call
+                "preferred_username", "email", "email_verified",               // identity, from the realm import
+                "name", "given_name", "family_name");
+
+        assertThat(jwt.getClaimAsString("typ")).isEqualTo("Bearer");  // an access token, not the id token
+        assertThat(jwt.getIssuer()).hasToString(ISSUER);                       // the realm that signed it
+        assertThat(jwt.getClaimAsString("azp")).isEqualTo(CLIENT_ID);          // the client it was issued for
+        assertThat(jwt.getClaimAsString("acr")).isEqualTo("1");       // authentication level, 1 = password
+        assertThat(jwt.getClaimAsMap("realm_access"))
+                .containsEntry("roles", List.of("GRANTED"));               // what becomes ROLE_* for hasRole()
+        assertThat(jwt.getClaimAsString("scope").split(" "))
+                .containsExactlyInAnyOrder("email", "profile");        // granted scopes, order not stable
+
+        assertThat(jwt.getClaimAsString("sub")).matches(UUID_FORMAT);          // user technical id
+        assertThat(jwt.getClaimAsString("jti")).matches(UUID_FORMAT);          // token id
+        assertThat(jwt.getClaimAsString("sid")).matches(UUID_FORMAT);          // keycloak session id
+        assertThat(jwt.getIssuedAt()).isBefore(Instant.now());                 // iat
+        assertThat(jwt.getExpiresAt()).isAfter(Instant.now());                 // exp, the 5 min bearer window
+
+        assertThat(jwt.getClaimAsString("preferred_username")).isEqualTo(GRANTED_USER);
+        assertThat(jwt.getClaimAsString("email")).isEqualTo(GRANTED_USER + "@poc.local");
+        assertThat(jwt.getClaimAsBoolean("email_verified")).isTrue();
+        assertThat(jwt.getClaimAsString("name")).isEqualTo("John Rambo");
+        assertThat(jwt.getClaimAsString("given_name")).isEqualTo("John");
+        assertThat(jwt.getClaimAsString("family_name")).isEqualTo("Rambo");
     }
 
     /** The keycloak realm role becomes a spring authority : the bridge every hasRole() relies on. */
