@@ -75,29 +75,66 @@
                         </exclude>
                     </excludes>
                 </configuration>
-                <!-- AOT disabled : the pre-generated CGLIB proxies land in target/(test-)classes and get
-                     reused by the plain JVM ITs, which broke ActuatorAndAdminSecurityKeycloakIT in CI
-                     ("Cannot find matching method/constructor").
-                     AOT is still provided by the parent's profiles : -Pnative (process-aot), -PnativeTest (process-test-aot). -->
-                <!--                <executions>-->
-                <!--                    <execution>-->
-                <!--                        <id>process-aot</id>-->
-                <!--                        <goals>-->
-                <!--                            <goal>process-aot</goal>-->
-                <!--                        </goals>-->
-                <!--                    </execution>-->
-                <!--                    <execution>-->
-                <!--                        <id>process-test-aot</id>-->
-                <!--                        <goals>-->
-                <!--                            <goal>process-test-aot</goal>-->
-                <!--                        </goals>-->
-                <!--                    </execution>-->
-                <!--                </executions>-->
             </plugin>
         </plugins>
     </build>
 
     <profiles>
+        <profile>
+            <!-- optimized jvm image, buildpacks so no dockerfile : mvn -Pjvm-image package
+                 Needs the docker daemon on /var/run/docker.sock. Never point DOCKER_HOST at a rootless
+                 podman socket : the lifecycle container cannot reach it, SELinux labels it user_tmp_t
+                 while containers run as container_t, and the exporter dies on "failed to fetch base
+                 layers". That variable also wins over <docker><host>, so no pom setting can rescue it.
+                 Out of the default build : needs docker, and its CGLIB proxies break the JVM ITs. -->
+            <id>jvm-image</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <image>
+                                <name>person.msvc.spring:${project.version}</name>
+                                <!-- prod ubuntu LTS 24 -->
+                                <builder>paketobuildpacks/builder-noble-java-tiny:latest</builder>
+                                <runImage>paketobuildpacks/ubuntu-noble-run-tiny:latest</runImage>
+                                <!-- with tools like bash -->
+<!--                                 <builder>paketobuildpacks/ubuntu-noble-builder:latest</builder>-->
+<!--                                 <runImage>paketobuildpacks/ubuntu-noble-run:latest</runImage>-->
+                                <env>
+                                    <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
+                                    <BP_JVM_AOTCACHE_ENABLED>true</BP_JVM_AOTCACHE_ENABLED>
+                                    <!-- TODO jvm aot cache (java 25, leyden) : training run done by the buildpack.
+                                         off until paketo-buildpacks/spring-boot#581 is fixed : the cache is
+                                         created, then "unable to contribute spring-performance layer" -->
+                                    <!-- jre trimmed to the used modules : smaller image -->
+                                    <BP_SPRING_AOT_ENABLED>false</BP_SPRING_AOT_ENABLED> <!-- build static factory -->
+                                    <BPL_SPRING_AOT_ENABLED>false</BPL_SPRING_AOT_ENABLED> <!-- run AOT mode -->
+                                    <BP_JVM_JLINK_ENABLED>true</BP_JVM_JLINK_ENABLED>
+                                </env>
+                            </image>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>process-aot</id>
+                                <goals>
+                                    <goal>process-aot</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>build-image</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <!-- no-fork : don't run maven package phase in a second time -->
+                                    <goal>build-image-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>openapi-spec-generator</id>
             <build>
@@ -163,63 +200,5 @@
                 </plugins>
             </build>
         </profile>
-        <!--        <profile>-->
-        <!--            &lt;!&ndash; FIXME instead of replicate the profile here, find a way to merge the plugin's configs &ndash;&gt;-->
-        <!--            &lt;!&ndash; with combine.children="append" anywhere &ndash;&gt;-->
-        <!--            <id>native</id>-->
-        <!--            <build>-->
-        <!--                <plugins>-->
-        <!--                    <plugin>-->
-        <!--                        <groupId>org.apache.maven.plugins</groupId>-->
-        <!--                        <artifactId>maven-jar-plugin</artifactId>-->
-        <!--                        <configuration>-->
-        <!--                            <archive>-->
-        <!--                                <manifestEntries>-->
-        <!--                                    <Spring-Boot-Native-Processed>true</Spring-Boot-Native-Processed>-->
-        <!--                                </manifestEntries>-->
-        <!--                            </archive>-->
-        <!--                        </configuration>-->
-        <!--                    </plugin>-->
-        <!--                    <plugin>-->
-        <!--                        <groupId>org.springframework.boot</groupId>-->
-        <!--                        <artifactId>spring-boot-maven-plugin</artifactId>-->
-        <!--                        <configuration>-->
-        <!--                            <image>-->
-        <!--                                <builder>paketobuildpacks/builder-jammy-tiny:latest</builder>-->
-        <!--                                <env>-->
-        <!--                                    <BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>-->
-        <!--                                    <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>-->
-        <!--                                </env>-->
-        <!--                                <name>person.msvc.spring:${project.version}</name>-->
-        <!--                            </image>-->
-        <!--                        </configuration>-->
-        <!--                        <executions>-->
-        <!--                            <execution>-->
-        <!--                                <id>process-aot</id>-->
-        <!--                                <goals>-->
-        <!--                                    <goal>process-aot</goal>-->
-        <!--                                </goals>-->
-        <!--                            </execution>-->
-        <!--                        </executions>-->
-        <!--                    </plugin>-->
-        <!--                    <plugin>-->
-        <!--                        <groupId>org.graalvm.buildtools</groupId>-->
-        <!--                        <artifactId>native-maven-plugin</artifactId>-->
-        <!--                        <configuration>-->
-        <!--                            <classesDirectory>${project.build.outputDirectory}</classesDirectory>-->
-        <!--                            <requiredVersion>22.3</requiredVersion>-->
-        <!--                        </configuration>-->
-        <!--                        <executions>-->
-        <!--                            <execution>-->
-        <!--                                <id>add-reachability-metadata</id>-->
-        <!--                                <goals>-->
-        <!--                                    <goal>add-reachability-metadata</goal>-->
-        <!--                                </goals>-->
-        <!--                            </execution>-->
-        <!--                        </executions>-->
-        <!--                    </plugin>-->
-        <!--                </plugins>-->
-        <!--            </build>-->
-        <!--        </profile>-->
     </profiles>
 </project>

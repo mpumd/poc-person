@@ -26,27 +26,17 @@ jobs:
           java-version: '25'
           distribution: 'liberica'
           cache: maven
-
       - uses: stCarolas/setup-maven@v5.1
         with:
           maven-version: 4.0.0-rc-5
-
       - name: Setup summary
         run: mvn -v
 
-      - name: Build
-        run: mvn -B package -DskipTests --file pom.xml
-
-      - name: UTs, ITs and generate openapi spec
+      - name: Build jars, Tests and generate openapi spec
         run: mvn -B verify -Popenapi-spec-generator --file pom.xml
 
-
-    #        &&
-    #          mvn spring-boot:build-image
-    #            -DskipTests
-    #            -Pnative
-    #            -pl infra-spring/sb-bootstrap
-    #            --file pom.xml
+      - name: Build jvm image
+        run: mvn -B package -DskipTests -Pjvm-image -pl infra-spring/sb-bootstrap --also-make-dependents --file pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
 #    - name: Update dependency graph
