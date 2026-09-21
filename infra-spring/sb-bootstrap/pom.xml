@@ -104,7 +104,7 @@
 <!--                                 <runImage>paketobuildpacks/ubuntu-noble-run:latest</runImage>-->
                                 <env>
                                     <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
-                                    <BP_JVM_AOTCACHE_ENABLED>true</BP_JVM_AOTCACHE_ENABLED>
+                                    <BP_JVM_AOTCACHE_ENABLED>false</BP_JVM_AOTCACHE_ENABLED>
                                     <!-- TODO jvm aot cache (java 25, leyden) : training run done by the buildpack.
                                          off until paketo-buildpacks/spring-boot#581 is fixed : the cache is
                                          created, then "unable to contribute spring-performance layer" -->
