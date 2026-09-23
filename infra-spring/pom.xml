@@ -26,6 +26,7 @@
     </modules>
 
     <properties>
+        <application.image.name>poc-person.spring</application.image.name>
         <java.version>25</java.version>
         <maven.compiler.proc>full</maven.compiler.proc>
         <nullability-maven-plugin.version>0.4.2</nullability-maven-plugin.version>

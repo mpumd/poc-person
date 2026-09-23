@@ -36,7 +36,12 @@ jobs:
         run: mvn -B verify -Popenapi-spec-generator --file pom.xml
 
       - name: Build jvm image
-        run: mvn -B package -DskipTests -Pjvm-image -pl infra-spring/sb-bootstrap --also-make-dependents --file pom.xml
+        run: mvn -B package -Pjvm-image -DskipTests -pl infra-spring/sb-bootstrap --also-make --file pom.xml
+
+      # native-image compiles inside the buildpack : ~20 min and ~9GB of RAM, way longer than the rest
+      - name: Build native image
+        timeout-minutes: 45
+        run: mvn -B package -Pnative-image -DskipTests -pl infra-spring/sb-bootstrap --also-make --file pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
 #    - name: Update dependency graph

@@ -3,7 +3,7 @@ server:
     context-path: /spring
 
 spring:
-  application.name: person.msvc.spring
+  application.name: person.spring
   #  mvc.log-request-details: true # log
   jpa:
     properties:

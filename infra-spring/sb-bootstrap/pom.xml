@@ -81,12 +81,6 @@
 
     <profiles>
         <profile>
-            <!-- optimized jvm image, buildpacks so no dockerfile : mvn -Pjvm-image package
-                 Needs the docker daemon on /var/run/docker.sock. Never point DOCKER_HOST at a rootless
-                 podman socket : the lifecycle container cannot reach it, SELinux labels it user_tmp_t
-                 while containers run as container_t, and the exporter dies on "failed to fetch base
-                 layers". That variable also wins over <docker><host>, so no pom setting can rescue it.
-                 Out of the default build : needs docker, and its CGLIB proxies break the JVM ITs. -->
             <id>jvm-image</id>
             <build>
                 <plugins>
@@ -95,22 +89,23 @@
                         <artifactId>spring-boot-maven-plugin</artifactId>
                         <configuration>
                             <image>
-                                <name>person.msvc.spring:${project.version}</name>
+                                <name>${application.image.name}-jvm:${project.version}</name>
                                 <!-- prod ubuntu LTS 24 -->
                                 <builder>paketobuildpacks/builder-noble-java-tiny:latest</builder>
                                 <runImage>paketobuildpacks/ubuntu-noble-run-tiny:latest</runImage>
                                 <!-- with tools like bash -->
-<!--                                 <builder>paketobuildpacks/ubuntu-noble-builder:latest</builder>-->
-<!--                                 <runImage>paketobuildpacks/ubuntu-noble-run:latest</runImage>-->
+                                <!-- <builder>paketobuildpacks/ubuntu-noble-builder:latest</builder>-->
+                                <!-- <runImage>paketobuildpacks/ubuntu-noble-run:latest</runImage>-->
                                 <env>
                                     <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
-                                    <BP_JVM_AOTCACHE_ENABLED>false</BP_JVM_AOTCACHE_ENABLED>
                                     <!-- TODO jvm aot cache (java 25, leyden) : training run done by the buildpack.
                                          off until paketo-buildpacks/spring-boot#581 is fixed : the cache is
                                          created, then "unable to contribute spring-performance layer" -->
-                                    <!-- jre trimmed to the used modules : smaller image -->
-                                    <BP_SPRING_AOT_ENABLED>false</BP_SPRING_AOT_ENABLED> <!-- build static factory -->
+                                    <BP_JVM_AOTCACHE_ENABLED>false</BP_JVM_AOTCACHE_ENABLED>
+
+                                    <BP_SPRING_AOT_ENABLED>false</BP_SPRING_AOT_ENABLED> <!-- build AOT static factory -->
                                     <BPL_SPRING_AOT_ENABLED>false</BPL_SPRING_AOT_ENABLED> <!-- run AOT mode -->
+                                    <!-- jre trimmed to the used modules : smaller image -->
                                     <BP_JVM_JLINK_ENABLED>true</BP_JVM_JLINK_ENABLED>
                                 </env>
                             </image>
@@ -128,6 +123,79 @@
                                 <goals>
                                     <!-- no-fork : don't run maven package phase in a second time -->
                                     <goal>build-image-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- native image, compiled by the buildpack so no local GraalVM : mvn -Pnative-image package
+                 Standalone : the spring boot parent's native profile only answers to -Pnative, and a profile
+                 can't activate another one, so its jar manifest entry, its process-aot execution and its
+                 native-maven-plugin setup are repeated here. -->
+            <id>native-image</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                            <archive>
+                                <manifestEntries>
+                                    <Spring-Boot-Native-Processed>true</Spring-Boot-Native-Processed>
+                                </manifestEntries>
+                            </archive>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <image>
+                                <name>${application.image.name}-native:${project.version}</name>
+                                <!-- prod ubuntu LTS 24 -->
+                                <builder>paketobuildpacks/builder-noble-java-tiny:latest</builder>
+                                <runImage>paketobuildpacks/ubuntu-noble-run-tiny:latest</runImage>
+                                <!-- with tools like bash -->
+<!--                                 <builder>paketobuildpacks/ubuntu-noble-builder:latest</builder>-->
+<!--                                 <runImage>paketobuildpacks/ubuntu-noble-run:latest</runImage>-->
+                                <env>
+                                    <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
+                                    <BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
+                                </env>
+                            </image>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>process-aot</id>
+                                <goals>
+                                    <goal>process-aot</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>build-image</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <!-- no-fork : don't run maven package phase in a second time -->
+                                    <goal>build-image-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!-- only brings the third party reachability metadata into the jar, no local compilation -->
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <configuration>
+                            <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>add-reachability-metadata</id>
+                                <goals>
+                                    <goal>add-reachability-metadata</goal>
                                 </goals>
                             </execution>
                         </executions>
