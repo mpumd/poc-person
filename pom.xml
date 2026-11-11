@@ -10,11 +10,11 @@
         <java.version>25</java.version>
 
         <!-- maven plugin -->
-        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
-        <nullability-maven-plugin.version>0.4.2</nullability-maven-plugin.version>
-        <maven-failsafe-plugin.version>3.5.6</maven-failsafe-plugin.version>
-        <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
-        <pitest-maven.version>1.25.7</pitest-maven.version>
+        <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
+        <nullability-maven-plugin.version>0.5.2</nullability-maven-plugin.version>
+        <maven-failsafe-plugin.version>3.6.1</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.6.1</maven-surefire-plugin.version>
+        <pitest-maven.version>1.30.2</pitest-maven.version>
 
         <!-- maven compiler -->
         <maven.compiler.proc>full</maven.compiler.proc>
@@ -23,15 +23,15 @@
 
         <!-- BOM -->
         <!-- only for manager version of dependencies -->
-        <spring-boot.version>4.1.1</spring-boot.version>
+        <spring-boot.version>4.1.2</spring-boot.version>
 
         <!-- Lib build / AOT -->
-        <vavr.version>1.0.1</vavr.version>
-        <jilt.version>1.9.1</jilt.version>
+        <vavr.version>1.1.0</vavr.version>
+        <jilt.version>1.9.2</jilt.version>
 
         <!-- Test -->
-        <cucumber-bom.version>7.34.4</cucumber-bom.version>
-        <instancio-junit.version>5.6.0</instancio-junit.version>
+        <cucumber-bom.version>8.0.4</cucumber-bom.version>
+        <instancio-junit.version>6.2.1</instancio-junit.version>
         <datafaker.version>2.7.0</datafaker.version>
         <!-- CI pitest -->
         <pitest-junit5-plugin.version>1.2.3</pitest-junit5-plugin.version>

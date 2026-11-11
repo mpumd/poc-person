@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.1</version>
+        <version>4.1.2</version>
         <relativePath/>
         <!-- lookup parent from repository -->
     </parent>
@@ -29,21 +29,21 @@
         <application.image.name>poc-person.spring</application.image.name>
         <java.version>25</java.version>
         <maven.compiler.proc>full</maven.compiler.proc>
-        <nullability-maven-plugin.version>0.4.2</nullability-maven-plugin.version>
+        <nullability-maven-plugin.version>0.5.2</nullability-maven-plugin.version>
 
         <!-- spring boot -->
         <spring-boot.version>${project.parent.version}</spring-boot.version>
-        <spring-boot-admin-dependencies.version>4.1.2</spring-boot-admin-dependencies.version>
+        <spring-boot-admin-dependencies.version>4.1.5</spring-boot-admin-dependencies.version>
         <!-- openapi + swagger -->
-        <springdoc-openapi-bom.version>3.0.3</springdoc-openapi-bom.version>
+        <springdoc-openapi-bom.version>3.2.0</springdoc-openapi-bom.version>
         <springdoc-openapi-plugin.version>1.5</springdoc-openapi-plugin.version>
 
         <!-- test -->
-        <instancio-junit.version>5.6.0</instancio-junit.version>
-        <cucumber-bom.version>7.34.4</cucumber-bom.version>
-        <testcontainers-keycloak.version>3.7.0</testcontainers-keycloak.version>
+        <instancio-junit.version>6.2.1</instancio-junit.version>
+        <cucumber-bom.version>8.0.4</cucumber-bom.version>
+        <testcontainers-keycloak.version>4.4.0</testcontainers-keycloak.version>
 
-        <rest-assured.version>6.0.1</rest-assured.version>
+        <rest-assured.version>6.3.0</rest-assured.version>
     </properties>
 
     <dependencyManagement>

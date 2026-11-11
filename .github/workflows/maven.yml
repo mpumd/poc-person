@@ -28,7 +28,7 @@ jobs:
           cache: maven
       - uses: stCarolas/setup-maven@v5.1
         with:
-          maven-version: 4.0.0-rc-5
+          maven-version: 4.0.0-rc-7
       - name: Setup summary
         run: mvn -v
 
