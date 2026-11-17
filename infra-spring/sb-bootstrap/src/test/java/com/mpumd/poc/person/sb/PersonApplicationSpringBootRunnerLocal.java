@@ -24,7 +24,7 @@ public class PersonApplicationSpringBootRunnerLocal {
 
         PersonApplicationSpringBootRunner.main(
                 "--spring.profiles.active=local",
-                "--spring.aot.enabled=true",
+                "--spring.aot.enabled=true", // verifier si ca marche
                 "--spring.docker.compose.file=" + dockerComposePath + "/compose.yaml");
     }
 
