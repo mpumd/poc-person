@@ -35,9 +35,9 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 // This annotations could be move outside here in a CucumberSpringConfiguration class
 @CucumberContextConfiguration // pretty same behavior of @ComponentScan
 @SpringBootTest(
-        classes = {PersonApplicationSpringBootRunner.class},
-        webEnvironment = RANDOM_PORT,
-        properties = "spring.profiles.active=test"
+        classes = {PersonApplicationSpringBootRunner.class}
+        ,webEnvironment = RANDOM_PORT
+//        ,properties = "spring.profiles.active=test"
 )
 // test profile is required to track the production config
 @Testcontainers(disabledWithoutDocker = true)

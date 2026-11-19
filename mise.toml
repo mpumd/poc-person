@@ -1,4 +1,2 @@
 [tools]
-claude = "latest"
-lazydocker = "latest"
-powershell = "latest"
+java = "liberica-nik-openjdk25"

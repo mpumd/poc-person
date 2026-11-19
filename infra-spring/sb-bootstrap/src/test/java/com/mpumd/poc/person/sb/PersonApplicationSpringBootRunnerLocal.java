@@ -24,7 +24,6 @@ public class PersonApplicationSpringBootRunnerLocal {
 
         PersonApplicationSpringBootRunner.main(
                 "--spring.profiles.active=local",
-                "--spring.aot.enabled=true", // verifier si ca marche
                 "--spring.docker.compose.file=" + dockerComposePath + "/compose.yaml");
     }
 
@@ -42,6 +41,7 @@ public class PersonApplicationSpringBootRunnerLocal {
             restClient = RestClient.builder()
                     .baseUrl("http://localhost:%s%s".formatted(port, contextPath))
                     .build();
+            super();
         }
 
         @Override
