@@ -14,7 +14,7 @@ import java.nio.file.Path;
 // for intellij local runner
 public class PersonApplicationSpringBootRunnerLocal {
 
-    void main() throws IOException, URISyntaxException {
+    public static void main(String[] args) throws IOException, URISyntaxException {
         final var uri = Thread.currentThread().getContextClassLoader().getResource("").toURI();
         final var dockerComposePath = Path.of(uri)
                 .resolve("../../")
@@ -40,6 +40,8 @@ public class PersonApplicationSpringBootRunnerLocal {
                 @Value("${server.servlet.context-path}") String contextPath) {
             restClient = RestClient.builder()
                     .baseUrl("http://localhost:%s%s".formatted(port, contextPath))
+                    // in memory admin user (SecurityConfig, profile !keycloak), register requires ADMIN
+                    .defaultHeaders(headers -> headers.setBasicAuth("admin", "admin"))
                     .build();
             super();
         }
