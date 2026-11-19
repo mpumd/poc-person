@@ -26,14 +26,13 @@ replay_pid*
 # IntelliJ IDEA config file
 .idea/
 .junie/
-
-# Generated compilation files
 *.iml
 *.iws
-
-# compilation and execution folders
 out/
 
 # maven
 target/
 .mvn/
+
+# IA
+.claude
